@@ -1,0 +1,37 @@
+{% extends "components/layout.njk" %}
+{% block head %}
+  <link rel="stylesheet" href="{{ static }}/styles/news.css"/>
+{% endblock %}
+{% block body %}
+  <div class="section new-detail">
+    <div class="wp">
+      <div class="title">
+        {{ info.title }}
+      </div>
+      <div class="tags">
+        <span>发布日期: {{ info.create_date }}</span>
+        <span>信息来源: {{ info.origin }}</span>
+      </div>
+      <div class="html-content">{{ info.content | safe }}</div>
+    </div>
+    <br>
+      <div class="wp">
+        {% if prev %}
+          <div class="prev-new">
+            <a href="/news/{{ prev.id }}">
+              <span>上一篇:</span>
+              <b>{{ prev.title }}</b>
+            </a>
+          </div>
+        {% endif %}
+        {% if next %}
+          <div class="next-new">
+            <a href="/news/{{ next.id }}">
+              <span>下一篇:</span>
+              <b>{{ next.title }}</b>
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endblock %}

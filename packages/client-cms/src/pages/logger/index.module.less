@@ -1,0 +1,29 @@
+.container {
+  :global {
+    .ant-tabs-nav {
+      margin-bottom: 16px;
+      &::before {
+        display: none !important;
+      }
+    }
+    .ant-tabs-tab-active {
+      font-weight: 700;
+    }
+    .ant-tabs-card .ant-tabs-content {
+      height: 120px;
+      margin-top: -16px;
+    }
+    .ant-tabs-card .ant-tabs-content > .ant-tabs-tabpane {
+      padding: 16px;
+      background: #fff;
+    }
+    .ant-tabs-card .ant-tabs-tab {
+      background: transparent;
+      border-color: transparent;
+    }
+    .ant-tabs-card .ant-tabs-tab-active {
+      background: #fff;
+      border-color: #fff;
+    }
+  }
+}

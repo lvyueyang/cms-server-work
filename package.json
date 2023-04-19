@@ -1,0 +1,22 @@
+{
+  "name": "cms-server-work",
+  "version": "0.0.0",
+  "private": true,
+  "description": "内容管理系统",
+  "author": "lvyueyang <975794403@qq.com>",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:cms": "lerna run --scope=client-cms dev",
+    "dev:server": "lerna run --scope=server dev",
+    "setup:cms": "lerna run --scope=client-cms setup"
+  },
+  "resolutions": {},
+  "dependencies": {
+    "dayjs": "^1.11.7"
+  },
+  "devDependencies": {
+    "lerna": "^6.6.1"
+  }
+}

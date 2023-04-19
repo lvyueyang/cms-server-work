@@ -1,0 +1,50 @@
+import { BaseEntity } from 'src/common/base.entity';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { AdminRole } from '../user_admin_role/user_admin_role.entity';
+
+/** 管理员账户 */
+@Entity({ orderBy: { is_root: 'DESC', create_date: 'DESC' } })
+export class UserAdmin extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  /** 管理账户 ID */
+  id: number;
+
+  /** 用户名 */
+  @Column({
+    unique: true,
+  })
+  username: string;
+
+  /** 用户密码 */
+  @Column({ select: false })
+  password: string;
+
+  /** 用户昵称 */
+  @Column()
+  cname: string;
+
+  /** 用户邮箱 */
+  @Column({
+    unique: true,
+  })
+  email: string;
+
+  /** 是否为根用户 */
+  @Column({ default: false })
+  is_root?: boolean;
+
+  /** 退出登录时间 */
+  @Column({ default: null })
+  out_login_date?: Date;
+
+  /** 关联角色 */
+  @ManyToMany(() => AdminRole, (role) => role.users)
+  @JoinTable()
+  roles: AdminRole[];
+}

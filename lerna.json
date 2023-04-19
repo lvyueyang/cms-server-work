@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+  "useNx": true,
+  "useWorkspaces": true,
+  "version": "independent",
+  "skip-npm": true,
+  "npmClient": "yarn",
+  "registry": "https://registry.npmmirror.com",
+  "command": {
+    "bootstrap": {}
+  }
+}
