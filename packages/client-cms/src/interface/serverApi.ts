@@ -316,3 +316,118 @@ export interface LoggerDetailResponseDto {
   /** 日志详情 */
   data: string[];
 }
+
+export interface NewsQueryListDto {
+  /**
+   * 分页查询-当前页
+   * @default 1
+   */
+  current?: number;
+  /**
+   * 分页查询-每页数量
+   * @default 10
+   */
+  page_size?: number;
+  /** 新闻中心名称-模糊搜索 */
+  keyword?: string;
+}
+
+export interface UserAdmin {
+  id: number;
+  username: string;
+  password: string;
+  cname: string;
+  email: string;
+  is_root?: boolean;
+  /** @format date-time */
+  out_login_date?: string;
+  roles: AdminRole[];
+  /** @format date-time */
+  create_date: string;
+  /** @format date-time */
+  update_date: string;
+}
+
+export interface NewsInfo {
+  id: number;
+  title: string;
+  cover: string;
+  desc?: string;
+  content: string;
+  is_delete: boolean;
+  authorId?: number;
+  author: UserAdmin;
+  /** @format date-time */
+  create_date: string;
+  /** @format date-time */
+  update_date: string;
+}
+
+export interface NewsList {
+  list: NewsInfo[];
+  total: number;
+}
+
+export interface NewsListResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: NewsList;
+}
+
+export interface NewsDetailResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: NewsInfo;
+}
+
+export interface NewsCreateDto {
+  /** 新闻中心名称 */
+  title: string;
+  /** 新闻中心描述 */
+  desc?: string;
+  /** 新闻中心封面 */
+  cover: string;
+  /** 新闻中心详情 */
+  content: string;
+}
+
+export interface NewsUpdateDto {
+  /** 新闻中心名称 */
+  title: string;
+  /** 新闻中心描述 */
+  desc?: string;
+  /** 新闻中心封面 */
+  cover: string;
+  /** 新闻中心详情 */
+  content: string;
+}
+
+export interface NewsDetailIdResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: number;
+}

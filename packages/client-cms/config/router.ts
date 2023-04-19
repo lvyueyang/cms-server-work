@@ -37,6 +37,24 @@ const router = {
           component: 'logger',
           title: '系统日志',
         },
+
+        {
+          path: '/news',
+          component: 'news',
+          title: '新闻管理',
+        },
+        {
+          path: '/news/create',
+          component: 'news/form',
+          title: '新增新闻',
+          menuHide: true,
+        },
+        {
+          path: '/news/update/:id',
+          component: 'news/form',
+          title: '修改新闻',
+          menuHide: true,
+        },
       ],
     },
     { path: '*', component: '404' },

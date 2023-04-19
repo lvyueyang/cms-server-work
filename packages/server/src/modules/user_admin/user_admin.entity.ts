@@ -1,11 +1,14 @@
+import { ApiHideProperty } from '@nestjs/swagger';
 import { BaseEntity } from 'src/common/base.entity';
 import {
   Column,
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { News } from '../news/news.entity';
 import { AdminRole } from '../user_admin_role/user_admin_role.entity';
 
 /** 管理员账户 */
@@ -47,4 +50,9 @@ export class UserAdmin extends BaseEntity {
   @ManyToMany(() => AdminRole, (role) => role.users)
   @JoinTable()
   roles: AdminRole[];
+
+  /** 新闻 */
+  @ApiHideProperty()
+  @OneToMany(() => News, (col) => col.author)
+  news: News[];
 }

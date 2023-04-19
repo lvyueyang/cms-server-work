@@ -7,6 +7,8 @@ import config from './config';
 import { AuthModule } from './modules/auth/auth.module';
 import { HomeModule } from './modules/home/home.module';
 import { LoggerModule } from './modules/logger/logger.module';
+import { News } from './modules/news/news.entity';
+import { NewsModule } from './modules/news/news.module';
 import { NunjucksModule } from './modules/nunjucks/nunjucks.module';
 import { User } from './modules/user/user.entity';
 import { UserModule } from './modules/user/user.module';
@@ -37,7 +39,7 @@ const workConfig = getWorkConfig();
           username: configService.get<string>('DATABASE_USERNAME'),
           password: configService.get<string>('DATABASE_PASSWORD'),
           database: configService.get<string>('DATABASE_NAME'),
-          entities: [User, UserAdmin, AdminRole, ValidateCode],
+          entities: [User, UserAdmin, AdminRole, ValidateCode, News],
           synchronize: true,
         };
       },
@@ -55,6 +57,8 @@ const workConfig = getWorkConfig();
     AdminRoleModule,
     ValidateCodeModule,
     LoggerModule,
+
+    NewsModule,
   ],
   controllers: [],
   providers: [],
