@@ -28,7 +28,7 @@ import { {{entityName}}Service } from './{{name}}.service';
 @ApiTags('{{cname}}')
 @Controller()
 export class {{entityName}}Controller {
-  constructor(private services: ProductDocumentService) {}
+  constructor(private services: {{entityName}}Service) {}
 
   @Get('/api/admin/{{name}}')
   @ApiOperation({ summary: '{{cname}}列表' })
