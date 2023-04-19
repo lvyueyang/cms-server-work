@@ -46,7 +46,7 @@ export default function {{entityName}}Form() {
       <Header title={isUpdate ? '修改{{cname}}' : '新增{{cname}}'} />
       <PageContainer>
         <Card style={{'{{'}} maxWidth: 1000, margin: '0 auto' {{'}}'}}>
-          <Form<FormValues> form={form} onFinish={submitHandler}>
+          <Form<FormValues> form={form} onFinish={submitHandler}  labelCol={{'{{'}} xs: 3 {{'}}'}}>
             <Form.Item label="{{cname}}标题" name="title" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
