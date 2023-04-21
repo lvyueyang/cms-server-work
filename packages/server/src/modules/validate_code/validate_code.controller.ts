@@ -2,7 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { USER_PONIT_TYPE, VALIDATE_CODE_TYPE } from 'src/constants';
 import { successResponse } from 'src/utils';
-import { NunjucksService } from '../nunjucks/nunjucks.service';
+import { RenderViewService } from '../render_view/render_view.service';
 import { UserAdminService } from '../user_admin/user_admin.service';
 import { EmailValidateCodeCreateDto } from './dto/validate_code.dto';
 import { ValidateCodeService } from './validate_code.service';
@@ -12,7 +12,7 @@ import { ValidateCodeService } from './validate_code.service';
 export class ValidateCodeController {
   constructor(
     private services: ValidateCodeService,
-    private nunjucksServices: NunjucksService,
+    private RenderViewServices: RenderViewService,
     private userAdminServices: UserAdminService,
   ) {}
 
@@ -25,7 +25,7 @@ export class ValidateCodeController {
       code_type: VALIDATE_CODE_TYPE.FORGET_PASSWORD,
       point_type: USER_PONIT_TYPE.AMDIN,
     });
-    const content = this.nunjucksServices.render('validate_code_template', {
+    const content = this.RenderViewServices.render('validate_code_template', {
       title: '密码重置',
       type: '邮箱验证码',
       code: res.code,

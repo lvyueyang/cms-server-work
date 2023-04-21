@@ -1,19 +1,20 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
-import { NunjucksService } from '../nunjucks/nunjucks.service';
+import { RenderView } from '../render_view/render_view.decorator';
 
 @Controller()
 export class HomeController {
-  constructor(private renderService: NunjucksService) {}
-
   @Get()
+  @RenderView('home')
   @ApiExcludeEndpoint()
   index() {
-    return this.renderService.render('home');
+    return null;
   }
+
   @Get('/404')
+  @RenderView('404')
   @ApiExcludeEndpoint()
   pageNotFound() {
-    return this.renderService.render('404');
+    return null;
   }
 }

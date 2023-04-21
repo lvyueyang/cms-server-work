@@ -20,7 +20,7 @@ import { ResponseResult } from 'src/interface';
 import { User } from 'src/modules/user_admin/user-admin.decorator';
 import { AdminRoleGuard } from 'src/modules/user_admin_role/user_admin_role.guard';
 import { successResponse } from 'src/utils';
-import { NunjucksService } from '../nunjucks/nunjucks.service';
+import { RenderView } from '../render_view/render_view.decorator';
 import {
   NewsByIdParamDto,
   NewsCreateDto,
@@ -36,12 +36,10 @@ import { NewsService } from './news.service';
 @ApiTags('新闻中心')
 @Controller()
 export class NewsController {
-  constructor(
-    private services: NewsService,
-    private renderService: NunjucksService,
-  ) {}
+  constructor(private services: NewsService) {}
 
   @Get('/news')
+  @RenderView('news')
   @ApiExcludeEndpoint()
   async list(@Query() { current = 1 }: { current: number }) {
     const limit = 20;
@@ -52,21 +50,22 @@ export class NewsController {
     const max = total / limit;
     const next = current < max ? current + 1 : 0;
     const prev = current > 1 ? current - 1 : 0;
-    return this.renderService.render('news', {
+    return {
       list: list.map((item) => ({
         ...item,
         create_date: dayjs(item.create_date).format('YYYY / MM / DD'),
       })),
       next,
       prev,
-    });
+    };
   }
 
   @Get('/news/:id')
+  @RenderView('news_detail')
   @ApiExcludeEndpoint()
   async detail(@Param() { id }: { id: number }) {
     const { current, next, prev } = await this.services.findNextAndPrev(id);
-    return this.renderService.render('news_detail', {
+    return {
       info: {
         ...current,
         create_date: dayjs(current.create_date).format('YYYY-MM-DD HH:mm'),
@@ -83,7 +82,7 @@ export class NewsController {
             id: prev.id,
           }
         : null,
-    });
+    };
   }
 
   @Get('/api/admin/news')

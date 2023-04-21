@@ -16,19 +16,25 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
   });
+  // 日志
   app.useLogger(app.get(LoggerService));
+  // 请求体尺寸限制
   app.use(bodyParser.json({ limit: '2mb' }));
   app.use(bodyParser.urlencoded({ limit: '2mb', extended: true }));
+  // 分页参数转换
   app.useGlobalPipes(new PaginationParseIntPipe());
+  // 参数验证
   app.useGlobalPipes(new ValidationPipe());
 
+  // 文件上传路径
   const uploadFileDir = getUploadFileDirPath();
-  // app.useStaticAssets(join(process.cwd(), 'public'));
-  app.useStaticAssets(join(process.cwd(), 'views/static'), {
-    prefix: '/_fe/static',
-  });
   app.useStaticAssets(uploadFileDir, {
     prefix: '/uploadfile',
+  });
+  // app.useStaticAssets(join(process.cwd(), 'public'));
+  // 前端模板资源
+  app.useStaticAssets(join(process.cwd(), 'views/static'), {
+    prefix: '/_fe/static',
   });
 
   // app.use(csurf());

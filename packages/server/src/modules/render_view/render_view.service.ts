@@ -3,7 +3,7 @@ import * as nunjucks from 'nunjucks';
 import { join } from 'path';
 
 @Injectable()
-export class NunjucksService {
+export class RenderViewService {
   env: nunjucks.Environment;
 
   constructor() {

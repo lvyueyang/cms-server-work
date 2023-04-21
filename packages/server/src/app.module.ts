@@ -9,7 +9,7 @@ import { HomeModule } from './modules/home/home.module';
 import { LoggerModule } from './modules/logger/logger.module';
 import { News } from './modules/news/news.entity';
 import { NewsModule } from './modules/news/news.module';
-import { NunjucksModule } from './modules/nunjucks/nunjucks.module';
+import { RenderViewModule } from './modules/render_view/render_view.module';
 import { User } from './modules/user/user.entity';
 import { UserModule } from './modules/user/user.module';
 import { UserAdmin } from './modules/user_admin/user_admin.entity';
@@ -49,7 +49,7 @@ const workConfig = getWorkConfig();
       rootPath: join(process.cwd(), 'admin-ui/dist'),
       serveRoot: '/' + workConfig.cms_admin_path,
     }),
-    NunjucksModule,
+    RenderViewModule,
     AuthModule,
     UserModule,
     HomeModule,
