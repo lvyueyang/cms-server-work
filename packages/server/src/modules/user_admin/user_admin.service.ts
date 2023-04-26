@@ -76,7 +76,12 @@ export class UserAdminService {
       }
       throw new BadRequestException(msg);
     }
-    return this.repository.save(user);
+    return this.repository.save({
+      cname: user.cname,
+      username: user.username,
+      email: user.email,
+      password: user.password,
+    });
   }
   async createRootUser(
     user: Pick<UserAdmin, 'cname' | 'username' | 'password' | 'email'>,

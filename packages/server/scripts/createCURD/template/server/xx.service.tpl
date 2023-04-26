@@ -52,7 +52,13 @@ export class {{entityName}}Service {
     if (isExisted) {
       throw new BadRequestException('{{cname}}已存在');
     }
-    return this.repository.save({ ...data, author });
+    return this.repository.save({ 
+      title: data.title,
+      content: data.content,
+      cover: data.cover,
+      desc: data.desc,
+      author
+    });
   }
 
   async remove(id: number) {

@@ -17,9 +17,15 @@ export class UserService {
     return this.usersRepository.findOneBy({ id });
   }
   create(
-    user: Pick<User, 'cname' | 'username' | 'email' | 'password' | 'phone'>,
+    data: Pick<User, 'cname' | 'username' | 'email' | 'password' | 'phone'>,
   ) {
-    return this.usersRepository.create(user);
+    return this.usersRepository.create({
+      cname: data.cname,
+      username: data.username,
+      email: data.email,
+      password: data.password,
+      phone: data.phone,
+    });
   }
   update(
     id: number,
