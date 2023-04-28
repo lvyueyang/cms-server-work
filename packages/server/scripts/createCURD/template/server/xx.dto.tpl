@@ -1,6 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-import { Pagination, ResponseListResult, ResponseResult } from 'src/interface';
+import {
+  PaginationAndOrder,
+  ResponseListResult,
+  ResponseResult,
+} from 'src/interface';
 import { {{entityName}} } from './{{name}}.entity';
 
 export class {{entityName}}Info extends {{entityName}} {}
@@ -49,7 +53,7 @@ export class {{entityName}}ByIdParamDto {
 }
 
 /** 查询列表 */
-export class {{entityName}}QueryListDto extends Pagination {
+export class {{entityName}}QueryListDto extends PaginationAndOrder<keyof {{entityName}}> {
   @ApiProperty({ description: '{{cname}}名称-模糊搜索' })
   keyword?: string;
 }

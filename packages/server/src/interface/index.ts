@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional } from 'class-validator';
 
 /** 分页 */
 export class Pagination {
@@ -18,6 +18,41 @@ export class Pagination {
   })
   @IsNumber()
   readonly page_size: number;
+}
+
+/** 排序 */
+export class Order<T extends string> {
+  /** key */
+  @ApiPropertyOptional({
+    default: 'create_at',
+    description: '被排序的字段',
+  })
+  readonly order_key?: T;
+
+  /** 排序方式 */
+  @ApiPropertyOptional({
+    default: 10,
+    description: '排序方式 DESC 降序 ASC 倒序',
+  })
+  readonly order_type?: 'DESC' | 'ASC';
+}
+
+export class PaginationAndOrder<T extends string> extends Pagination {
+  /** key */
+  @ApiPropertyOptional({
+    default: 'create_at',
+    description: '被排序的字段',
+  })
+  readonly order_key?: T;
+
+  /** 排序方式 */
+  @ApiPropertyOptional({
+    default: 10,
+    description: '排序方式 DESC 降序 ASC 倒序',
+  })
+  @IsOptional()
+  @IsEnum(['DESC', 'ASC'])
+  readonly order_type?: 'DESC' | 'ASC';
 }
 
 /** 请求结果响应数据 */

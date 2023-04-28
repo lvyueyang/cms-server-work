@@ -1,7 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Pagination } from 'src/interface';
+import { Order, Pagination } from 'src/interface';
 import { UserAdmin } from 'src/modules/user_admin/user_admin.entity';
+import { createOrder } from 'src/utils';
 import { paginationTransform } from 'src/utils/whereTransform';
 import { Like, Repository } from 'typeorm';
 import { {{entityName}}CreateDto } from './{{name}}.dto';
@@ -20,9 +21,13 @@ export class {{entityName}}Service {
     return this.repository.find({ where: { is_delete: false } });
   }
 
-  findList({ keyword = '', ...pagination }: Pagination & { keyword?: string }) {
+  findList({
+    keyword = '',
+    ...params
+  }: Pagination & Order<keyof {{entityName}}> & { keyword?: string }) {
     return this.repository.findAndCount({
-      ...paginationTransform(pagination),
+      ...paginationTransform(params),
+      ...createOrder(params),
       where: {
         is_delete: false,
         title: Like(`%${keyword.trim()}%`),

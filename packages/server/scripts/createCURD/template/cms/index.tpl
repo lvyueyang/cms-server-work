@@ -1,7 +1,7 @@
 import Header from '@/components/Header';
 import PageContainer from '@/components/PageContainer';
 import { {{entityName}}Info } from '@/interface/serverApi';
-import { transformPagination } from '@/utils';
+import { transformPagination, transformSort } from '@/utils';
 import { message } from '@/utils/message';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, Input, Popconfirm, Space } from 'antd';
@@ -37,11 +37,13 @@ export default function {{entityName}}ListPage() {
       dataIndex: 'create_date',
       title: '创建时间',
       valueType: 'dateTime',
+      sorter: true,
     },
     {
       dataIndex: 'update_date',
       title: '修改时间',
       valueType: 'dateTime',
+      sorter: true,
     },
     {
       dataIndex: 'operate',
@@ -83,12 +85,14 @@ export default function {{entityName}}ListPage() {
           rowKey="id"
           bordered
           search={false}
-          request={(params) => {
-            return getListApi({ ...transformPagination(params), ...searchForm }).then(
-              ({ data }) => {
-                return { data: data.data.list, total: data.data.total || 0 };
-              },
-            );
+          request={(params, sorter) => {
+            return getListApi({
+              ...transformPagination(params),
+              ...transformSort(sorter),
+              ...searchForm,
+            }).then(({ data }) => {
+              return { data: data.data.list, total: data.data.total || 0 };
+            });
           {{ '}}' }}
           actionRef={tableRef}
           headerTitle={

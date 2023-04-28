@@ -1,4 +1,5 @@
 import { message } from '@/utils/message';
+import { SortOrder } from 'antd/es/table/interface';
 
 interface TransformPaginationOption {
   current?: number;
@@ -70,4 +71,21 @@ export function redundancyCount(len: number) {
 /** 合并 className */
 export function cls(...classList: (string | undefined)[]) {
   return classList.filter((i) => !!i).join(' ');
+}
+
+const ORDER_ENUM = {
+  descend: 'DESC',
+  ascend: 'ASC',
+};
+
+export function transformSort(sort: { [key: string]: SortOrder }) {
+  const res = Object.entries(sort).map(([key, value]) => {
+    if (!value) return {};
+    return {
+      order_key: key,
+      order_type: ORDER_ENUM[value],
+    };
+  });
+
+  return res[0];
 }
