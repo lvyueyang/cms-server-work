@@ -1,12 +1,20 @@
 import Header from '@/components/Header';
 import PageContainer from '@/components/PageContainer';
+
 import { NewsInfo } from '@/interface/serverApi';
+
 import { transformPagination } from '@/utils';
+
 import { message } from '@/utils/message';
+
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
+
 import { Button, Input, Popconfirm, Space } from 'antd';
+
 import { useRef, useState } from 'react';
+
 import { Link, history } from 'umi';
+
 import { getListApi, removeApi } from './module';
 
 type TableItem = NewsInfo;
@@ -104,6 +112,7 @@ export default function NewsListPage() {
               placeholder="请输入新闻名称搜索"
               enterButton={<>搜索</>}
               onSearch={() => {
+                tableRef.current?.setPageInfo?.({ current: 1 });
                 tableRef.current?.reload();
               }}
             />

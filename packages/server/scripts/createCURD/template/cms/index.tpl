@@ -108,6 +108,7 @@ export default function {{entityName}}ListPage() {
               placeholder="请输入{{cname}}名称搜索"
               enterButton={<>搜索</>}
               onSearch={() => {
+                tableRef.current?.setPageInfo?.({ current: 1 });
                 tableRef.current?.reload();
               {{ '}}' }}
             />

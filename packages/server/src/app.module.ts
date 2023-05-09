@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { join } from 'path';
 import config from './config';
 import { AuthModule } from './modules/auth/auth.module';
@@ -31,16 +31,17 @@ const workConfig = getWorkConfig();
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService): any => {
+      useFactory: (configService: ConfigService): TypeOrmModuleOptions => {
         return {
           type: 'mysql',
           host: configService.get<string>('DATABASE_HOST'),
-          port: configService.get<string>('DATABASE_PORT'),
+          port: configService.get<number>('DATABASE_PORT'),
           username: configService.get<string>('DATABASE_USERNAME'),
           password: configService.get<string>('DATABASE_PASSWORD'),
           database: configService.get<string>('DATABASE_NAME'),
           entities: [User, UserAdmin, AdminRole, ValidateCode, News],
           synchronize: true,
+          timezone: 'Z',
         };
       },
       inject: [ConfigService],
