@@ -31,4 +31,12 @@ export const emailClientConfig = registerAs('emailClient', () => ({
   from: process.env.EMAIL_FROM,
 }));
 
-export default [databaseConfig, userConfig, s3AccountConfig, emailClientConfig];
+export const aliSmsClientConfig = registerAs('aliSmsClient', () => ({
+  accessKeyId: process.env.SMS_SEND_ACCESS_KEY_ID,
+  accessKeySecret: process.env.SMS_SEND_ACCESS_KEY_SECRET,
+  endpoint: process.env.SMS_SEND_EDNPINIT,
+  templateCode: process.env.SMS_SEND_TEMPLATE_CODE,
+  signName: process.env.SMS_SEND_SIGN_NAME,
+}));
+
+export default [databaseConfig, userConfig, s3AccountConfig, emailClientConfig, aliSmsClientConfig];

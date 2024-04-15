@@ -1,4 +1,4 @@
-import { createHash } from 'crypto';
+import { createCipher, createDecipher, createHash } from 'crypto';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
@@ -96,4 +96,20 @@ export function createOrder<T extends string>({ order_key, order_type }: Order<T
       },
     };
   }
+}
+
+/** 文字加密 */
+export function encryptString(input: string, password: string): string {
+  const cipher = createCipher('aes-256-cbc', password);
+  let encrypted = cipher.update(input, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  return encrypted;
+}
+
+/** 文字解密 */
+export function decryptString(input: string, password: string): string {
+  const decipher = createDecipher('aes-256-cbc', password);
+  let decrypted = decipher.update(input, 'hex', 'utf8');
+  decrypted += decipher.final('utf8');
+  return decrypted;
 }

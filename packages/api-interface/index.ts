@@ -329,6 +329,32 @@ export interface EmailValidateCodeCreateDto {
   email: string;
 }
 
+export interface ImageValidateCodeResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: {
+    data: string;
+    hash: string;
+  };
+}
+
+export interface SMSValidateCodeCreateDto {
+  /** 手机号 */
+  phone: string;
+  /** 图片验证码 */
+  image_code: string;
+  /** 图片验证码 HASH */
+  image_code_hash: string;
+}
+
 export interface LoggerListResponseDto {
   /**
    * 状态码

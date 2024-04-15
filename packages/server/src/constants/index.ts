@@ -11,3 +11,8 @@ export const enum VALIDATE_CODE_TYPE {
   /** 忘记密码 */
   FORGET_PASSWORD = 'forget_password',
 }
+
+export const enum SMS_CODE_KEY {
+  // C端用户登录注册
+  USER_LOGIN = 'user-login',
+}
