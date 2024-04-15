@@ -1,38 +1,21 @@
-import { TypeValue } from '@/types';
-
 /** 用户登录后储存在 cookie 中的 token */
-export const TOKEN_COOKIE_KEY = 'token';
+export const TOKEN_KEY = 'token';
 
 /** API 请求前缀 */
 export const AIP_FIX = '/api/admin';
 
-/** 发送验证码类型 */
-export const SEND_VALIDATE_CODE_TYPE = {
-  SMS: {
-    id: 'sms',
-    label: '手机短信',
-  },
-  EMAIL: {
-    id: 'email',
-    label: '邮箱',
-  },
-} as const;
+export const enum SendPhoneCaptchaType {
+  /** 手机号注册 */
+  Register = 'send_phone_code',
+  /** 忘记密码 */
+  ForgetPassword = 'forget_phone_code',
+  /** 更新手机号 */
+  Update = 'update_phone_code',
+}
 
-export type SEND_VALIDATE_CODE_TYPE_ENUM = TypeValue<typeof SEND_VALIDATE_CODE_TYPE>['id'];
-
-export const SEND_TYPE = {
-  REGISTER: {
-    id: 1,
-    label: '注册',
-  },
-  NOPASSWORD: {
-    id: 2,
-    label: '忘记密码',
-  },
-  UPDATE: {
-    id: 3,
-    label: '更新邮箱/手机号',
-  },
-} as const;
-
-export type SEND_TYPE_ENUM = TypeValue<typeof SEND_TYPE>['id'];
+export const enum SendEmailCaptchaType {
+  /** 邮箱注册 */
+  Register = 'send_email_code',
+  /** 邮箱更新 */
+  Update = 'update_email_code',
+}

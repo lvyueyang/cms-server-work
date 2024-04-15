@@ -8,7 +8,7 @@ import {
   UserAdminUpdatePasswordDto,
   UserAdminUpdateRolesDto,
 } from '@/interface/serverApi';
-import request from '@/services/request';
+import { request } from '@/request';
 import { Pagination, Result } from '@/types';
 
 /** 用户列表 */

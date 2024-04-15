@@ -1,4 +1,3 @@
-import workConfig from '../../../../../work.config.json';
 import router from '../../../config/router';
 const routes = router.routes;
 
@@ -45,9 +44,9 @@ export function getNavMenu() {
     routes.find((r) => r.path === '/' && r.routes)?.routes?.filter((item) => item.title) || [];
   return routers2menu(menuRouters);
 }
-export function getDefaultOpenKeys() {
-  const list = location.pathname
-    .replace(new RegExp(`${workConfig.cms_admin_path}`), '')
+export function getDefaultOpenKeys(pathname: string = location.pathname) {
+  const list = pathname
+    // .replace(new RegExp(`${workConfig.cms_admin_path}`), '')
     .split('/')
     .filter((item) => item !== '/' && !!item);
   const keys: string[] = [];

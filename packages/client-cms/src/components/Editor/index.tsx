@@ -1,8 +1,9 @@
 import { uploadFile } from '@/services';
 import { cls } from '@/utils';
-import { IDomEditor, IEditorConfig, IToolbarConfig } from '@wangeditor/editor';
-import { Editor as WangEditor, Toolbar } from '@wangeditor/editor-for-react';
+import { Boot, IDomEditor, IEditorConfig, IToolbarConfig } from '@wangeditor/editor';
+import { Toolbar, Editor as WangEditor } from '@wangeditor/editor-for-react';
 import '@wangeditor/editor/dist/css/style.css';
+import attachmentModule from '@wangeditor/plugin-upload-attachment';
 import React, { useEffect, useState } from 'react';
 import './index.module.less';
 
@@ -22,6 +23,8 @@ interface EditorProps {
   onChange?: (value: string) => void;
 }
 
+Boot.registerModule(attachmentModule);
+
 export default function Editor({ value, placeholder, className, style, onChange }: EditorProps) {
   // editor 实例
   const [editor, setEditor] = useState<IDomEditor | null>(null); // TS 语法
@@ -34,11 +37,21 @@ export default function Editor({ value, placeholder, className, style, onChange 
   }, [value]);
 
   // 工具栏配置
-  const toolbarConfig: Partial<IToolbarConfig> = {}; // TS 语法
+  const toolbarConfig: Partial<IToolbarConfig> = {
+    insertKeys: {
+      index: 24,
+      keys: ['uploadAttachment'], // “上传附件”菜单
+    },
+  }; // TS 语法
 
   // 编辑器配置
   const editorConfig: Partial<IEditorConfig> = {
     placeholder,
+    hoverbarKeys: {
+      attachment: {
+        menuKeys: ['downloadAttachment'], // “下载附件”菜单
+      },
+    },
     MENU_CONF: {
       uploadImage: {
         customUpload(file: File, insertFn: InsertImageFn) {
@@ -53,6 +66,14 @@ export default function Editor({ value, placeholder, className, style, onChange 
           uploadFile(file).then((res) => {
             const url = res.data.data;
             insertFn(url);
+          });
+        },
+      },
+      uploadAttachment: {
+        customUpload(file: File, insertFn: InsertVideoFn) {
+          uploadFile(file).then((res) => {
+            const url = res.data.data;
+            insertFn(file.name, url);
           });
         },
       },

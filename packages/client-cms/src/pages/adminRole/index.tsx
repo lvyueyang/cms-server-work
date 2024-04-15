@@ -1,13 +1,12 @@
-import Header from '@/components/Header';
 import PageContainer from '@/components/PageContainer';
 import { ModalType, useFormModal } from '@/hooks/useFormModal';
 import { AdminRoleCreateDto, AdminRoleInfo } from '@/interface/serverApi';
 import { transformPagination } from '@/utils';
-import { message } from '@/utils/message';
+import { message } from '@/utils/notice';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { useRequest } from 'ahooks';
 import { Button, Form, Input, Modal, Popconfirm, Space, Spin, Transfer } from 'antd';
-import { useRef, useState } from 'react';
+import { Key, useRef, useState } from 'react';
 import {
   createApi,
   getCodeListApi,
@@ -24,7 +23,7 @@ class CodeModalState {
   role?: number;
   open: boolean = false;
   loading: boolean = false;
-  values: string[] = [];
+  values: Key[] = [];
 }
 
 export default function AdminRoleList() {
@@ -142,33 +141,30 @@ export default function AdminRoleList() {
 
   return (
     <>
-      <Header />
-      <PageContainer>
-        <ProTable<TableItem>
-          columns={columns}
-          rowKey="id"
-          bordered
-          search={false}
-          request={(params) => {
-            return getListApi({ ...transformPagination(params) }).then(({ data }) => {
-              return { data: data.data.list, total: data.data.total || 0 };
-            });
-          }}
-          actionRef={tableRef}
-          toolBarRender={() => [
-            <Button
-              type="primary"
-              key="create"
-              onClick={() => {
-                infoModal.form.resetFields();
-                infoModal.formModalShow();
-              }}
-            >
-              新增角色
-            </Button>,
-          ]}
-        />
-      </PageContainer>
+      <ProTable<TableItem>
+        columns={columns}
+        rowKey="id"
+        bordered
+        search={false}
+        request={(params) => {
+          return getListApi({ ...transformPagination(params) }).then(({ data }) => {
+            return { data: data.data.list, total: data.data.total || 0 };
+          });
+        }}
+        actionRef={tableRef}
+        toolBarRender={() => [
+          <Button
+            type="primary"
+            key="create"
+            onClick={() => {
+              infoModal.form.resetFields();
+              infoModal.formModalShow();
+            }}
+          >
+            新增角色
+          </Button>,
+        ]}
+      />
 
       <Modal
         maskClosable={false}
@@ -228,7 +224,7 @@ export default function AdminRoleList() {
                 ...state,
                 values,
               }));
-              submitCodeHandler(values);
+              submitCodeHandler(values as string[]);
             }}
             render={(item) => item.cname}
           />

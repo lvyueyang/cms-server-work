@@ -6,7 +6,7 @@ import {
   {{entityName}}QueryListDto,
   {{entityName}}UpdateDto,
 } from '@/interface/serverApi';
-import request from '@/services/request';
+import {request} from '@/request';
 import { Result } from '@/types';
 
 /** 列表 */

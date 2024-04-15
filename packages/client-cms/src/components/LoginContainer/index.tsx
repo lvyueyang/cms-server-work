@@ -15,7 +15,6 @@ export default function LoginContainer({ children }: React.PropsWithChildren) {
         }}
       >
         <img src={LOGO} alt="" />
-        <h2>内容管理</h2>
       </div>
       <div className={styles.wrap}>{children}</div>
     </div>

@@ -1,4 +1,4 @@
-import { message } from '@/utils/message';
+import { message } from '@/utils/notice';
 import { Form } from 'antd';
 import { useState } from 'react';
 

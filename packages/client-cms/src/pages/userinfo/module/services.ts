@@ -1,5 +1,5 @@
 import { AIP_FIX } from '@/constants';
-import request from '@/services/request';
+import { request } from '@/request';
 
 import { Result } from '@/types';
 import { UpdatePasswordBody } from './types';

@@ -1,23 +1,21 @@
 import { ConfirmPasswordItem } from '@/components/ConfirmPasswordItem';
 import LoginContainer from '@/components/LoginContainer';
 import ValidateCodeInput from '@/components/ValidateCodeInput';
-import { SEND_TYPE, SEND_VALIDATE_CODE_TYPE } from '@/constants';
-import { UserAdminForgetPasswordDto } from '@/interface/serverApi';
+import { SendPhoneCaptchaType } from '@/constants';
 import { App, Button, Form, Input, Row, Space } from 'antd';
 import { useState } from 'react';
-import { history, Link } from 'umi';
+import { Link, history } from 'umi';
 import { forgetPassword } from './modules';
 
-type FormValues = UserAdminForgetPasswordDto;
+type FormValues = any;
 
 export default function Login() {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm<FormValues>();
-  const email = Form.useWatch<FormValues['email']>('email', form);
   const { modal } = App.useApp();
+  const phone = Form.useWatch('phone', form);
 
   const submitHandler = async (formValue: FormValues) => {
-    console.log('formValue: ', formValue);
     setLoading(true);
     forgetPassword({
       ...formValue,
@@ -48,19 +46,17 @@ export default function Login() {
       <br />
       <Form<FormValues>
         form={form}
-        colon={false}
-        labelCol={{ span: 6 }}
+        labelCol={{ flex: '100px' }}
         onFinish={submitHandler}
         style={{ width: 400 }}
       >
-        <Form.Item label="邮箱" name="email" rules={[{ required: true }]}>
-          <Input />
+        <Form.Item label="手机号" name="phone" rules={[{ required: true }]}>
+          <Input placeholder="请输入您的手机号" />
         </Form.Item>
         <Form.Item label="验证码" name="code" rules={[{ required: true }]}>
           <ValidateCodeInput
-            targetValue={email}
-            sendType={SEND_VALIDATE_CODE_TYPE.EMAIL.id}
-            actionType={SEND_TYPE.NOPASSWORD.id}
+            targetValue={phone}
+            sendRequest={() => sendSMSCaptcha(phone, SendPhoneCaptchaType.ForgetPassword)}
           />
         </Form.Item>
         <Form.Item label="密码" name="password" rules={[{ required: true }]}>
@@ -74,7 +70,7 @@ export default function Login() {
         </Form.Item>
         <Row justify="end" style={{ marginTop: -10 }}>
           <Space size={20}>
-            <Link to="/register">注册</Link>
+            {/* <Link to="/register">注册</Link> */}
             <Link to="/login">去登录</Link>
           </Space>
         </Row>

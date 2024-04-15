@@ -1,4 +1,4 @@
-import { message } from '@/utils/message';
+import { message } from '@/utils/notice';
 import { SortOrder } from 'antd/es/table/interface';
 
 interface TransformPaginationOption {
@@ -69,7 +69,7 @@ export function redundancyCount(len: number) {
 }
 
 /** 合并 className */
-export function cls(...classList: (string | undefined)[]) {
+export function cls(...classList: (string | undefined | boolean)[]) {
   return classList.filter((i) => !!i).join(' ');
 }
 

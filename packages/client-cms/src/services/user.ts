@@ -1,7 +1,8 @@
-import { AIP_FIX, TOKEN_COOKIE_KEY } from '@/constants';
+import { AIP_FIX, SendEmailCaptchaType, SendPhoneCaptchaType, TOKEN_KEY } from '@/constants';
 import { UserAdminInfoResponseDto } from '@/interface/serverApi';
 import { Result } from '@/types';
-import request from '../request';
+import { request } from '@/request';
+import { AxiosProgressEvent } from 'axios';
 
 /** 获取当前登录用户信息 */
 export const getUserInfo = () => {
@@ -11,13 +12,13 @@ export const getUserInfo = () => {
 /** 退出登录 */
 export const outLogin = () => {
   return request.post<Result<null>>(`${AIP_FIX}/outlogin`).then(() => {
-    localStorage.removeItem(TOKEN_COOKIE_KEY);
+    localStorage.removeItem(TOKEN_KEY);
   });
 };
 
 export const uploadFile = (
   file: File,
-  options?: { onUploadProgress?: (p: ProgressEvent) => void },
+  options?: { onUploadProgress?: (p: AxiosProgressEvent) => void },
 ) => {
   const formData = new FormData();
   formData.append('file', file);
@@ -26,12 +27,15 @@ export const uploadFile = (
   });
 };
 
-/** 发送手机号验证码 */
-export const sendSmsCode = (phone: string) => {
-  return request.post<Result<void>>(`${AIP_FIX}/user/send-code`, { phone });
+/** 发送短信验证码 */
+export const sendSMSCaptcha = (phone: string, send_type: SendPhoneCaptchaType) => {
+  return request.post<Result<any>>(`${AIP_FIX}/user/send-code`, { phone, send_type });
 };
 
 /** 发送邮箱验证码 */
-export const sendEmailCode = (email: string) => {
-  return request.post<Result<void>>(`${AIP_FIX}/send-validate-code/forget-password`, { email });
+export const sendEmailCaptcha = (email: string, send_type: SendEmailCaptchaType) => {
+  return request.post<Result<any>>(`${AIP_FIX}/user/send-check-email-code`, {
+    email,
+    send_type,
+  });
 };

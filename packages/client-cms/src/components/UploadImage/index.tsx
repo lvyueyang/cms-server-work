@@ -1,5 +1,5 @@
 import { uploadFile } from '@/services';
-import { message } from '@/utils/message';
+import { message } from '@/utils/notice';
 import { PlusOutlined } from '@ant-design/icons';
 import { Upload, UploadProps } from 'antd';
 interface UploadImageProps {
@@ -8,14 +8,12 @@ interface UploadImageProps {
 }
 export default function UploadImage({ value, onChange }: UploadImageProps) {
   const changeHandler: UploadProps<string>['onChange'] = (e) => {
-    console.log('e: ', e);
     if (e.file.response) {
       onChange?.(e.file.response);
     }
   };
   return (
     <Upload<string>
-      name="avatar"
       onChange={changeHandler}
       listType="picture-card"
       showUploadList={false}

@@ -7,7 +7,7 @@ import {
   AdminRoleUpdateDto,
   AdminRoleUpdatePermissionCodeDto,
 } from '@/interface/serverApi';
-import request from '@/services/request';
+import { request } from '@/request';
 import { Pagination } from '@/types';
 
 /** 列表 */

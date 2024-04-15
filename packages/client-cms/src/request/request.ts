@@ -1,8 +1,7 @@
-import { TOKEN_COOKIE_KEY } from '@/constants';
-import { notification } from '@/utils/message';
+import { TOKEN_KEY } from '@/constants';
+import { notification } from '@/utils/notice';
 import axios, { AxiosRequestConfig } from 'axios';
 import { history } from 'umi';
-import workConfig from '../../../../work.config.json';
 
 export interface CustomConfig extends AxiosRequestConfig {
   // 请求错误时不弹出错误提示
@@ -15,18 +14,14 @@ const request = axios.create({
   baseURL: '/',
 });
 
-const ignoreLoginPaths = ['/login', '/_init_root_user', '/nopassword'].map(
-  (p) => `/${workConfig.cms_admin_path}${p}`,
-);
+const ignoreLoginPaths = ['/login', '/nopassword'].map((p) => `/${p}`);
 
 /** 请求拦截 */
 request.interceptors.request.use((config) => {
-  const token = localStorage.getItem(TOKEN_COOKIE_KEY);
+  const token = localStorage.getItem(TOKEN_KEY);
   if (token) {
-    if (!config.headers) {
-      config.headers = {};
-    }
-    config.headers.token = token;
+    // @ts-ignore
+    config.headers.set('token', token);
   }
   return config;
 });

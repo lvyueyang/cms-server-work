@@ -4,7 +4,7 @@ import workConfig from '../../../work.config.json';
 import router from './router';
 
 export default defineConfig({
-  npmClient: 'yarn',
+  npmClient: 'pnpm',
   proxy: {
     '/api': {
       target: 'http://127.0.0.1:7000/',

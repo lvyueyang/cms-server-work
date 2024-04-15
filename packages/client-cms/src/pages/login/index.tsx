@@ -1,24 +1,25 @@
 import LoginContainer from '@/components/LoginContainer';
-import { TOKEN_COOKIE_KEY } from '@/constants';
+import { TOKEN_KEY } from '@/constants';
 import useUserInfo from '@/hooks/useUserInfo';
 import { UserAdminLoginBody } from '@/interface/serverApi';
-import { message } from '@/utils/message';
+import { message } from '@/utils/notice';
 import { Button, Form, Input, Row, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import { history, Link } from 'umi';
 import { login } from './modules';
+import { useUserinfoStore } from '@/store/userinfo';
 
 type LoginBody = UserAdminLoginBody;
 
 export default function Login() {
   const [form] = Form.useForm<LoginBody>();
   const [loading, setLoading] = useState(false);
-  const { loadUser } = useUserInfo();
+  const { load: loadUser } = useUserinfoStore();
   const submitHandler = async (formValue: LoginBody) => {
     setLoading(true);
     login(formValue)
       .then(({ data }) => {
-        localStorage.setItem(TOKEN_COOKIE_KEY, data.data.token);
+        localStorage.setItem(TOKEN_KEY, data.data.token);
         message.success('登录成功');
         loadUser?.();
         history.push('/');

@@ -1,7 +1,7 @@
 import { ConfirmPasswordItem } from '@/components/ConfirmPasswordItem';
 import LoginContainer from '@/components/LoginContainer';
 import { UserAdminCreateRootDto } from '@/interface/serverApi';
-import { message } from '@/utils/message';
+import { message } from '@/utils/notice';
 import { Alert, Button, Form, Input, Popover, Result } from 'antd';
 import { useState } from 'react';
 import { history } from 'umi';

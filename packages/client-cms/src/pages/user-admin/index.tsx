@@ -1,14 +1,13 @@
 import { ConfirmPasswordItem } from '@/components/ConfirmPasswordItem';
-import Header from '@/components/Header';
 import PageContainer from '@/components/PageContainer';
 import { ModalType, useFormModal } from '@/hooks/useFormModal';
 import { UserAdminCreateDto, UserAdminInfo } from '@/interface/serverApi';
 import { transformPagination } from '@/utils';
-import { message } from '@/utils/message';
+import { message } from '@/utils/notice';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { useRequest } from 'ahooks';
 import { Button, Form, Input, Modal, Space, Spin, Tag, Transfer } from 'antd';
-import { useRef, useState } from 'react';
+import { Key, useRef, useState } from 'react';
 import { getListApi as getRoleListApi } from '../adminRole/module/services';
 import { createUser, getUserList, resetpasswordUser, updateRole, updateUser } from './module';
 
@@ -18,7 +17,7 @@ class RoleModalState {
   user?: number;
   open: boolean = false;
   loading: boolean = false;
-  values: string[] = [];
+  values: Key[] = [];
 }
 
 export default function UserAdminList() {
@@ -155,50 +154,47 @@ export default function UserAdminList() {
 
   return (
     <>
-      <Header />
-      <PageContainer>
-        <ProTable<TableItem>
-          columns={columns}
-          rowKey="id"
-          bordered
-          search={false}
-          request={(params) => {
-            return getUserList(transformPagination(params)).then(({ data }) => {
-              return { data: data.data.list, total: data.data.total || 0 };
-            });
-          }}
-          actionRef={tableRef}
-          // headerTitle={
-          //   <Input.Search
-          //     value={searchParams.search_keywords}
-          //     onChange={(e) => {
-          //       setSearchParams((state) => ({
-          //         ...state,
-          //         search_keywords: e.target.value.trim(),
-          //       }));
-          //     }}
-          //     style={{ width: 400 }}
-          //     placeholder="请输入用户名搜索"
-          //     enterButton={<>搜索</>}
-          //     onSearch={() => {
-          //       tableRef.current?.reload();
-          //     }}
-          //   />
-          // }
-          toolBarRender={() => [
-            <Button
-              key="create"
-              type="primary"
-              onClick={() => {
-                form.resetFields();
-                formModalShow();
-              }}
-            >
-              新增管理账户
-            </Button>,
-          ]}
-        />
-      </PageContainer>
+      <ProTable<TableItem>
+        columns={columns}
+        rowKey="id"
+        bordered
+        search={false}
+        request={(params) => {
+          return getUserList(transformPagination(params)).then(({ data }) => {
+            return { data: data.data.list, total: data.data.total || 0 };
+          });
+        }}
+        actionRef={tableRef}
+        // headerTitle={
+        //   <Input.Search
+        //     value={searchParams.search_keywords}
+        //     onChange={(e) => {
+        //       setSearchParams((state) => ({
+        //         ...state,
+        //         search_keywords: e.target.value.trim(),
+        //       }));
+        //     }}
+        //     style={{ width: 400 }}
+        //     placeholder="请输入用户名搜索"
+        //     enterButton={<>搜索</>}
+        //     onSearch={() => {
+        //       tableRef.current?.reload();
+        //     }}
+        //   />
+        // }
+        toolBarRender={() => [
+          <Button
+            key="create"
+            type="primary"
+            onClick={() => {
+              form.resetFields();
+              formModalShow();
+            }}
+          >
+            新增管理账户
+          </Button>,
+        ]}
+      />
       <Modal
         maskClosable={false}
         open={formModal.open}

@@ -1,6 +1,6 @@
 {
   "name": "cms-server-work",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "description": "内容管理系统",
   "author": "lvyueyang <975794403@qq.com>",
@@ -8,15 +8,26 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:cms": "lerna run --scope=client-cms dev",
-    "dev:server": "lerna run --scope=server dev",
-    "setup:cms": "lerna run --scope=client-cms setup"
+    "build": "npm run build:cms && npm run build:server",
+    "build:cms": "npm run build --prefix ./packages/client-cms",
+    "build:server": "npm run build --prefix ./packages/server",
+    "dev:cms": "npm run dev --prefix ./packages/client-cms",
+    "dev:server": "npm run dev --prefix ./packages/server"
   },
   "resolutions": {},
   "dependencies": {
-    "dayjs": "^1.11.7"
+    "@wangeditor/plugin-upload-attachment": "^1.1.0",
+    "body-parser": "^1.20.2",
+    "chokidar": "^3.6.0",
+    "dayjs": "^1.11.10",
+    "path-to-regexp": "^6.2.2",
+    "uuid": "^9.0.1",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
-    "lerna": "^6.6.1"
+    "@umijs/lint": "^4.1.9",
+    "eslint": "^8.20.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.0.4"
   }
 }

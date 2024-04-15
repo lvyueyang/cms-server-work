@@ -2,7 +2,7 @@ import Header from '@/components/Header';
 import PageContainer from '@/components/PageContainer';
 import { {{entityName}}Info } from '@/interface/serverApi';
 import { transformPagination, transformSort } from '@/utils';
-import { message } from '@/utils/message';
+import { message } from '@/utils/notice';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, Input, Popconfirm, Space } from 'antd';
 import { useRef, useState } from 'react';

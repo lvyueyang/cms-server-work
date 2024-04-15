@@ -23,6 +23,10 @@ export class ValidateCodeService {
 
   initMainClient() {
     const { host, port, secure, auth } = this.emailConfig;
+    if (!host) {
+      console.log('邮箱未配置， 无法使用找回密码功能和发送邮件功能');
+      return;
+    }
 
     this.mainClient = createTransport({
       host,

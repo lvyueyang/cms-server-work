@@ -1,5 +1,5 @@
 import { copyText } from '@/utils';
-import { message } from '@/utils/message';
+import { message } from '@/utils/notice';
 import { CopyFilled } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 
