@@ -6,7 +6,7 @@ import {
   AdminRoleListResponseDto,
   AdminRoleUpdateDto,
   AdminRoleUpdatePermissionCodeDto,
-} from '@/interface/serverApi';
+} from '@cms/api-interface';
 import { request } from '@/request';
 import { Pagination } from '@/types';
 

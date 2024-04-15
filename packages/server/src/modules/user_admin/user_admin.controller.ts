@@ -14,13 +14,7 @@ import {
 } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
-import {
-  ApiBody,
-  ApiConsumes,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Express } from 'express';
 import { userConfig } from 'src/config';
 import { USER_PONIT_TYPE, VALIDATE_CODE_TYPE } from 'src/constants';
@@ -44,7 +38,7 @@ import {
   UserAdminUpdateDto,
   UserAdminUpdatePasswordDto,
   UserAdminUpdateRolesDto,
-} from './dto/user_admin.dto';
+} from './user_admin.dto';
 import { User } from './user-admin.decorator';
 import { PERMISSION } from './user_admin.permission';
 import { UserAdminService } from './user_admin.service';
@@ -104,10 +98,7 @@ export class UserAdminController {
     type: UserAdminIdResponseDto,
   })
   @AdminRoleGuard(PERMISSION.UPDATE)
-  async update(
-    @Param() { id }: UserAdminParamsInfoDto,
-    @Body() { cname }: UserAdminUpdateDto,
-  ) {
+  async update(@Param() { id }: UserAdminParamsInfoDto, @Body() { cname }: UserAdminUpdateDto) {
     await this.services.update(id, {
       cname,
     });
@@ -207,9 +198,7 @@ export class UserAdminController {
   @ApiOkResponse({
     type: UserAdminIdResponseDto,
   })
-  async initRootUser(
-    @Body() { cname, password, username, email }: UserAdminCreateRootDto,
-  ) {
+  async initRootUser(@Body() { cname, password, username, email }: UserAdminCreateRootDto) {
     const user = await this.services.createRootUser({
       cname,
       username,

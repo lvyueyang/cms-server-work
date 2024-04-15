@@ -7,7 +7,7 @@ import {
   UserAdminUpdateDto,
   UserAdminUpdatePasswordDto,
   UserAdminUpdateRolesDto,
-} from '@/interface/serverApi';
+} from '@cms/api-interface';
 import { request } from '@/request';
 import { Pagination, Result } from '@/types';
 

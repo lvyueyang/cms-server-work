@@ -12,7 +12,7 @@ import { ApiHeader } from '@nestjs/swagger';
 import * as dayjs from 'dayjs';
 import { UserAdminService } from '../user_admin/user_admin.service';
 import { AuthService } from './auth.service';
-import { LOGIN_TYPE } from './interface';
+import { LOGIN_TYPE } from './auth.interface';
 
 @Injectable()
 export class LoginAuthGuard implements CanActivate {
@@ -22,10 +22,7 @@ export class LoginAuthGuard implements CanActivate {
     private userAdminService: UserAdminService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const loginType = this.reflector.get<LOGIN_TYPE>(
-      'loginType',
-      context.getHandler(),
-    );
+    const loginType = this.reflector.get<LOGIN_TYPE>('loginType', context.getHandler());
     const req = context.switchToHttp().getRequest();
     const { headers } = req;
     const token = headers.token;
@@ -56,10 +53,7 @@ export class LoginAuthGuard implements CanActivate {
 
 /** C 端用户登录校验 */
 export function Login() {
-  return applyDecorators(
-    SetMetadata('loginType', LOGIN_TYPE.USER),
-    UseGuards(LoginAuthGuard),
-  );
+  return applyDecorators(SetMetadata('loginType', LOGIN_TYPE.USER), UseGuards(LoginAuthGuard));
 }
 
 /** 管理后台登录 */

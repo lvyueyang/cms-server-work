@@ -1,5 +1,5 @@
 import { AIP_FIX } from '@/constants';
-import { UserAdminCreateRootDto } from '@/interface/serverApi';
+import { UserAdminCreateRootDto } from '@cms/api-interface';
 
 import { request } from '@/request';
 import { Result } from '@/types';

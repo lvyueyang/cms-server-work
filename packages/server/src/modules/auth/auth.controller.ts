@@ -5,11 +5,7 @@ import { User } from '../user_admin/user-admin.decorator';
 import { UserAdminService } from '../user_admin/user_admin.service';
 import { AdminLogin } from './auth.guard';
 import { AuthService } from './auth.service';
-import {
-  UserAdminLoginBody,
-  UserAdminLoginResponse,
-  UserAdminOutLoginResponse,
-} from './dto/auth.dto';
+import { UserAdminLoginBody, UserAdminLoginResponse, UserAdminOutLoginResponse } from './auth.dto';
 
 @Controller()
 export class AuthController {

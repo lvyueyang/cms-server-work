@@ -3,10 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Pagination } from 'src/interface';
 import { paginationTransform } from 'src/utils/whereTransform';
 import { Repository } from 'typeorm';
-import {
-  AdminRoleUpdateDto,
-  AdminRoleUpdatePermissionCodeDto,
-} from './dto/user_admin_role.dto';
+import { AdminRoleUpdateDto, AdminRoleUpdatePermissionCodeDto } from './user_admin_role.dto';
 import { AdminRole } from './user_admin_role.entity';
 
 @Injectable()
@@ -50,11 +47,7 @@ export class AdminRoleService {
 
   async update(
     id: number,
-    {
-      name,
-      desc,
-      codes,
-    }: Partial<AdminRoleUpdateDto & AdminRoleUpdatePermissionCodeDto>,
+    { name, desc, codes }: Partial<AdminRoleUpdateDto & AdminRoleUpdatePermissionCodeDto>,
   ) {
     const isExisted = await this.repository.findOneBy({
       id,

@@ -1,5 +1,5 @@
 import { AIP_FIX } from '@/constants';
-import { LoggerListResponseDto } from '@/interface/serverApi';
+import { LoggerListResponseDto } from '@cms/api-interface';
 import { request } from '@/request';
 import { Result } from '@/types';
 

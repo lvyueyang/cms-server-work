@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ADMIN_PERMISSION_CODE } from 'src/common/common.permission';
 import { successResponse } from 'src/utils';
@@ -22,7 +13,7 @@ import {
   AdminRoleQueryListDto,
   AdminRoleUpdateDto,
   AdminRoleUpdatePermissionCodeDto,
-} from './dto/user_admin_role.dto';
+} from './user_admin_role.dto';
 import { AdminRoleGuard } from './user_admin_role.guard';
 import { PERMISSION } from './user_admin_role.permission';
 import { AdminRoleService } from './user_admin_role.service';

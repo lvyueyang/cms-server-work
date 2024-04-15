@@ -8,6 +8,7 @@
     "packages/*"
   ],
   "scripts": {
+    "crud": "npm run crud --prefix ./packages/cmd",
     "build": "npm run build:cms && npm run build:server",
     "build:cms": "npm run build --prefix ./packages/client-cms",
     "build:server": "npm run build --prefix ./packages/server",

@@ -11,7 +11,7 @@ import { Reflector } from '@nestjs/core';
 import { ApiHeader } from '@nestjs/swagger';
 import { CodeItem } from 'src/common/common.permission';
 import { LoginAuthGuard } from '../auth/auth.guard';
-import { LOGIN_TYPE } from '../auth/interface';
+import { LOGIN_TYPE } from '../auth/auth.interface';
 import { UserAdmin } from '../user_admin/user_admin.entity';
 import { AdminRoleService } from './user_admin_role.service';
 
@@ -23,10 +23,7 @@ export class RoleGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const codeItem = this.reflector.get<CodeItem>(
-      'codeItem',
-      context.getHandler(),
-    );
+    const codeItem = this.reflector.get<CodeItem>('codeItem', context.getHandler());
     const req = context.switchToHttp().getRequest();
     const user = req.user as UserAdmin;
     if (user.is_root) {
@@ -36,9 +33,7 @@ export class RoleGuard implements CanActivate {
     if (!user.roles.length) {
       throw new ForbiddenException('无操作权限');
     }
-    const userCodes = await this.adminRoleService.ids2Codes(
-      user.roles.map((r) => r.id),
-    );
+    const userCodes = await this.adminRoleService.ids2Codes(user.roles.map((r) => r.id));
     if (!userCodes.includes(codeItem.code)) {
       throw new ForbiddenException('无操作权限');
     }

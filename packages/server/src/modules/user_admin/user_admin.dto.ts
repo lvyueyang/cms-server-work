@@ -1,12 +1,7 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import {
-  IsAlphanumeric,
-  IsByteLength,
-  IsEmail,
-  IsNotEmpty,
-} from 'class-validator';
-import { Pagination, ResponseListResult, ResponseResult } from 'src/interface';
-import { UserAdmin } from '../user_admin.entity';
+import { IsAlphanumeric, IsByteLength, IsEmail, IsNotEmpty } from 'class-validator';
+import { Pagination, ResponseResult } from 'src/interface';
+import { UserAdmin } from './user_admin.entity';
 
 export class UserAdminInfo extends UserAdmin {}
 
@@ -53,14 +48,10 @@ export class UserAdminCreateDto {
 }
 
 /** 更新 */
-export class UserAdminUpdateDto extends PickType(UserAdminCreateDto, [
-  'cname',
-]) {}
+export class UserAdminUpdateDto extends PickType(UserAdminCreateDto, ['cname']) {}
 
 /** 更新用户密码 */
-export class UserAdminUpdatePasswordDto extends PickType(UserAdminCreateDto, [
-  'password',
-]) {}
+export class UserAdminUpdatePasswordDto extends PickType(UserAdminCreateDto, ['password']) {}
 
 export class UserAdminQueryInfoDto {
   @ApiProperty({
@@ -130,6 +121,6 @@ export class UserAdminInfoResponseDto extends ResponseResult {
   readonly data: UserAdminInfo;
 }
 
-export class UserAdminListResponseDto extends ResponseListResult {
+export class UserAdminListResponseDto extends ResponseResult {
   readonly data: UserAdminList;
 }

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-import { Pagination, ResponseListResult, ResponseResult } from 'src/interface';
+import { Pagination, ResponseResult } from 'src/interface';
 import { News } from './news.entity';
 
 export class NewsInfo extends News {}
@@ -55,7 +55,7 @@ export class NewsQueryListDto extends Pagination {
 }
 
 /** 列表 Response */
-export class NewsListResponseDto extends ResponseListResult {
+export class NewsListResponseDto extends ResponseResult {
   data: NewsList;
 }
 

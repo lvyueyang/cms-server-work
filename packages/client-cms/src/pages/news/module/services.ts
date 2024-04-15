@@ -1,12 +1,11 @@
-import { AIP_FIX } from '@/constants';
 import {
   NewsCreateDto,
   NewsDetailResponseDto,
   NewsListResponseDto,
   NewsQueryListDto,
   NewsUpdateDto,
-} from '@/interface/serverApi';
-import { request } from '@/request';
+} from '@cms/api-interface';
+import { request, AIP_FIX } from '@/request';
 import { Result } from '@/types';
 
 /** 列表 */

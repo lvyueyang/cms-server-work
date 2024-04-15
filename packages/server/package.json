@@ -5,7 +5,6 @@
   "description": "服务端",
   "scripts": {
     "build": "nest build",
-    "curd": "node ./scripts/createCURD/index.js",
     "dev": "nest start --watch",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

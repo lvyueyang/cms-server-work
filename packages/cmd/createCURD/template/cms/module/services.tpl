@@ -1,4 +1,3 @@
-import { AIP_FIX } from '@/constants';
 import {
   {{entityName}}CreateDto,
   {{entityName}}DetailResponseDto,
@@ -6,7 +5,7 @@ import {
   {{entityName}}QueryListDto,
   {{entityName}}UpdateDto,
 } from '@cms/api-interface';
-import {request} from '@/request';
+import { request, AIP_FIX } from '@/request';
 import { Result } from '@/types';
 
 /** 列表 */

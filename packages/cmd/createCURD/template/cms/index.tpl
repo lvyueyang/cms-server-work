@@ -1,5 +1,3 @@
-import Header from '@/components/Header';
-import PageContainer from '@/components/PageContainer';
 import { {{entityName}}Info } from '@cms/api-interface';
 import { transformPagination, transformSort } from '@/utils';
 import { message } from '@/utils/notice';
@@ -78,54 +76,51 @@ export default function {{entityName}}ListPage() {
 
   return (
     <>
-      <Header />
-      <PageContainer>
-        <ProTable<TableItem>
-          columns={columns}
-          rowKey="id"
-          bordered
-          search={false}
-          request={(params, sorter) => {
-            return getListApi({
-              ...transformPagination(params),
-              ...transformSort(sorter),
-              ...searchForm,
-            }).then(({ data }) => {
-              return { data: data.data.list, total: data.data.total || 0 };
-            });
-          {{ '}}' }}
-          actionRef={tableRef}
-          headerTitle={
-            <Input.Search
-              value={searchForm.keyword}
-              onChange={(e) => {
-                setSearchForm((state) => ({
-                  ...state,
-                  keyword: e.target.value.trim(),
-                }));
-              {{ '}}' }}
-              style={{ '{{' }} width: 400 {{ '}}' }}
-              placeholder="请输入{{cname}}名称搜索"
-              enterButton={<>搜索</>}
-              onSearch={() => {
-                tableRef.current?.setPageInfo?.({ current: 1 });
-                tableRef.current?.reload();
-              {{ '}}' }}
-            />
-          }
-          toolBarRender={() => [
-            <Button
-              key="create"
-              type="primary"
-              onClick={() => {
-                history.push('/{{pathName}}/create');
-              {{ '}}' }}
-            >
-              新增{{cname}}
-            </Button>,
-          ]}
-        />
-      </PageContainer>
+      <ProTable<TableItem>
+        columns={columns}
+        rowKey="id"
+        bordered
+        search={false}
+        request={(params, sorter) => {
+          return getListApi({
+            ...transformPagination(params),
+            ...transformSort(sorter),
+            ...searchForm,
+          }).then(({ data }) => {
+            return { data: data.data.list, total: data.data.total || 0 };
+          });
+        {{ '}}' }}
+        actionRef={tableRef}
+        headerTitle={
+          <Input.Search
+            value={searchForm.keyword}
+            onChange={(e) => {
+              setSearchForm((state) => ({
+                ...state,
+                keyword: e.target.value.trim(),
+              }));
+            {{ '}}' }}
+            style={{ '{{' }} width: 400 {{ '}}' }}
+            placeholder="请输入{{cname}}名称搜索"
+            enterButton={<>搜索</>}
+            onSearch={() => {
+              tableRef.current?.setPageInfo?.({ current: 1 });
+              tableRef.current?.reload();
+            {{ '}}' }}
+          />
+        }
+        toolBarRender={() => [
+          <Button
+            key="create"
+            type="primary"
+            onClick={() => {
+              history.push('/{{pathName}}/create');
+            {{ '}}' }}
+          >
+            新增{{cname}}
+          </Button>,
+        ]}
+      />
     </>
   );
 }

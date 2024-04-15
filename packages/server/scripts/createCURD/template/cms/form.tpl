@@ -2,7 +2,7 @@ import Editor from '@/components/Editor';
 import Header from '@/components/Header';
 import PageContainer from '@/components/PageContainer';
 import UploadImage from '@/components/UploadImage';
-import { {{entityName}}UpdateDto } from '@/interface/serverApi';
+import { {{entityName}}UpdateDto } from '@cms/api-interface';
 import { message } from '@/utils/notice';
 import { useRequest } from 'ahooks';
 import { Button, Card, Form, Input, Row } from 'antd';

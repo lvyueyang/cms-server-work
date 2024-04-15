@@ -1,6 +1,6 @@
 import PageContainer from '@/components/PageContainer';
 import { ModalType, useFormModal } from '@/hooks/useFormModal';
-import { AdminRoleCreateDto, AdminRoleInfo } from '@/interface/serverApi';
+import { AdminRoleCreateDto, AdminRoleInfo } from '@cms/api-interface';
 import { transformPagination } from '@/utils';
 import { message } from '@/utils/notice';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';

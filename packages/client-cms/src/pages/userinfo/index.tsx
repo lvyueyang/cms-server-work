@@ -1,4 +1,4 @@
-import { UserAdminInfo } from '@/interface/serverApi';
+import { UserAdminInfo } from '@cms/api-interface';
 import { message } from '@/utils/notice';
 import { useRequest } from 'ahooks';
 import { Button, Card, Form, Input, Space } from 'antd';

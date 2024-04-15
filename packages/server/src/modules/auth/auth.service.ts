@@ -5,7 +5,7 @@ import * as jwt from 'jsonwebtoken';
 import { userConfig } from 'src/config';
 import { passwordCrypto } from 'src/utils';
 import { UserAdminService } from '../user_admin/user_admin.service';
-import { LOGIN_TYPE, UserAdminJWTPayload } from './interface';
+import { LOGIN_TYPE, UserAdminJWTPayload } from './auth.interface';
 
 @Injectable()
 export class AuthService {
@@ -50,7 +50,6 @@ export class AuthService {
   }
 
   async validateJwt(token) {
-    return jwt.verify(token, this.config.jwtSecret) as UserAdminJWTPayload &
-      jwt.JwtPayload;
+    return jwt.verify(token, this.config.jwtSecret) as UserAdminJWTPayload & jwt.JwtPayload;
   }
 }

@@ -63,11 +63,3 @@ export class ResponseResult<T = any> {
   readonly message: string;
   data: T;
 }
-
-/** 请求结果列表响应数据 */
-export class ResponseListResult<T = any> extends ResponseResult<any> {
-  data: {
-    total: number;
-    list: T[];
-  };
-}

@@ -1,5 +1,5 @@
 import { AIP_FIX, SendEmailCaptchaType, SendPhoneCaptchaType, TOKEN_KEY } from '@/constants';
-import { UserAdminInfoResponseDto } from '@/interface/serverApi';
+import { UserAdminInfoResponseDto } from '@cms/api-interface';
 import { Result } from '@/types';
 import { request } from '@/request';
 import { AxiosProgressEvent } from 'axios';

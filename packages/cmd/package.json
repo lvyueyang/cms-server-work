@@ -1,0 +1,12 @@
+{
+  "name": "cmd",
+  "version": "1.0.0",
+  "private": true,
+  "description": "命令行工具",
+  "scripts": {
+    "crud": "node ./createCURD/index.js"
+  },
+  "devDependencies": {
+    "swagger-typescript-api": "^12.0.4"
+  }
+}

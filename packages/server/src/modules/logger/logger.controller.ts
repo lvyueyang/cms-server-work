@@ -5,11 +5,7 @@ import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { getLogDirPath, successResponse } from 'src/utils';
 import { AdminRoleGuard } from '../user_admin_role/user_admin_role.guard';
-import {
-  LoggerByDateParamDto,
-  LoggerDetailResponseDto,
-  LoggerListResponseDto,
-} from './dto/logger.dto';
+import { LoggerByDateParamDto, LoggerDetailResponseDto, LoggerListResponseDto } from './logger.dto';
 import { PERMISSION } from './logger.permission';
 
 @ApiTags('系统日志')

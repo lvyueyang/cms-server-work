@@ -7,8 +7,8 @@ import { exec } from 'child_process';
 import * as path from 'path';
 
 function runGapi() {
-  const dir = path.join(process.cwd(), '../client-cms');
-  exec(`cd ${dir} && npm run gapi`, (error) => {
+  const dir = path.join(process.cwd(), '../api-interface');
+  exec(`cd ${dir} && npm run gen`, (error) => {
     if (error) {
       console.error(`exec error: ${error}`);
       return;
@@ -16,10 +16,7 @@ function runGapi() {
   });
 }
 export function useSwagger(app: NestExpressApplication) {
-  const options = new DocumentBuilder()
-    .setTitle('管理后台')
-    .setVersion('1.0')
-    .build();
+  const options = new DocumentBuilder().setTitle('管理后台').setVersion('1.0').build();
   const document = SwaggerModule.createDocument(app, options, {
     // include: [
     //   UserAdminModule,

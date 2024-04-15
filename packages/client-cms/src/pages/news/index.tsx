@@ -1,5 +1,5 @@
 import PageContainer from '@/components/PageContainer';
-import { NewsInfo } from '@/interface/serverApi';
+import { NewsInfo } from '@cms/api-interface';
 import { transformPagination } from '@/utils';
 import { message } from '@/utils/notice';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
