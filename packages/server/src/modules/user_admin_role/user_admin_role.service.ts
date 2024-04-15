@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Pagination } from 'src/interface';
-import { paginationTransform } from 'src/utils/whereTransform';
+import { Pagination } from '@/interface';
+import { paginationTransform } from '@/utils/whereTransform';
 import { Repository } from 'typeorm';
 import { AdminRoleUpdateDto, AdminRoleUpdatePermissionCodeDto } from './user_admin_role.dto';
 import { AdminRole } from './user_admin_role.entity';

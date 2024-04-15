@@ -3,10 +3,9 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import { Order } from 'src/interface';
+import { Order } from '@/interface';
 
-const homedir =
-  process.env[process.platform == 'win32' ? 'USERPROFILE' : 'HOME'];
+const homedir = process.env[process.platform == 'win32' ? 'USERPROFILE' : 'HOME'];
 
 let dataDirPath = '';
 let logDataDirPath = '';
@@ -89,10 +88,7 @@ function expandHomeDir(dir: string) {
 }
 
 /** 创建排序查询 */
-export function createOrder<T extends string>({
-  order_key,
-  order_type,
-}: Order<T>) {
+export function createOrder<T extends string>({ order_key, order_type }: Order<T>) {
   if (order_key && order_type) {
     return {
       order: {

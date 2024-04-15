@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-import { ResponseResult } from 'src/interface';
+import { ResponseResult } from '@/interface';
 
 export class LoggerListResponseDto extends ResponseResult {
   @ApiProperty({ description: '日志列表' })

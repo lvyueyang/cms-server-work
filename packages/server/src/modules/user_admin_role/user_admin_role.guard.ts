@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ApiHeader } from '@nestjs/swagger';
-import { CodeItem } from 'src/common/common.permission';
+import { CodeItem } from '@/common/common.permission';
 import { LoginAuthGuard } from '../auth/auth.guard';
 import { LOGIN_TYPE } from '../auth/auth.interface';
 import { UserAdmin } from '../user_admin/user_admin.entity';

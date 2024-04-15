@@ -1,25 +1,10 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
-import {
-  ApiBody,
-  ApiExcludeEndpoint,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { ApiBody, ApiExcludeEndpoint, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import * as dayjs from 'dayjs';
-import { ResponseResult } from 'src/interface';
-import { User } from 'src/modules/user_admin/user-admin.decorator';
-import { AdminRoleGuard } from 'src/modules/user_admin_role/user_admin_role.guard';
-import { successResponse } from 'src/utils';
+import { ResponseResult } from '@/interface';
+import { User } from '@/modules/user_admin/user-admin.decorator';
+import { AdminRoleGuard } from '@/modules/user_admin_role/user_admin_role.guard';
+import { successResponse } from '@/utils';
 import { RenderView } from '../render_view/render_view.decorator';
 import {
   NewsByIdParamDto,
@@ -46,6 +31,8 @@ export class NewsController {
     const [list, total] = await this.services.findList({
       current,
       page_size: limit,
+      order_key: 'recommend',
+      order_type: 'DESC',
     });
     const max = total / limit;
     const next = current < max ? current + 1 : 0;
@@ -53,7 +40,7 @@ export class NewsController {
     return {
       list: list.map((item) => ({
         ...item,
-        create_date: dayjs(item.create_date).format('YYYY / MM / DD'),
+        create_date: dayjs(item.push_date || item.create_date).format('YYYY / MM / DD'),
       })),
       next,
       prev,
@@ -125,10 +112,7 @@ export class NewsController {
     type: NewsDetailIdResponseDto,
   })
   @AdminRoleGuard(PERMISSION.UPDATE)
-  async apiUpdate(
-    @Param() { id }: NewsByIdParamDto,
-    @Body() data: NewsUpdateDto,
-  ) {
+  async apiUpdate(@Param() { id }: NewsByIdParamDto, @Body() data: NewsUpdateDto) {
     await this.services.update(id, data);
     return successResponse(id, '修改成功');
   }

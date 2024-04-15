@@ -4,7 +4,7 @@ import {
   PaginationAndOrder,
   ResponseListResult,
   ResponseResult,
-} from 'src/interface';
+} from '@/interface';
 import { {{entityName}} } from './{{name}}.entity';
 
 export class {{entityName}}Info extends {{entityName}} {}

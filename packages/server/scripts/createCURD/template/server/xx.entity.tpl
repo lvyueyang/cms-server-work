@@ -1,5 +1,5 @@
-import { BaseEntity } from 'src/common/base.entity';
-import { UserAdmin } from 'src/modules/user_admin/user_admin.entity';
+import { BaseEntity } from '@/common/base.entity';
+import { UserAdmin } from '@/modules/user_admin/user_admin.entity';
 import {
   Column,
   Entity,

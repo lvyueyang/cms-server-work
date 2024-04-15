@@ -9,10 +9,10 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ResponseResult } from 'src/interface';
-import { User } from 'src/modules/user_admin/user-admin.decorator';
-import { AdminRoleGuard } from 'src/modules/user_admin_role/user_admin_role.guard';
-import { successResponse } from 'src/utils';
+import { ResponseResult } from '@/interface';
+import { User } from '@/modules/user_admin/user-admin.decorator';
+import { AdminRoleGuard } from '@/modules/user_admin_role/user_admin_role.guard';
+import { successResponse } from '@/utils';
 import {
   {{entityName}}ByIdParamDto,
   {{entityName}}CreateDto,

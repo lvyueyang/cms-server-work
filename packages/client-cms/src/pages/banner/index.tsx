@@ -1,14 +1,15 @@
-import PageContainer from '@/components/PageContainer';
-import { NewsInfo } from '@cms/api-interface';
-import { transformPagination } from '@/utils';
+import { BannerInfo } from '@cms/api-interface';
+import { transformPagination, transformSort } from '@/utils';
 import { message } from '@/utils/notice';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, Input, Popconfirm, Space } from 'antd';
 import { useRef, useState } from 'react';
-import { Link, history } from 'umi';
+import { history, Link } from 'umi';
 import { getListApi, removeApi } from './module';
-type TableItem = NewsInfo;
-export default function NewsListPage() {
+
+type TableItem = BannerInfo;
+
+export default function BannerListPage() {
   const [searchForm, setSearchForm] = useState({
     keyword: '',
   });
@@ -22,22 +23,11 @@ export default function NewsListPage() {
     },
     {
       dataIndex: 'title',
-      title: '新闻名称',
-    },
-    {
-      dataIndex: 'recommend',
-      title: '推荐等级',
-      sorter: true,
-    },
-    {
-      dataIndex: 'push_date',
-      title: '发布日期',
-      valueType: 'dateTime',
-      sorter: true,
+      title: '广告名称',
     },
     {
       dataIndex: 'desc',
-      title: '新闻描述',
+      title: '广告描述',
       width: 300,
       ellipsis: true,
     },
@@ -45,11 +35,13 @@ export default function NewsListPage() {
       dataIndex: 'create_date',
       title: '创建时间',
       valueType: 'dateTime',
+      sorter: true,
     },
     {
       dataIndex: 'update_date',
       title: '修改时间',
       valueType: 'dateTime',
+      sorter: true,
     },
     {
       dataIndex: 'operate',
@@ -59,9 +51,9 @@ export default function NewsListPage() {
       render: (_, row) => {
         return (
           <Space>
-            <Link to={`/news/update/${row.id}`}>编辑</Link>
+            <Link to={`/banner/update/${row.id}`}>编辑</Link>
             <Popconfirm
-              title="确定要删除这个新闻吗？"
+              title="确定要删除这个广告吗？"
               onConfirm={() => {
                 const close = message.loading('删除中...', 0);
                 removeApi(row.id)
@@ -89,8 +81,12 @@ export default function NewsListPage() {
         rowKey="id"
         bordered
         search={false}
-        request={(params) => {
-          return getListApi({ ...transformPagination(params), ...searchForm }).then(({ data }) => {
+        request={(params, sorter) => {
+          return getListApi({
+            ...transformPagination(params),
+            ...transformSort(sorter),
+            ...searchForm,
+          }).then(({ data }) => {
             return { data: data.data.list, total: data.data.total || 0 };
           });
         }}
@@ -105,7 +101,7 @@ export default function NewsListPage() {
               }));
             }}
             style={{ width: 400 }}
-            placeholder="请输入新闻名称搜索"
+            placeholder="请输入广告名称搜索"
             enterButton={<>搜索</>}
             onSearch={() => {
               tableRef.current?.setPageInfo?.({ current: 1 });
@@ -118,10 +114,10 @@ export default function NewsListPage() {
             key="create"
             type="primary"
             onClick={() => {
-              history.push('/news/create');
+              history.push('/banner/create');
             }}
           >
-            新增新闻
+            新增广告
           </Button>,
         ]}
       />

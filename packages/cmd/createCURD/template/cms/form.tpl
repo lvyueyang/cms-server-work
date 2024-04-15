@@ -24,7 +24,7 @@ export default function {{entityName}}Form() {
         message.success('更新成功');
       } else {
         await createApi(values);
-        history.push('/{{pathName}}');
+        history.push('/{{pathName}}/list');
         message.success('创建成功');
       }
     },

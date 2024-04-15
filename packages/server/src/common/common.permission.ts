@@ -1,5 +1,5 @@
-import { USER_ADMIN_PERMISSION_LIST } from 'src/modules/user_admin/user_admin.permission';
-import { ROLE_ADMIN_PERMISSION_LIST } from 'src/modules/user_admin_role/user_admin_role.permission';
+import { USER_ADMIN_PERMISSION_LIST } from '@/modules/user_admin/user_admin.permission';
+import { ROLE_ADMIN_PERMISSION_LIST } from '@/modules/user_admin_role/user_admin_role.permission';
 
 export interface CodeItem {
   code: string;
@@ -7,10 +7,7 @@ export interface CodeItem {
 }
 
 /** 后台管理权限码 */
-export const ADMIN_PERMISSION_CODE = [
-  ...USER_ADMIN_PERMISSION_LIST,
-  ...ROLE_ADMIN_PERMISSION_LIST,
-];
+export const ADMIN_PERMISSION_CODE = [...USER_ADMIN_PERMISSION_LIST, ...ROLE_ADMIN_PERMISSION_LIST];
 
 function verifyCodeList(data: CodeItem[]) {
   const codeList: string[] = [];

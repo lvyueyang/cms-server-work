@@ -1,6 +1,6 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-import { Pagination, ResponseResult } from 'src/interface';
+import { Pagination, ResponseResult } from '@/interface';
 import { AdminRole } from './user_admin_role.entity';
 
 export class AdminRoleInfo extends OmitType(AdminRole, ['users']) {}

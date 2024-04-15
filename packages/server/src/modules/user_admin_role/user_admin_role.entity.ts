@@ -1,5 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { BaseEntity } from 'src/common/base.entity';
+import { BaseEntity } from '@/common/base.entity';
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserAdmin } from '../user_admin/user_admin.entity';
 

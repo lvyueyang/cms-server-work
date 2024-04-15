@@ -1,13 +1,11 @@
 import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
-import { Pagination } from 'src/interface';
+import { Pagination } from '@/interface';
 
 /**
  * 将get请求中的分页参数转换为 number 类型
  */
 @Injectable()
-export class PaginationParseIntPipe
-  implements PipeTransform<Pagination, Pagination>
-{
+export class PaginationParseIntPipe implements PipeTransform<Pagination, Pagination> {
   transform(value: Pagination, metadata: ArgumentMetadata): Pagination {
     if (metadata.type !== 'query') {
       return value;

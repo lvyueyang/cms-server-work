@@ -1,18 +1,13 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
-import { s3AccountConfig } from 'src/config';
-import { Pagination } from 'src/interface';
-import { getUploadFileDirPath } from 'src/utils';
-import { paginationTransform } from 'src/utils/whereTransform';
+import { s3AccountConfig } from '@/config';
+import { Pagination } from '@/interface';
+import { getUploadFileDirPath } from '@/utils';
+import { paginationTransform } from '@/utils/whereTransform';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { AdminRole } from '../user_admin_role/user_admin_role.entity';
@@ -62,9 +57,7 @@ export class UserAdminService {
     });
     return res[0];
   }
-  async create(
-    user: Pick<UserAdmin, 'cname' | 'username' | 'password' | 'email'>,
-  ) {
+  async create(user: Pick<UserAdmin, 'cname' | 'username' | 'password' | 'email'>) {
     const isExisted = await this.repository.findOne({
       where: [{ username: user.username }, { email: user.email }],
     });
@@ -83,9 +76,7 @@ export class UserAdminService {
       password: user.password,
     });
   }
-  async createRootUser(
-    user: Pick<UserAdmin, 'cname' | 'username' | 'password' | 'email'>,
-  ) {
+  async createRootUser(user: Pick<UserAdmin, 'cname' | 'username' | 'password' | 'email'>) {
     // 判断是否存在超管用户
     const rootUser = await this.repository.findOneBy({ is_root: true });
     if (rootUser) {
@@ -100,9 +91,7 @@ export class UserAdminService {
       password,
       email,
       out_login_date,
-    }: Partial<
-      Pick<UserAdmin, 'cname' | 'password' | 'email' | 'out_login_date'>
-    >,
+    }: Partial<Pick<UserAdmin, 'cname' | 'password' | 'email' | 'out_login_date'>>,
   ) {
     const isExisted = await this.repository.findOneBy({
       id,
@@ -141,11 +130,7 @@ export class UserAdminService {
     return client;
   }
 
-  async uploadToS3(
-    file: Express.Multer.File,
-    dirPath: string,
-    filename?: string,
-  ) {
+  async uploadToS3(file: Express.Multer.File, dirPath: string, filename?: string) {
     const Key = dirPath + `/${filename || uuid()}`;
     const Upload = new PutObjectCommand({
       Bucket: this.s3Config.bucket,
@@ -167,13 +152,8 @@ export class UserAdminService {
     }
   }
 
-  async uploadLocal(
-    file: Express.Multer.File,
-    dirPath: string,
-    filename?: string,
-  ) {
-    const Key =
-      filename || `${uuid()}.${file.originalname.split('.').reverse()[0]}`;
+  async uploadLocal(file: Express.Multer.File, dirPath: string, filename?: string) {
+    const Key = filename || `${uuid()}.${file.originalname.split('.').reverse()[0]}`;
     const dir = path.join(getUploadFileDirPath(), dirPath);
     try {
       await fs.promises.access(dir);

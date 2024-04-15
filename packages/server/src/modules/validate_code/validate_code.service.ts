@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
 import { createTransport, Transporter } from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
-import { emailClientConfig } from 'src/config';
+import { emailClientConfig } from '@/config';
 import { Repository } from 'typeorm';
 import { ValidateCode } from './validate_code.entity';
 
@@ -52,11 +52,7 @@ export class ValidateCodeService {
 
   /** 创建验证码 */
   async create(
-    {
-      user_id,
-      point_type,
-      code_type,
-    }: Pick<ValidateCode, 'code_type' | 'point_type' | 'user_id'>,
+    { user_id, point_type, code_type }: Pick<ValidateCode, 'code_type' | 'point_type' | 'user_id'>,
     expiresIn: number | Date = 5,
   ) {
     const code = this.createCode();

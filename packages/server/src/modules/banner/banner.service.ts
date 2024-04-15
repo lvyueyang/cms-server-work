@@ -1,20 +1,20 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order, Pagination } from '@/interface';
-import { UserAdmin } from '@/modules/user_admin/user_admin.entity';
-import { createOrder } from '@/utils';
-import { paginationTransform } from '@/utils/whereTransform';
+import { UserAdmin } from '../../modules/user_admin/user_admin.entity';
+import { createOrder } from '../../utils';
+import { paginationTransform } from '../../utils/whereTransform';
 import { Like, Repository } from 'typeorm';
-import { {{entityName}}CreateDto } from './{{name}}.dto';
-import { {{entityName}} } from './{{name}}.entity';
+import { BannerCreateDto } from './banner.dto';
+import { Banner } from './banner.entity';
 
-type FormValues = {{entityName}}CreateDto;
+type FormValues = BannerCreateDto;
 
 @Injectable()
-export class {{entityName}}Service {
+export class BannerService {
   constructor(
-    @InjectRepository({{entityName}})
-    private repository: Repository<{{entityName}}>,
+    @InjectRepository(Banner)
+    private repository: Repository<Banner>,
   ) {}
 
   findAll() {
@@ -24,7 +24,7 @@ export class {{entityName}}Service {
   findList({
     keyword = '',
     ...params
-  }: Pagination & Order<keyof {{entityName}}> & { keyword?: string }) {
+  }: Pagination & Order<keyof Banner> & { keyword?: string }) {
     return this.repository.findAndCount({
       ...paginationTransform(params),
       ...createOrder(params),
@@ -42,8 +42,8 @@ export class {{entityName}}Service {
     });
     if (!isExisted) {
       throw new BadRequestException(
-        '{{cname}}不存在',
-        '{{name}} not found',
+        '广告不存在',
+        'banner not found',
       );
     }
     return isExisted;
@@ -55,7 +55,7 @@ export class {{entityName}}Service {
       is_delete: false,
     });
     if (isExisted) {
-      throw new BadRequestException('{{cname}}已存在');
+      throw new BadRequestException('广告已存在');
     }
     return this.repository.save({ 
       title: data.title,
@@ -73,8 +73,8 @@ export class {{entityName}}Service {
     });
     if (!isExisted) {
       throw new BadRequestException(
-        '{{cname}}不存在',
-        '{{name}} not found',
+        '广告不存在',
+        'banner not found',
       );
     }
     return this.repository.update(id, { is_delete: true });
@@ -87,8 +87,8 @@ export class {{entityName}}Service {
     });
     if (!isExisted) {
       throw new BadRequestException(
-        '{{cname}}不存在',
-        '{{name}} not found',
+        '广告不存在',
+        'banner not found',
       );
     }
     return this.repository.update(id, {

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BaseEntity } from 'src/common/base.entity';
-import { USER_PONIT_TYPE, VALIDATE_CODE_TYPE } from 'src/constants';
+import { BaseEntity } from '@/common/base.entity';
+import { USER_PONIT_TYPE, VALIDATE_CODE_TYPE } from '@/constants';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 /** 用户验证码 */

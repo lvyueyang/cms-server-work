@@ -1,6 +1,6 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { IsAlphanumeric, IsByteLength, IsEmail, IsNotEmpty } from 'class-validator';
-import { Pagination, ResponseResult } from 'src/interface';
+import { Pagination, ResponseResult } from '@/interface';
 import { UserAdmin } from './user_admin.entity';
 
 export class UserAdminInfo extends UserAdmin {}

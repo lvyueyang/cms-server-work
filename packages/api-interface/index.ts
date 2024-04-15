@@ -100,6 +100,8 @@ export interface UserAdminInfo {
   roles: AdminRole[];
   /** 新闻 */
   news: string[];
+  /** 广告 */
+  banner: string[];
 }
 
 export interface UserAdminList {
@@ -404,6 +406,8 @@ export interface UserAdmin {
   roles: AdminRole[];
   /** 新闻 */
   news: string[];
+  /** 广告 */
+  banner: string[];
 }
 
 export interface NewsInfo {
@@ -417,13 +421,28 @@ export interface NewsInfo {
    * @format date-time
    */
   update_date: string;
+  /** ID */
   id: number;
+  /** 标题 */
   title: string;
+  /** 封面图 */
   cover: string;
+  /** 描述 */
   desc?: string;
+  /** 详情 */
   content: string;
+  /**
+   * 发布时间
+   * @format date-time
+   */
+  push_date?: string;
+  /** 推荐等级, 0 为不推荐, 后续可根据值大小进行排序 */
+  recommend: number;
+  /** 描述 */
   is_delete: boolean;
+  /** 创建者 ID */
   authorId?: number;
+  /** 创建者 */
   author: UserAdmin;
 }
 
@@ -461,28 +480,165 @@ export interface NewsDetailResponseDto {
 }
 
 export interface NewsCreateDto {
-  /** 新闻中心名称 */
+  /** 标题 */
   title: string;
-  /** 新闻中心描述 */
-  desc?: string;
-  /** 新闻中心封面 */
+  /** 封面图 */
   cover: string;
-  /** 新闻中心详情 */
+  /** 描述 */
+  desc?: string;
+  /** 详情 */
   content: string;
+  /**
+   * 发布时间
+   * @format date-time
+   */
+  push_date?: string;
+  /** 推荐等级, 0 为不推荐, 后续可根据值大小进行排序 */
+  recommend: number;
 }
 
 export interface NewsUpdateDto {
-  /** 新闻中心名称 */
+  /** 标题 */
   title: string;
-  /** 新闻中心描述 */
-  desc?: string;
-  /** 新闻中心封面 */
+  /** 封面图 */
   cover: string;
-  /** 新闻中心详情 */
+  /** 描述 */
+  desc?: string;
+  /** 详情 */
   content: string;
+  /**
+   * 发布时间
+   * @format date-time
+   */
+  push_date?: string;
+  /** 推荐等级, 0 为不推荐, 后续可根据值大小进行排序 */
+  recommend: number;
 }
 
 export interface NewsDetailIdResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: number;
+}
+
+export interface BannerQueryListDto {
+  /**
+   * 分页查询-当前页
+   * @default 1
+   */
+  current?: number;
+  /**
+   * 分页查询-每页数量
+   * @default 10
+   */
+  page_size?: number;
+  /**
+   * 被排序的字段
+   * @default "create_at"
+   */
+  order_key?: string;
+  /**
+   * 排序方式 DESC 降序 ASC 倒序
+   * @default 10
+   */
+  order_type?: string;
+  /** 广告名称-模糊搜索 */
+  keyword?: string;
+}
+
+export interface BannerInfo {
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  create_date: string;
+  /**
+   * 更新时间
+   * @format date-time
+   */
+  update_date: string;
+  /** 广告 ID */
+  id: number;
+  /** 广告标题 */
+  title: string;
+  /** 广告封面图 */
+  cover: string;
+  /** 广告描述 */
+  desc?: string;
+  /** 广告详情 */
+  content: string;
+  /** 是否已删除 */
+  is_delete: boolean;
+  /** 广告创建者 ID */
+  authorId?: number;
+  /** 广告创建者 */
+  author: UserAdmin;
+}
+
+export interface BannerList {
+  list: BannerInfo[];
+  total: number;
+}
+
+export interface BannerListResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: BannerList;
+}
+
+export interface BannerDetailResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: BannerInfo;
+}
+
+export interface BannerCreateDto {
+  /** 广告标题 */
+  title: string;
+  /** 广告封面图 */
+  cover: string;
+  /** 广告描述 */
+  desc?: string;
+  /** 广告详情 */
+  content: string;
+}
+
+export interface BannerUpdateDto {
+  /** 广告标题 */
+  title: string;
+  /** 广告封面图 */
+  cover: string;
+  /** 广告描述 */
+  desc?: string;
+  /** 广告详情 */
+  content: string;
+}
+
+export interface BannerDetailIdResponseDto {
   /**
    * 状态码
    * @default 200

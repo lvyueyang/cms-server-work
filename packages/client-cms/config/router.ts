@@ -64,6 +64,29 @@ const router = {
             },
           ],
         },
+        {
+          path: '/banner',
+          title: '广告管理',
+          routes: [
+            {
+              path: '/banner/list',
+              component: 'banner',
+              title: '广告列表',
+            },
+            {
+              path: '/banner/create',
+              component: 'banner/form',
+              title: '新增广告',
+              menuHide: true,
+            },
+            {
+              path: '/banner/update/:id',
+              component: 'banner/form',
+              title: '修改广告',
+              menuHide: true,
+            },
+          ],
+        },
       ],
     },
     { path: '*', component: '404' },

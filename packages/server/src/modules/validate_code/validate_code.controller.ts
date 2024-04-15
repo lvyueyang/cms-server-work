@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { USER_PONIT_TYPE, VALIDATE_CODE_TYPE } from 'src/constants';
-import { successResponse } from 'src/utils';
+import { USER_PONIT_TYPE, VALIDATE_CODE_TYPE } from '@/constants';
+import { successResponse } from '@/utils';
 import { RenderViewService } from '../render_view/render_view.service';
 import { UserAdminService } from '../user_admin/user_admin.service';
 import { EmailValidateCodeCreateDto } from './dto/validate_code.dto';

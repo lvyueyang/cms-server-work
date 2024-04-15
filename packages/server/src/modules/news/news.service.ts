@@ -1,13 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Pagination } from 'src/interface';
-import { UserAdmin } from 'src/modules/user_admin/user_admin.entity';
-import { paginationTransform } from 'src/utils/whereTransform';
+import { Order, Pagination } from '@/interface';
+import { createOrder } from '../../utils';
+import { paginationTransform } from '../../utils/whereTransform';
 import { LessThan, Like, MoreThan, Repository } from 'typeorm';
-import { NewsCreateDto } from './news.dto';
+import { UserAdmin } from '../user_admin/user_admin.entity';
 import { News } from './news.entity';
-
-type FormValues = NewsCreateDto;
+import { NewsBody } from './news.interface';
 
 @Injectable()
 export class NewsService {
@@ -17,17 +16,28 @@ export class NewsService {
   ) {}
 
   findAll() {
-    return this.repository.find({ where: { is_delete: false } });
+    return this.repository.find({
+      where: { is_delete: false },
+    });
   }
 
-  findList({ keyword = '', ...pagination }: Pagination & { keyword?: string }) {
-    return this.repository.findAndCount({
-      ...paginationTransform(pagination),
-      where: {
+  findList({ keyword = '', ...params }: Pagination & Order<keyof News> & { keyword?: string }) {
+    const { skip, take } = paginationTransform(params);
+    const { order } = createOrder(params) || {};
+    const find = this.repository
+      .createQueryBuilder('news')
+      .where({
         is_delete: false,
         title: Like(`%${keyword.trim()}%`),
-      },
+      })
+      .skip(skip)
+      .take(take);
+    Object.entries(order || {}).forEach(([key, value]) => {
+      find.addOrderBy('news.' + key, value);
     });
+    /** 在 push_date 为空时,按创建时间排序 */
+    find.addOrderBy('COALESCE(news.push_date, news.create_date)', 'DESC');
+    return find.getManyAndCount();
   }
 
   async findById(id: number) {
@@ -36,7 +46,7 @@ export class NewsService {
       is_delete: false,
     });
     if (!isExisted) {
-      throw new BadRequestException('新闻中心不存在', 'news not found');
+      throw new BadRequestException('新闻不存在', 'product not found');
     }
     return isExisted;
   }
@@ -70,21 +80,15 @@ export class NewsService {
     };
   }
 
-  async create(data: FormValues, author: UserAdmin) {
+  async create(data: NewsBody, author: UserAdmin) {
     const isExisted = await this.repository.findOneBy({
       title: data.title,
       is_delete: false,
     });
     if (isExisted) {
-      throw new BadRequestException('新闻中心已存在');
+      throw new BadRequestException('新闻已存在');
     }
-    return this.repository.save({
-      title: data.title,
-      content: data.content,
-      cover: data.cover,
-      desc: data.desc,
-      author,
-    });
+    return this.repository.save({ ...data, author });
   }
 
   async remove(id: number) {
@@ -93,24 +97,26 @@ export class NewsService {
       is_delete: false,
     });
     if (!isExisted) {
-      throw new BadRequestException('新闻中心不存在', 'news not found');
+      throw new BadRequestException('新闻不存在', 'product not found');
     }
     return this.repository.update(id, { is_delete: true });
   }
 
-  async update(id: number, data: Partial<FormValues>) {
+  async update(id: number, data: Partial<NewsBody>) {
     const isExisted = await this.repository.findOneBy({
       id,
       is_delete: false,
     });
     if (!isExisted) {
-      throw new BadRequestException('新闻中心不存在', 'news not found');
+      throw new BadRequestException('新闻不存在', 'product not found');
     }
     return this.repository.update(id, {
       title: data.title,
-      content: data.content,
-      cover: data.cover,
       desc: data.desc,
+      cover: data.cover,
+      content: data.content,
+      recommend: data.recommend,
+      push_date: data.push_date,
     });
   }
 }

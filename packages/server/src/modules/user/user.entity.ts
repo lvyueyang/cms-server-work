@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BaseEntity } from 'src/common/base.entity';
+import { BaseEntity } from '@/common/base.entity';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ orderBy: { create_date: 'DESC' } })

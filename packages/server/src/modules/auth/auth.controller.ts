@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { successResponse } from 'src/utils';
+import { successResponse } from '@/utils';
 import { User } from '../user_admin/user-admin.decorator';
 import { UserAdminService } from '../user_admin/user_admin.service';
 import { AdminLogin } from './auth.guard';

@@ -2,8 +2,8 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { isEmail } from 'class-validator';
 import * as jwt from 'jsonwebtoken';
-import { userConfig } from 'src/config';
-import { passwordCrypto } from 'src/utils';
+import { userConfig } from '@/config';
+import { passwordCrypto } from '@/utils';
 import { UserAdminService } from '../user_admin/user_admin.service';
 import { LOGIN_TYPE, UserAdminJWTPayload } from './auth.interface';
 

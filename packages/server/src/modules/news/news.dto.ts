@@ -1,6 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-import { Pagination, ResponseResult } from 'src/interface';
+import { Pagination, ResponseResult } from '@/interface';
 import { News } from './news.entity';
 
 export class NewsInfo extends News {}
@@ -11,30 +11,14 @@ export class NewsList {
 }
 
 /** 新增 */
-export class NewsCreateDto {
-  @ApiProperty({
-    description: '新闻中心名称',
-  })
-  @IsNotEmpty()
-  readonly title: News['title'];
-
-  @ApiProperty({
-    description: '新闻中心描述',
-  })
-  readonly desc?: News['desc'];
-
-  @ApiProperty({
-    description: '新闻中心封面',
-  })
-  @IsNotEmpty()
-  readonly cover: News['cover'];
-
-  @ApiProperty({
-    description: '新闻中心详情',
-  })
-  @IsNotEmpty()
-  readonly content: News['content'];
-}
+export class NewsCreateDto extends PickType(News, [
+  'title',
+  'desc',
+  'cover',
+  'content',
+  'recommend',
+  'push_date',
+]) {}
 
 /** 修改 */
 export class NewsUpdateDto extends NewsCreateDto {}

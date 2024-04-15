@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ADMIN_PERMISSION_CODE } from 'src/common/common.permission';
-import { successResponse } from 'src/utils';
+import { ADMIN_PERMISSION_CODE } from '@/common/common.permission';
+import { successResponse } from '@/utils';
 import { AdminLogin } from '../auth/auth.guard';
 import {
   AdminPermissionCodeListResponseDto,
