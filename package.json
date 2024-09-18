@@ -1,6 +1,6 @@
 {
   "name": "cms-server-work",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "description": "内容管理系统",
   "author": "lvyueyang <975794403@qq.com>",
@@ -9,11 +9,12 @@
   ],
   "scripts": {
     "crud": "npm run crud --prefix ./packages/cmd",
+    "start:prod": "npm run start:prod --prefix ./server",
     "build": "npm run build:cms && npm run build:server",
-    "build:cms": "npm run build --prefix ./packages/client-cms",
-    "build:server": "npm run build --prefix ./packages/server",
-    "dev:cms": "npm run dev --prefix ./packages/client-cms",
-    "dev:server": "npm run dev --prefix ./packages/server"
+    "build:cms": "npm run build --prefix ./clients/cms",
+    "build:server": "npm run build --prefix ./server",
+    "dev:cms": "npm run dev --prefix ./clients/cms",
+    "dev:server": "npm run dev --prefix ./server"
   },
   "resolutions": {},
   "dependencies": {
