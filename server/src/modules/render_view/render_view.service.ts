@@ -1,30 +1,43 @@
-import { Injectable } from '@nestjs/common';
-import * as nunjucks from 'nunjucks';
-import { join } from 'path';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Request, Response } from 'express';
+import * as nextServer from 'next';
+import { NextServer, NextServerOptions } from 'next/dist/server/next';
+import { ConfigService } from '@nestjs/config';
+import * as path from 'path';
 
 @Injectable()
-export class RenderViewService {
-  env: nunjucks.Environment;
+export class RenderViewService implements OnModuleInit {
+  private server: NextServer;
+  globalData = {};
 
-  constructor() {
-    this.initEnv();
+  constructor(private configService: ConfigService) {}
+
+  async onModuleInit(): Promise<void> {
+    const dir = path.join(process.cwd(), '../', 'clients/fe');
+    const dev = this.configService.get<string>('NODE_ENV') !== 'production';
+    const conf: NextServerOptions = {
+      dev,
+      dir,
+    };
+    try {
+      this.server = (nextServer as any)(conf);
+      await this.server.prepare();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  private initEnv() {
-    this.env = nunjucks.configure([join(process.cwd(), 'views')], {
-      autoescape: true,
-      throwOnUndefined: false,
-      trimBlocks: true,
-      lstripBlocks: false,
-      watch: true,
-      noCache: process.env.NODE_ENV === 'development' ? true : false,
-    });
-    this.loadGlobal();
-    this.env.addGlobal('static', '/_fe/static');
+  handler(req: Request, res: Response, context?: any) {
+    // @ts-ignore
+    req.pageData = context;
+    // @ts-ignore
+    req.globalData = this.globalData;
+    return this.server.getRequestHandler()(req, res);
   }
 
   render(name: string, context?: object) {
-    return this.env.render(name + '.njk', context);
+    return '';
+    // return this.env.render(name + '.njk', context);
   }
 
   async loadGlobal() {

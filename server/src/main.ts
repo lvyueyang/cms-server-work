@@ -21,6 +21,7 @@ async function bootstrap() {
   // 请求体尺寸限制
   app.use(bodyParser.json({ limit: '2mb' }));
   app.use(bodyParser.urlencoded({ limit: '2mb', extended: true }));
+
   // 分页参数转换
   app.useGlobalPipes(new PaginationParseIntPipe());
   // 参数验证
