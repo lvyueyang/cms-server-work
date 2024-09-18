@@ -19,17 +19,17 @@
   "resolutions": {},
   "dependencies": {
     "@wangeditor/plugin-upload-attachment": "^1.1.0",
-    "body-parser": "^1.20.2",
+    "body-parser": "^1.20.3",
     "chokidar": "^3.6.0",
-    "dayjs": "^1.11.10",
-    "path-to-regexp": "^6.2.2",
+    "dayjs": "^1.11.13",
+    "path-to-regexp": "^6.3.0",
     "uuid": "^9.0.1",
-    "zustand": "^4.5.2"
+    "zustand": "^4.5.5"
   },
   "devDependencies": {
-    "@umijs/lint": "^4.1.9",
-    "eslint": "^8.20.0",
-    "prettier": "^3.2.5",
-    "typescript": "^5.0.4"
+    "@umijs/lint": "^4.3.20",
+    "eslint": "^8.57.1",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.2"
   }
 }
