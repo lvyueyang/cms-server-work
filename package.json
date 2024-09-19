@@ -12,6 +12,7 @@
     "start:prod": "npm run start:prod --prefix ./server",
     "build": "npm run build:cms && npm run build:server",
     "build:cms": "npm run build --prefix ./clients/cms",
+    "build:fe": "npm run build --prefix ./clients/fe",
     "build:server": "npm run build --prefix ./server",
     "dev:cms": "npm run dev --prefix ./clients/cms",
     "dev:server": "npm run dev --prefix ./server"

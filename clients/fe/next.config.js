@@ -1,3 +1,13 @@
-module.exports = {
-  distDir: '../../.next',
+// @ts-check
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
+
+module.exports = nextConfig;

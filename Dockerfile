@@ -12,6 +12,8 @@ RUN npm i -g pnpm --registry=https://registry.npmmirror.com
 RUN pnpm install --frozen-lockfile
 # 打包 cms-ui
 RUN npm run build:cms
+# 打包 前端页面
+RUN npm run build:fe
 # 打包 server
 RUN npm run build:server
 
@@ -25,6 +27,7 @@ COPY ./pnpm-lock.yaml /app/pnpm-lock.yaml
 COPY ./pnpm-workspace.yaml /app/pnpm-workspace.yaml
 COPY ./work.config.json /app/work.config.json
 COPY ./.npmrc /app/.npmrc
+COPY ./clients/fe /app/clients/fe
 
 COPY --from=build /app/server /app/server
 
@@ -37,8 +40,7 @@ RUN pnpm install --prod --frozen-lockfile
 
 # 不需要 src 下源码了
 RUN rm -rf /app/server/src
-# 卸载 pnpm 
-RUN npm uninstall -g pnpm
+RUN rm -rf /app/clients/fe/src
 
 ENV TZ="Asia/Shanghai"
 

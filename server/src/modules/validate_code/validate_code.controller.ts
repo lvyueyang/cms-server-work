@@ -29,11 +29,24 @@ export class ValidateCodeController {
       code_type: VALIDATE_CODE_TYPE.FORGET_PASSWORD,
       point_type: USER_PONIT_TYPE.AMDIN,
     });
-    const content = this.nunjucksServices.render('validate_code_template', {
+    const ctx = {
       title: '密码重置',
       type: '邮箱验证码',
       code: res.code,
-    });
+    };
+    const content = `<div style="width: 600px;margin: 20px auto;color:#000;background:#fff;border: 1px solid #415A94;">
+  <div style="padding-left:30px;background-color:#415A94;color:#fff;padding:20px 40px;font-size: 21px;">${ctx.title}</div>
+  <div style="padding:40px;">
+    <div style="font-size:24px;line-height:1.5;">${ctx.type}</div>
+    <div style="margin-top: 15px;">
+      <span>您的验证码是：</span>
+      <span style="padding: 0 3px;font-size: 18px;">
+        <b>${ctx.code}</b>
+      </span>
+      <span>，请在 5 分钟内进行验证。如果该验证码不为您本人申请，请无视。</span>
+    </div>
+  </div>
+</div>`;
 
     await this.services.senEmail({
       to: user.email,

@@ -35,11 +35,6 @@ export class RenderViewService implements OnModuleInit {
     return this.server.getRequestHandler()(req, res);
   }
 
-  render(name: string, context?: object) {
-    return '';
-    // return this.env.render(name + '.njk', context);
-  }
-
   async loadGlobal() {
     // const [[news]] = await Promise.all([]);
     // this.env.addGlobal('header', {

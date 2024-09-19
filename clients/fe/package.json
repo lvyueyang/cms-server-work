@@ -1,13 +1,13 @@
 {
-  "name": "client-fe",
+  "name": "@cms/client-fe",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "umi build",
-    "dev": "cross-env PORT=8088 umi dev",
-    "start": "npm run dev"
+    "build": "next build",
+    "dev": "next"
   },
   "dependencies": {
     "next": "^14.2.12"
-  }
+  },
+  "devDependencies": {}
 }
