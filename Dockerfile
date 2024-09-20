@@ -1,4 +1,4 @@
-FROM node:18-alpine AS build
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
@@ -12,11 +12,13 @@ RUN npm i -g pnpm --registry=https://registry.npmmirror.com
 RUN pnpm install --frozen-lockfile
 # 打包 cms-ui
 RUN npm run build:cms
+# 打包 前端页面
+RUN npm run build:fe
 # 打包 server
 RUN npm run build:server
 
 
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -25,8 +27,9 @@ COPY ./pnpm-lock.yaml /app/pnpm-lock.yaml
 COPY ./pnpm-workspace.yaml /app/pnpm-workspace.yaml
 COPY ./work.config.json /app/work.config.json
 COPY ./.npmrc /app/.npmrc
+COPY ./clients/fe /app/clients/fe
 
-COPY --from=build /app/packages/server /app/packages/server
+COPY --from=build /app/server /app/server
 
 # 安装 pnpm
 RUN npm i -g pnpm --registry=https://registry.npmmirror.com
@@ -36,13 +39,12 @@ RUN npm i -g pnpm --registry=https://registry.npmmirror.com
 RUN pnpm install --prod --frozen-lockfile
 
 # 不需要 src 下源码了
-RUN rm -rf /app/packages/server/src
-# 卸载 pnpm 
-RUN npm uninstall -g pnpm
+RUN rm -rf /app/server/src
+RUN rm -rf /app/clients/fe/src
 
 ENV TZ="Asia/Shanghai"
 
 EXPOSE 7000
 
 # 启动
-CMD ["npm", "run", "start:prod", "--prefix", "packages/server"]
+CMD ["npm", "run", "start:prod"]

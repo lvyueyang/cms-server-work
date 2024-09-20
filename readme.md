@@ -2,8 +2,7 @@
 
 # 服务端
 
-基于 nest.js 构建
-数据库 Mysql
+基于 nest.js 构建数据库 Mysql
 
 ## 环境变量
 
@@ -23,9 +22,7 @@ FILE_DATA_DIR_PATH="~/node_server_data/cms_server"
 
 ### 日志与上传文件目录
 
-基于 `FILE_DATA_DIR_PATH`
-日志文件存储于 logs 目录下
-用户上传资源存储于 uploadfile 目录下
+基于 `FILE_DATA_DIR_PATH` 日志文件存储于 logs 目录下用户上传资源存储于 uploadfile 目录下
 
 ## docker 相关
 
@@ -34,9 +31,12 @@ FILE_DATA_DIR_PATH="~/node_server_data/cms_server"
 
 ## 初始化
 
-首次启动需创建超级管理员账户
-需主动打开 `/_cms_admin/_init_root_user` 页面进行超管初始化
+首次启动需创建超级管理员账户需主动打开 `/_cms_admin/_init_root_user` 页面进行超管初始化
 
 # CMS UI 管理后台
 
 umi 构建 React + antd + antd Pro + typescript
+
+# SSR 服务端渲染
+
+基于 Next.js 构建, Next.js与 NestJS 的完美结合!

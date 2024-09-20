@@ -1,5 +1,6 @@
 .vscode
 .DS_Store
+.next/
 yarn-error.log
 lerna-debug.log
 
