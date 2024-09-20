@@ -23,8 +23,7 @@ import { NewsService } from './news.service';
 export class NewsController {
   constructor(private services: NewsService) {}
 
-  @Get('/news')
-  @RenderView()
+  @RenderView('/news')
   async list(@Query() { current = 1 }: { current: number }) {
     const limit = 20;
     const [list, total] = await this.services.findList({
@@ -46,8 +45,7 @@ export class NewsController {
     };
   }
 
-  @Get('/news/:id')
-  @RenderView()
+  @RenderView('/news/:id')
   async detail(@Param() { id }: { id: number }) {
     const { current, next, prev } = await this.services.findNextAndPrev(id);
     return {

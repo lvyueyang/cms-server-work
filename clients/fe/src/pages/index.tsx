@@ -1,10 +1,11 @@
 import React from 'react';
-import { NextPage } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import AVATAR from '../assets/images/avatar.png';
+import { createPage } from '@/lib/ssr';
+export { getServerSideProps } from '@/lib/ssr';
 
-const Home: NextPage = () => {
+export default createPage(function Home() {
   return (
     <div>
       <Image src={AVATAR} alt="" />
@@ -16,6 +17,4 @@ const Home: NextPage = () => {
       </ul>
     </div>
   );
-};
-
-export default Home;
+});

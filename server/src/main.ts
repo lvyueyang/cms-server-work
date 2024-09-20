@@ -32,22 +32,22 @@ async function bootstrap() {
   app.useStaticAssets(uploadFileDir, {
     prefix: '/uploadfile',
   });
-  // app.useStaticAssets(join(process.cwd(), 'public'));
+  // 静态资源
+  app.useStaticAssets(join(process.cwd(), 'public'));
   // 前端模板资源
-  app.useStaticAssets(join(process.cwd(), 'views/static'), {
-    prefix: '/_fe/static',
-  });
+  // app.useStaticAssets(join(process.cwd(), 'public'), {
+  //   prefix: '/_fe/static',
+  // });
 
   // app.use(csurf());
 
   /** Swagger */
   if (process.env.NODE_ENV === 'development') {
     useSwagger(app);
+    cssPretreatment();
   }
 
   await app.listen(PORT);
-
-  cssPretreatment();
 
   // 打印地址
   const ipv4 = getLocalIPv4Address();

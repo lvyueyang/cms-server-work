@@ -2,7 +2,6 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { TEMPLATE_NAME_METADATA } from './render_view.constant';
 import { Request, Response } from 'express';
 import { RenderViewService } from './render_view.service';
 
@@ -16,8 +15,6 @@ export class RenderViewInterceptor implements NestInterceptor {
     const req = context.switchToHttp().getRequest() as Request;
     const res = context.switchToHttp().getResponse() as Response;
     const handler = context.getHandler();
-    const template = this.reflector.get<string>(TEMPLATE_NAME_METADATA, handler);
-
     return next.handle().pipe(
       map(async (context) => {
         return await this.renderViewService.handler(req, res, context);

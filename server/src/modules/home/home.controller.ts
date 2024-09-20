@@ -4,15 +4,13 @@ import { RenderView } from '../render_view/render_view.decorator';
 
 @Controller()
 export class HomeController {
-  @Get('/')
-  @RenderView()
+  @RenderView('/')
   @ApiExcludeEndpoint()
   index() {
     return { data: 'HOME' };
   }
 
-  @Get('/404')
-  @RenderView()
+  @RenderView('/404')
   @ApiExcludeEndpoint()
   pageNotFound() {
     return null;

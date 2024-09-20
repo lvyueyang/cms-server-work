@@ -1,4 +1,5 @@
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { SSRProps } from '@/typing';
 
 export async function getServerSideProps<T>({ req, res }: { req: Request; res: Response }) {
@@ -33,7 +34,8 @@ export function createPage<T extends (...args: any) => any>(component: React.FC<
     return (
       <>
         <Header />
-        {component(props)}
+        <main className="wp layoutContainer">{component(props)}</main>
+        <Footer />
       </>
     );
   };
