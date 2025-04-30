@@ -40,10 +40,13 @@ import {
   UserAdminUpdateRolesDto,
 } from './user_admin.dto';
 import { User } from './user-admin.decorator';
-import { PERMISSION } from './user_admin.permission';
 import { UserAdminService } from './user_admin.service';
+import { createPermGroup } from '@/common/common.permission';
 
-@ApiTags('管理后台用户相关')
+const MOD_NAME = '管理后台用户';
+const createPerm = createPermGroup(MOD_NAME);
+
+@ApiTags(MOD_NAME)
 @Controller('/api/admin/')
 export class UserAdminController {
   constructor(
@@ -57,22 +60,20 @@ export class UserAdminController {
   ) {}
 
   @Get('/admin-user')
-  @ApiOperation({ summary: '用户列表' })
   @ApiOkResponse({
     type: UserAdminListResponseDto,
   })
-  @AdminRoleGuard(PERMISSION.LIST)
+  @AdminRoleGuard(createPerm('admin:user:list', `获取${MOD_NAME}列表`))
   async list(@Query() pagination: UserAdminQueryListDto) {
     const [list, total] = await this.services.findList(pagination);
     return successResponse({ list, total });
   }
 
   @Post('/admin-user')
-  @ApiOperation({ summary: '用户新增' })
   @ApiOkResponse({
     type: UserAdminIdResponseDto,
   })
-  @AdminRoleGuard(PERMISSION.CREATE)
+  @AdminRoleGuard(createPerm('admin:user:crate', `创建${MOD_NAME}`))
   async create(@Body() user: UserAdminCreateDto) {
     const newUser = await this.services.create({
       ...user,
@@ -82,22 +83,20 @@ export class UserAdminController {
   }
 
   @Get('/admin-user/:id')
-  @ApiOperation({ summary: '用户详情' })
   @ApiOkResponse({
     type: UserAdminInfoResponseDto,
   })
-  @AdminRoleGuard(PERMISSION.INFO)
+  @AdminRoleGuard(createPerm('admin:user:info', `获取${MOD_NAME}详情`))
   async detail(@Param() { id }: UserAdminParamsInfoDto) {
     const info = await this.services.findOneById(id);
     return successResponse(info);
   }
 
   @Put('/admin-user/:id')
-  @ApiOperation({ summary: '用户更新' })
   @ApiOkResponse({
     type: UserAdminIdResponseDto,
   })
-  @AdminRoleGuard(PERMISSION.UPDATE)
+  @AdminRoleGuard(createPerm('admin:user:update', `修改${MOD_NAME}信息`))
   async update(@Param() { id }: UserAdminParamsInfoDto, @Body() { cname }: UserAdminUpdateDto) {
     await this.services.update(id, {
       cname,
@@ -106,11 +105,10 @@ export class UserAdminController {
   }
 
   @Post('/admin-user/reset-password/:id')
-  @ApiOperation({ summary: '密码重置' })
   @ApiOkResponse({
     type: UserAdminIdResponseDto,
   })
-  @AdminRoleGuard(PERMISSION.PASSWORD_RESET)
+  @AdminRoleGuard(createPerm('admin:user:passwordreset', `重置${MOD_NAME}密码`))
   async resetPassword(
     @Param() { id }: UserAdminParamsInfoDto,
     @Body() { password }: UserAdminUpdatePasswordDto,
@@ -122,11 +120,10 @@ export class UserAdminController {
   }
 
   @Put('/admin-user/:id/role')
-  @ApiOperation({ summary: '更新角色' })
   @ApiOkResponse({
     type: ResponseResult,
   })
-  @AdminRoleGuard(PERMISSION.ROLE_UPDATE)
+  @AdminRoleGuard(createPerm('admin:user:roleupdate', `更新${MOD_NAME}角色`))
   async updateRoles(
     @Param() { id }: UserAdminParamsInfoDto,
     @Body() { roles }: UserAdminUpdateRolesDto,
@@ -170,7 +167,6 @@ export class UserAdminController {
   }
 
   @Post('/upload')
-  @ApiOperation({ summary: '文件上传' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: '上传文件',
@@ -179,7 +175,7 @@ export class UserAdminController {
   @ApiOkResponse({
     type: ResponseResult<string>,
   })
-  @AdminRoleGuard(PERMISSION.UPLOAD_FILE)
+  @AdminRoleGuard(createPerm('admin:user:uploadfile', `${MOD_NAME}文件上传`))
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@User() user, @UploadedFile() file: Express.Multer.File) {
     const dir_path = `adminfile/${user.id}`;

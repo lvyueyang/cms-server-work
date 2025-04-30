@@ -6,16 +6,18 @@ import { join } from 'path';
 import { getLogDirPath, successResponse } from '@/utils';
 import { AdminRoleGuard } from '../user_admin_role/user_admin_role.guard';
 import { LoggerByDateParamDto, LoggerDetailResponseDto, LoggerListResponseDto } from './logger.dto';
-import { PERMISSION } from './logger.permission';
+import { createPermGroup } from '@/common/common.permission';
 
-@ApiTags('系统日志')
+const MODULE_NAME = '系统日志';
+const createPerm = createPermGroup(MODULE_NAME);
+
+@ApiTags(MODULE_NAME)
 @Controller()
 export class LoggerController {
   logDir = getLogDirPath();
 
   @Get('/api/admin/logger')
-  @ApiOperation({ summary: '日志列表' })
-  @AdminRoleGuard(PERMISSION.LIST)
+  @AdminRoleGuard(createPerm('admin:logger:list', '获取日志列表'))
   @ApiOkResponse({
     type: LoggerListResponseDto,
   })
@@ -31,8 +33,7 @@ export class LoggerController {
   }
 
   @Get('/api/admin/logger/:date')
-  @ApiOperation({ summary: '日志详情' })
-  @AdminRoleGuard(PERMISSION.INFO)
+  @AdminRoleGuard(createPerm('admin:logger:info', '获取日志详情'))
   @ApiOkResponse({
     type: LoggerDetailResponseDto,
   })

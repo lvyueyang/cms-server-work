@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ADMIN_PERMISSION_CODE } from '@/common/common.permission';
+import { ADMIN_PERMISSION_CODE, createPermGroup } from '@/common/common.permission';
 import { successResponse } from '@/utils';
 import { AdminLogin } from '../auth/auth.guard';
 import {
@@ -15,31 +15,31 @@ import {
   AdminRoleUpdatePermissionCodeDto,
 } from './user_admin_role.dto';
 import { AdminRoleGuard } from './user_admin_role.guard';
-import { PERMISSION } from './user_admin_role.permission';
 import { AdminRoleService } from './user_admin_role.service';
 
-@ApiTags('管理后台角色')
+const MOD_NAME = '管理后台角色';
+const createPerm = createPermGroup(MOD_NAME);
+
+@ApiTags(MOD_NAME)
 @Controller()
 export class AdminRoleController {
   constructor(private readonly service: AdminRoleService) {}
 
   @Post('/api/admin/role')
-  @ApiOperation({ summary: '创建角色' })
   @ApiOkResponse({
     type: AdminRoleIdResponseDto,
   })
-  @AdminRoleGuard(PERMISSION.CREATE)
+  @AdminRoleGuard(createPerm('admin:role:create', `创建${MOD_NAME}`))
   async create(@Body() data: AdminRoleCreateDto) {
     const res = await this.service.create(data);
     return successResponse(res.id);
   }
 
   @Get('/api/admin/role')
-  @ApiOperation({ summary: '角色列表' })
   @ApiOkResponse({
     type: AdminRoleListResponseDto,
   })
-  @AdminRoleGuard(PERMISSION.LIST)
+  @AdminRoleGuard(createPerm('admin:role:list', `获取${MOD_NAME}列表`))
   async findAll(@Query() pagination: AdminRoleQueryListDto) {
     const [list, total] = await this.service.findList(pagination);
     return successResponse({ list, total });
@@ -56,22 +56,20 @@ export class AdminRoleController {
   }
 
   @Get('/api/admin/role/:id')
-  @ApiOperation({ summary: '角色详情' })
   @ApiOkResponse({
     type: AdminRoleInfoResponseDto,
   })
-  @AdminRoleGuard(PERMISSION.INFO)
+  @AdminRoleGuard(createPerm('admin:role:info', `获取${MOD_NAME}详情`))
   async findOne(@Param() { id }: AdminRoleParamsInfoDto) {
     const res = await this.service.findOneById(Number(id));
     return successResponse(res);
   }
 
   @Put('/api/admin/role/:id')
-  @ApiOperation({ summary: '更新角色' })
   @ApiOkResponse({
     type: AdminRoleInfoResponseDto,
   })
-  @AdminRoleGuard(PERMISSION.UPDATE)
+  @AdminRoleGuard(createPerm('admin:role:update', `修改${MOD_NAME}信息`))
   async update(
     @Param() { id }: AdminRoleParamsInfoDto,
     @Body() { name, desc }: AdminRoleUpdateDto,
@@ -84,11 +82,10 @@ export class AdminRoleController {
   }
 
   @Put('/api/admin/role/:id/codes')
-  @ApiOperation({ summary: '更新角色权限码' })
   @ApiOkResponse({
     type: AdminRoleInfoResponseDto,
   })
-  @AdminRoleGuard(PERMISSION.UPDATE_CODE)
+  @AdminRoleGuard(createPerm('admin:role:code:update', `修改${MOD_NAME}权限码`))
   async updateCodes(
     @Param() { id }: AdminRoleParamsInfoDto,
     @Body() { codes }: AdminRoleUpdatePermissionCodeDto,
@@ -104,7 +101,7 @@ export class AdminRoleController {
   @ApiOkResponse({
     type: AdminRoleInfoResponseDto,
   })
-  @AdminRoleGuard(PERMISSION.DELETE)
+  @AdminRoleGuard(createPerm('admin:role:delete', `删除${MOD_NAME}`))
   async remove(@Param() { id }: AdminRoleParamsInfoDto) {
     await this.service.remove(Number(id));
     return successResponse(id);

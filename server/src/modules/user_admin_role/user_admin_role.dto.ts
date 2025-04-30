@@ -1,7 +1,7 @@
-import { ApiProperty, OmitType } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { ApiProperty, OmitType, PickType } from '@nestjs/swagger';
 import { Pagination, ResponseResult } from '@/interface';
 import { AdminRole } from './user_admin_role.entity';
+import { CodeItem } from '@/common/common.permission';
 
 export class AdminRoleInfo extends OmitType(AdminRole, ['users']) {}
 class AdminRoleList {
@@ -10,18 +10,7 @@ class AdminRoleList {
 }
 
 /** 新增 */
-export class AdminRoleCreateDto {
-  @ApiProperty({
-    description: '角色名称',
-  })
-  @IsNotEmpty()
-  readonly name: AdminRole['name'];
-
-  @ApiProperty({
-    description: '角色描述',
-  })
-  readonly desc?: AdminRole['desc'];
-}
+export class AdminRoleCreateDto extends PickType(AdminRole, ['name', 'desc']) {}
 
 /** 更新权限码 */
 export class AdminRoleUpdatePermissionCodeDto {
@@ -74,4 +63,29 @@ class CodeInfo {
 /** 权限码列表 Response */
 export class AdminPermissionCodeListResponseDto extends ResponseResult {
   data: CodeInfo[];
+}
+
+export class GuardOpt {
+  /** 接口名称 */
+  @ApiProperty()
+  summary?: string;
+  /** 接口备注 */
+  @ApiProperty()
+  desc?: string;
+  /** 不需要查询条件 */
+  @ApiProperty()
+  not_query_params?: boolean;
+}
+
+export class ApiMetadata {
+  @ApiProperty()
+  summary: string;
+  @ApiProperty()
+  description: string;
+  @ApiProperty()
+  codeItem: CodeItem;
+  @ApiProperty()
+  opt?: GuardOpt;
+  @ApiProperty()
+  desc?: string;
 }

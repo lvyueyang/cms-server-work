@@ -13,8 +13,11 @@ import {
   BannerQueryListDto,
   BannerUpdateDto,
 } from './banner.dto';
-import { PERMISSION } from './banner.permission';
 import { BannerService } from './banner.service';
+import { createPermGroup } from '@/common/common.permission';
+
+const MODULE_NAME = '广告';
+const createPerm = createPermGroup(MODULE_NAME);
 
 @ApiTags('广告')
 @Controller()
@@ -22,12 +25,11 @@ export class BannerController {
   constructor(private services: BannerService) {}
 
   @Get('/api/admin/banner')
-  @ApiOperation({ summary: '广告列表' })
   @ApiOkResponse({
     type: BannerListResponseDto,
   })
   @ApiBody({ type: BannerQueryListDto })
-  @AdminRoleGuard(PERMISSION.LIST)
+  @AdminRoleGuard(createPerm('admin:banner:list', `获取${MODULE_NAME}列表`))
   async apiList(@Query() query: BannerQueryListDto) {
     const [list, total] = await this.services.findList(query);
     return successResponse({ list, total });
@@ -38,40 +40,37 @@ export class BannerController {
   @ApiOkResponse({
     type: BannerDetailResponseDto,
   })
-  @AdminRoleGuard(PERMISSION.INFO)
+  @AdminRoleGuard(createPerm('admin:banner:info', `获取${MODULE_NAME}详情`))
   async apiDetail(@Param() { id }: BannerByIdParamDto) {
     const data = await this.services.findById(id);
     return successResponse(data);
   }
 
   @Post('/api/admin/banner')
-  @ApiOperation({ summary: '新增广告' })
   @ApiOkResponse({
     type: BannerDetailResponseDto,
   })
-  @AdminRoleGuard(PERMISSION.CREATE)
+  @AdminRoleGuard(createPerm('admin:banner:create', `新增${MODULE_NAME}`))
   async apiCreate(@Body() data: BannerCreateDto, @User() user) {
     const newData = await this.services.create(data, user);
     return successResponse(newData, '创建成功');
   }
 
   @Put('/api/admin/banner/:id')
-  @ApiOperation({ summary: '修改广告' })
   @ApiOkResponse({
     type: BannerDetailIdResponseDto,
   })
-  @AdminRoleGuard(PERMISSION.UPDATE)
+  @AdminRoleGuard(createPerm('admin:banner:update', `修改${MODULE_NAME}`))
   async apiUpdate(@Param() { id }: BannerByIdParamDto, @Body() data: BannerUpdateDto) {
     await this.services.update(id, data);
     return successResponse(id, '修改成功');
   }
 
   @Delete('/api/admin/banner/:id')
-  @ApiOperation({ summary: '删除广告' })
   @ApiOkResponse({
     type: ResponseResult<null>,
   })
-  @AdminRoleGuard(PERMISSION.DELETE)
+  @AdminRoleGuard(createPerm('admin:banner:delete', `删除${MODULE_NAME}`))
   async apiDelete(@Param() { id }: BannerByIdParamDto) {
     await this.services.remove(id);
     return successResponse(null, '删除成功');

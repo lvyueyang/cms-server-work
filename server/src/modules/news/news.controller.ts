@@ -15,10 +15,13 @@ import {
   NewsQueryListDto,
   NewsUpdateDto,
 } from './news.dto';
-import { PERMISSION } from './news.permission';
 import { NewsService } from './news.service';
+import { createPermGroup } from '@/common/common.permission';
 
-@ApiTags('新闻中心')
+const MODULE_NAME = '新闻';
+const createPerm = createPermGroup(MODULE_NAME);
+
+@ApiTags(MODULE_NAME)
 @Controller()
 export class NewsController {
   constructor(private services: NewsService) {}
@@ -69,56 +72,51 @@ export class NewsController {
   }
 
   @Get('/api/admin/news')
-  @ApiOperation({ summary: '新闻中心列表' })
   @ApiOkResponse({
     type: NewsListResponseDto,
   })
   @ApiBody({ type: NewsQueryListDto })
-  @AdminRoleGuard(PERMISSION.LIST)
+  @AdminRoleGuard(createPerm('admin:news:list', `获取${MODULE_NAME}列表`))
   async apiList(@Query() query: NewsQueryListDto) {
     const [list, total] = await this.services.findList(query);
     return successResponse({ list, total });
   }
 
   @Get('/api/admin/news/:id')
-  @ApiOperation({ summary: '新闻中心详情' })
   @ApiOkResponse({
     type: NewsDetailResponseDto,
   })
-  @AdminRoleGuard(PERMISSION.INFO)
+  @AdminRoleGuard(createPerm('admin:news:info', `获取${MODULE_NAME}详情`))
   async apiDetail(@Param() { id }: NewsByIdParamDto) {
     const data = await this.services.findById(id);
     return successResponse(data);
   }
 
   @Post('/api/admin/news')
-  @ApiOperation({ summary: '新增新闻中心' })
   @ApiOkResponse({
     type: NewsDetailResponseDto,
   })
-  @AdminRoleGuard(PERMISSION.CREATE)
+  @AdminRoleGuard(createPerm('admin:news:create', `新增${MODULE_NAME}`))
   async apiCreate(@Body() data: NewsCreateDto, @User() user) {
     const newData = await this.services.create(data, user);
     return successResponse(newData, '创建成功');
   }
 
   @Put('/api/admin/news/:id')
-  @ApiOperation({ summary: '修改新闻中心' })
   @ApiOkResponse({
     type: NewsDetailIdResponseDto,
   })
-  @AdminRoleGuard(PERMISSION.UPDATE)
+  @AdminRoleGuard(createPerm('admin:news:update', `修改${MODULE_NAME}`))
   async apiUpdate(@Param() { id }: NewsByIdParamDto, @Body() data: NewsUpdateDto) {
     await this.services.update(id, data);
     return successResponse(id, '修改成功');
   }
 
   @Delete('/api/admin/news/:id')
-  @ApiOperation({ summary: '删除新闻中心' })
   @ApiOkResponse({
     type: ResponseResult<null>,
   })
-  @AdminRoleGuard(PERMISSION.DELETE)
+  @AdminRoleGuard(createPerm('admin:news:delete', `删除${MODULE_NAME}`))
   async apiDelete(@Param() { id }: NewsByIdParamDto) {
     await this.services.remove(id);
     return successResponse(null, '删除成功');

@@ -16,3 +16,5 @@ export const enum SMS_CODE_KEY {
   // C端用户登录注册
   USER_LOGIN = 'user-login',
 }
+
+export const PERM_CODE_METADATA = 'PERM_CODE_ITEM';
