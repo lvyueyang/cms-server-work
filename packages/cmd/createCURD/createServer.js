@@ -25,7 +25,7 @@ function createServerModule(name, cname) {
     cname: cname,
     permissionName: name.toLocaleUpperCase(),
   };
-  const output = path.join(__dirname, '../../server/src/modules', res.name);
+  const output = path.join(__dirname, '../../../server/src/modules', res.name);
   fse.ensureDirSync(output);
 
   if (fs.readdirSync(output).length) {

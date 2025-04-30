@@ -1,32 +1,31 @@
-import Header from '@/components/Header';
-import PageContainer from '@/components/PageContainer';
 import { AvailableSwitch } from '@/components/Available';
-import { {{entityName}}Info } from '@/interface/serverApi';
+import { {{entityName}}Info } from '@cms/api-interface';
 import { transformPagination } from '@/utils';
-import { message } from '@/utils/message';
+import { message } from '@/utils/notice';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
-import { Button, Input, Popconfirm, Space, Form } from 'antd';
+import { Button, Input, Popconfirm, Space, Form, Modal, Switch } from 'antd';
 import { useRef, useState } from 'react';
 import { history, Link } from 'umi';
 import { createApi, getListApi, removeApi, updateApi } from './module';
 import { ModalType, useFormModal } from '@/hooks/useFormModal';
+import UploadImage from '@/components/UploadImage';
+import { RecommendFormItem } from '@/components/RecommendFormItem';
 
 type TableItem = {{entityName}}Info;
 
-export default function {{entityName}}ListPage() {
+export default function {{entityName}}Page() {
   const [searchForm, setSearchForm] = useState({
     keyword: '',
   });
   const tableRef = useRef<ActionType>();
-
-  const formModal = useFormModal<SiteColumnCreateDto & { id?: number }>({
+  const formModal = useFormModal<{{entityName}}CreateDto | {{entityName}}UpdateDto>({
     submit: (values, modal) => {
-      if (modal.type === ModalType.UPDATE && values.id) {
-        return updateApi(values.id, values).then(() => {
+      if (modal.type === ModalType.UPDATE) {
+        return updateApi(values as {{entityName}}UpdateDto).then(() => {
           tableRef.current?.reload();
         });
       }
-      return createApi(values).then(() => {
+      return createApi(values as {{entityName}}CreateDto).then(() => {
         tableRef.current?.reload();
       });
     },
@@ -36,17 +35,18 @@ export default function {{entityName}}ListPage() {
     {
       dataIndex: 'cover',
       title: '缩略图',
+      width: 60,
       valueType: 'image',
     },
     {
       dataIndex: 'title',
       title: '{{cname}}名称',
+      sorter: true,
     },
     {
-      dataIndex: 'desc',
-      title: '{{cname}}描述',
-      width: 300,
-      ellipsis: true,
+      dataIndex: 'recommend',
+      title: '推荐等级',
+      sorter: true,
     },
     {
       dataIndex: 'is_available',
@@ -57,7 +57,8 @@ export default function {{entityName}}ListPage() {
             value={row.is_available}
             tableRef={tableRef}
             request={() =>
-              updateApi(row.id, {
+              updateApi({
+                id: row.id,
                 is_available: !row.is_available,
               })
             }
@@ -66,14 +67,21 @@ export default function {{entityName}}ListPage() {
       },
     },
     {
+      dataIndex: 'desc',
+      title: '{{cname}}描述',
+      ellipsis: true,
+    },
+    {
       dataIndex: 'create_date',
       title: '创建时间',
       valueType: 'dateTime',
+      sorter: true,
     },
     {
       dataIndex: 'update_date',
       title: '修改时间',
       valueType: 'dateTime',
+      sorter: true,
     },
     {
       dataIndex: 'operate',
@@ -116,54 +124,52 @@ export default function {{entityName}}ListPage() {
 
   return (
     <>
-      <Header />
-      <PageContainer>
-        <ProTable<TableItem>
-          columns={columns}
-          rowKey="id"
-          bordered
-          search={false}
-          request={(params) => {
-            return getListApi({ ...transformPagination(params), ...searchForm }).then(
-              ({ data }) => {
-                return { data: data.data.list, total: data.data.total || 0 };
-              },
-            );
-          {{ '}}' }}
-          actionRef={tableRef}
-          headerTitle={
-            <Input.Search
-              value={searchForm.keyword}
-              onChange={(e) => {
-                setSearchForm((state) => ({
-                  ...state,
-                  keyword: e.target.value.trim(),
-                }));
-              {{ '}}' }}
-              style={{ '{{' }} width: 400 {{ '}}' }}
-              placeholder="请输入{{cname}}名称搜索"
-              enterButton={<>搜索</>}
-              onSearch={() => {
-                tableRef.current?.setPageInfo?.({ current: 1 });
-                tableRef.current?.reload();
-              {{ '}}' }}
-            />
-          }
-          toolBarRender={() => [
-            <Button
-              key="create"
-              type="primary"
-              onClick={() => {
-                history.push('/{{pathName}}/create');
-                formModal.form.resetFields();
-                formModal.formModalShow();
-              {{ '}}' }}
-            >
-              新增{{cname}}
-            </Button>,
-          ]}
-        />
-      </PageContainer>
+      <ProTable<TableItem>
+        columns={columns}
+        rowKey="id"
+        bordered
+        search={false}
+        request={(params) => {
+          return getListApi({ ...transformPagination(params), ...searchForm }).then(
+            ({ data }) => {
+              return { data: data.data.list, total: data.data.total || 0 };
+            },
+          );
+        {{ '}}' }}
+        actionRef={tableRef}
+        headerTitle={
+          <Input.Search
+            value={searchForm.keyword}
+            onChange={(e) => {
+              setSearchForm((state) => ({
+                ...state,
+                keyword: e.target.value.trim(),
+              }));
+            {{ '}}' }}
+            style={{ '{{' }} width: 400 {{ '}}' }}
+            placeholder="请输入{{cname}}名称搜索"
+            allowClear
+            enterButton={<>搜索</>}
+            onSearch={() => {
+              tableRef.current?.setPageInfo?.({ current: 1 });
+              tableRef.current?.reload();
+            {{ '}}' }}
+          />
+        }
+        toolBarRender={() => [
+          <Button
+            key="create"
+            type="primary"
+            onClick={() => {
+              history.push('/{{pathName}}/create');
+              formModal.form.resetFields();
+              formModal.formModalShow();
+            {{ '}}' }}
+          >
+            新增{{cname}}
+          </Button>,
+        ]}
+      />
       <Modal
         maskClosable={false}
         open={formModal.formModal.open}
@@ -177,8 +183,8 @@ export default function {{entityName}}ListPage() {
         <br />
         <Form form={formModal.form} labelCol={{'{{'}} span: 4 {{'}}'}} initialValues={{'{{'}} redundancy_count: 1 {{'}}'}}>
           {formModal.formModal.type !== ModalType.CREATE && (
-            <Form.Item name="id" hidden>
-              <Input />
+            <Form.Item label="{{cname}}ID" name="id" hidden>
+              <Input disabled />
             </Form.Item>
           )}
           <Form.Item label="{{cname}}标题" name="title" rules={[{ required: true }]}>
@@ -194,15 +200,9 @@ export default function {{entityName}}ListPage() {
           <Form.Item label="上架状态" name="is_available" valuePropName="checked">
             <Switch checkedChildren="上架" unCheckedChildren="下架" />
           </Form.Item>
+          <RecommendFormItem />
           <Form.Item label="{{cname}}描述" name="desc">
             <Input.TextArea />
-          </Form.Item>
-          <Form.Item
-            label="{{cname}}详情"
-            name="content"
-            rules={[{ required: true, validateTrigger: 'submit' }]}
-          >
-            <Editor style={{ '{{' }} height: 400 {{ '}}' }} />
           </Form.Item>
         </Form>
       </Modal>

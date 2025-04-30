@@ -1,11 +1,13 @@
-import { NewsInfo } from '@cms/api-interface';
+import { NewsCreateDto, NewsInfo, NewsUpdateDto } from '@cms/api-interface';
 import { transformPagination, transformSort } from '@/utils';
 import { message } from '@/utils/notice';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, Input, Popconfirm, Space } from 'antd';
 import { useRef, useState } from 'react';
 import { Link, history } from 'umi';
-import { getListApi, removeApi } from './module';
+import { createApi, getListApi, removeApi, updateApi } from './module';
+import { AvailableSwitch } from '@/components/Available';
+import { ModalType, useFormModal } from '@/hooks/useFormModal';
 
 type TableItem = NewsInfo;
 
@@ -14,6 +16,18 @@ export default function NewsPage() {
     keyword: '',
   });
   const tableRef = useRef<ActionType>();
+  const formModal = useFormModal<NewsCreateDto | NewsUpdateDto>({
+    submit: (values, modal) => {
+      if (modal.type === ModalType.UPDATE) {
+        return updateApi(values as NewsUpdateDto).then(() => {
+          tableRef.current?.reload();
+        });
+      }
+      return createApi(values as NewsCreateDto).then(() => {
+        tableRef.current?.reload();
+      });
+    },
+  });
 
   const columns: ProColumns<TableItem>[] = [
     {
@@ -31,6 +45,24 @@ export default function NewsPage() {
       dataIndex: 'recommend',
       title: '推荐等级',
       sorter: true,
+    },
+    {
+      dataIndex: 'is_available',
+      title: '是否可用',
+      render: (_, row) => {
+        return (
+          <AvailableSwitch
+            value={row.is_available}
+            tableRef={tableRef}
+            request={() =>
+              updateApi({
+                id: row.id,
+                is_available: !row.is_available,
+              })
+            }
+          />
+        );
+      },
     },
     {
       dataIndex: 'push_date',

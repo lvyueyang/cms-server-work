@@ -23,7 +23,7 @@ function createCms(name, cname) {
     name: name,
     cname: cname,
   };
-  const output = path.join(__dirname, '../../client-cms/src/pages', res.pathName);
+  const output = path.join(__dirname, '../../../clients/cms/src/pages', res.pathName);
   console.log('output: ', output);
 
   fse.ensureDirSync(output);

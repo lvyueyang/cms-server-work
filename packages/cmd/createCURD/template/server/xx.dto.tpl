@@ -1,28 +1,39 @@
-import { ApiProperty, PickType } from '@nestjs/swagger';
+import { ApiProperty, PartialType, PickType } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-import {
-  PaginationAndOrder,
-  ResponseResult,
-} from '@/interface';
+import { PaginationAndOrder, ResponseResult } from '@/interface';
 import { {{entityName}} } from './{{name}}.entity';
 
 export class {{entityName}}Info extends {{entityName}} {}
 
 export class {{entityName}}List {
+  @ApiProperty({
+    description: '列表',
+  })
   list: {{entityName}}Info[];
+  @ApiProperty({
+    description: '总数',
+  })
   total: number;
 }
+
 /** 新增 */
 export class {{entityName}}CreateDto extends PickType({{entityName}}, [
   'title',
   'desc',
   'cover',
-  'cover',
   'content',
+  'recommend',
+  'is_available',
 ]) {}
 
 /** 修改 */
-export class {{entityName}}UpdateDto extends {{entityName}}CreateDto {}
+export class {{entityName}}UpdateDto extends PartialType({{entityName}}CreateDto) {
+  @ApiProperty({
+    description: '{{cname}} ID',
+  })
+  @IsNotEmpty()
+  readonly id: {{entityName}}['id'];
+}
 
 /** Params */
 export class {{entityName}}ByIdParamDto {
@@ -34,7 +45,7 @@ export class {{entityName}}ByIdParamDto {
 }
 
 /** 查询列表 */
-export class {{entityName}}QueryListDto extends PaginationAndOrder<keyof {{entityName}}> {
+export class {{entityName}}QueryListDto extends PaginationAndOrder<{{entityName}}> {
   @ApiProperty({ description: '{{cname}}名称-模糊搜索' })
   keyword?: string;
 }

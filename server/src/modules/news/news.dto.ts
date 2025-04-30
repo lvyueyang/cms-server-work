@@ -1,4 +1,4 @@
-import { ApiProperty, PickType } from '@nestjs/swagger';
+import { ApiProperty, PartialType, PickType } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 import { Pagination, ResponseResult } from '@/interface';
 import { News } from './news.entity';
@@ -28,7 +28,7 @@ export class NewsCreateDto extends PickType(News, [
 ]) {}
 
 /** 修改 */
-export class NewsUpdateDto extends NewsCreateDto {
+export class NewsUpdateDto extends PartialType(NewsCreateDto) {
   @ApiProperty({
     description: '新闻 ID',
   })

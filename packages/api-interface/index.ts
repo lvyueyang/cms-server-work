@@ -532,22 +532,22 @@ export interface NewsCreateDto {
 
 export interface NewsUpdateDto {
   /** 标题 */
-  title: string;
+  title?: string;
   /** 封面图 */
-  cover: string;
+  cover?: string;
   /** 描述 */
   desc?: string;
   /** 详情 */
-  content: string;
+  content?: string;
   /**
    * 发布时间
    * @format date-time
    */
   push_date?: string;
   /** 推荐等级, 0 为不推荐, 后续可根据值大小进行排序 */
-  recommend: number;
+  recommend?: number;
   /** 是否可用 */
-  is_available: boolean;
+  is_available?: boolean;
   /** 新闻 ID */
   id: number;
 }

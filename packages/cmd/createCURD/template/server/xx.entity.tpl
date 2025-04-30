@@ -45,6 +45,18 @@ export class {{entityName}} extends BaseEntity {
   content: string;
 
   @ApiProperty({
+    description: '推荐等级, 0 为不推荐, 后续可根据值大小进行排序',
+  })
+  @Column({ default: 0 })
+  recommend: number;
+
+  @ApiProperty({
+    description: '是否可用',
+  })
+  @Column({ default: true })
+  is_available: boolean;
+
+  @ApiProperty({
     description: '是否已删除',
   })
   @Column({ default: false })

@@ -1,16 +1,16 @@
 import Editor from '@/components/Editor';
 import UploadImage from '@/components/UploadImage';
-import { NewsUpdateDto } from '@cms/api-interface';
+import { NewsCreateDto, NewsUpdateDto } from '@cms/api-interface';
 import { message } from '@/utils/notice';
 import { useRequest } from 'ahooks';
-import { Button, DatePicker, Form, Input, Row } from 'antd';
+import { Button, DatePicker, Form, Input, Row, Switch } from 'antd';
 import { useEffect } from 'react';
 import { history, useParams } from 'umi';
 import { createApi, getDetailApi, updateApi } from './module';
 import dayjs from 'dayjs';
 import { RecommendFormItem } from '@/components/RecommendFormItem';
 
-type FormValues = NewsUpdateDto;
+type FormValues = NewsUpdateDto | NewsUpdateDto;
 
 export default function NewsFormPage() {
   const { id } = useParams();
@@ -25,7 +25,7 @@ export default function NewsFormPage() {
           ...(values.push_date
             ? { push_date: dayjs(values.push_date).format('YYYY-MM-DD HH:mm') }
             : void 0),
-        });
+        } as NewsUpdateDto);
         message.success('更新成功');
       } else {
         await createApi({
@@ -33,7 +33,7 @@ export default function NewsFormPage() {
           ...(values.push_date
             ? { push_date: dayjs(values.push_date).format('YYYY-MM-DD HH:mm') }
             : void 0),
-        });
+        } as NewsCreateDto);
         history.push('/news/list');
         message.success('创建成功');
       }
@@ -62,6 +62,9 @@ export default function NewsFormPage() {
         </Form.Item>
         <Form.Item label="新闻标题" name="title" rules={[{ required: true }]}>
           <Input placeholder="请输入" />
+        </Form.Item>
+        <Form.Item label="是否上架" name="is_available" valuePropName="checked">
+          <Switch checkedChildren="上架" unCheckedChildren="下架" />
         </Form.Item>
         <Form.Item
           label="新闻封面"

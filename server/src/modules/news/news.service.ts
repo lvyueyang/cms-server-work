@@ -46,14 +46,14 @@ export class NewsService {
       is_delete: false,
     });
     if (!isExisted) {
-      throw new BadRequestException('新闻不存在', 'product not found');
+      throw new BadRequestException('新闻不存在', 'news not found');
     }
     return isExisted;
   }
 
   async findNextAndPrev(id: number) {
-    const currentNews = await this.findById(id);
-    const [nextNews, prevNews] = await Promise.all([
+    const currentInfo = await this.findById(id);
+    const [nextInfo, prevInfo] = await Promise.all([
       this.repository.findOne({
         where: {
           id: LessThan(id),
@@ -74,9 +74,9 @@ export class NewsService {
       }),
     ]);
     return {
-      next: nextNews || null,
-      prev: prevNews || null,
-      current: currentNews,
+      next: nextInfo || null,
+      prev: prevInfo || null,
+      current: currentInfo,
     };
   }
 
@@ -106,7 +106,7 @@ export class NewsService {
       is_delete: false,
     });
     if (!isExisted) {
-      throw new BadRequestException('新闻不存在', 'product not found');
+      throw new BadRequestException('新闻不存在', 'news not found');
     }
     return this.repository.update(id, { is_delete: true });
   }
@@ -117,7 +117,7 @@ export class NewsService {
       is_delete: false,
     });
     if (!isExisted) {
-      throw new BadRequestException('新闻不存在', 'product not found');
+      throw new BadRequestException('新闻不存在', 'news not found');
     }
     return this.repository.update(data.id, {
       title: data.title,
