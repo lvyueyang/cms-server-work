@@ -7,12 +7,12 @@ export default defineConfig({
   npmClient: 'pnpm',
   proxy: {
     '/api': {
-      target: 'http://127.0.0.1:7100/',
+      target: 'http://127.0.0.1:7001/',
       changeOrigin: true,
       secure: false,
     },
     '/uploadfile': {
-      target: 'http://127.0.0.1:7100/',
+      target: 'http://127.0.0.1:7001/',
       changeOrigin: true,
       secure: false,
     },
