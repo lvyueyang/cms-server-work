@@ -27,7 +27,7 @@ const workConfig = getWorkConfig();
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.prod.env', '.dev.env', '.default.env'],
+      envFilePath: ['env/.prod.env', 'env/.dev.env'],
       load: [...config],
       isGlobal: true,
     }),
