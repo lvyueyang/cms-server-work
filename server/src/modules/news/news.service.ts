@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Order, Pagination } from '@/interface';
+import { CRUDQuery } from '@/interface';
 import { createOrder } from '../../utils';
 import { paginationTransform } from '../../utils/whereTransform';
 import { LessThan, Like, MoreThan, Repository } from 'typeorm';
 import { UserAdmin } from '../user_admin/user_admin.entity';
 import { News } from './news.entity';
-import { NewsBody } from './news.interface';
+import { NewsCreateDto, NewsUpdateDto } from './news.dto';
 
 @Injectable()
 export class NewsService {
@@ -21,7 +21,7 @@ export class NewsService {
     });
   }
 
-  findList({ keyword = '', ...params }: Pagination & Order<keyof News> & { keyword?: string }) {
+  findList({ keyword = '', ...params }: CRUDQuery<News>) {
     const { skip, take } = paginationTransform(params);
     const { order } = createOrder(params) || {};
     const find = this.repository
@@ -80,7 +80,7 @@ export class NewsService {
     };
   }
 
-  async create(data: NewsBody, author: UserAdmin) {
+  async create(data: NewsCreateDto, author: UserAdmin) {
     const isExisted = await this.repository.findOneBy({
       title: data.title,
       is_delete: false,
@@ -88,7 +88,16 @@ export class NewsService {
     if (isExisted) {
       throw new BadRequestException('新闻已存在');
     }
-    return this.repository.save({ ...data, author });
+    return this.repository.save({
+      title: data.title,
+      desc: data.desc,
+      cover: data.cover,
+      content: data.content,
+      recommend: data.recommend,
+      push_date: data.push_date,
+      is_available: data.is_available,
+      author,
+    });
   }
 
   async remove(id: number) {
@@ -102,21 +111,22 @@ export class NewsService {
     return this.repository.update(id, { is_delete: true });
   }
 
-  async update(id: number, data: Partial<NewsBody>) {
+  async update(data: Partial<NewsUpdateDto>) {
     const isExisted = await this.repository.findOneBy({
-      id,
+      id: data.id,
       is_delete: false,
     });
     if (!isExisted) {
       throw new BadRequestException('新闻不存在', 'product not found');
     }
-    return this.repository.update(id, {
+    return this.repository.update(data.id, {
       title: data.title,
       desc: data.desc,
       cover: data.cover,
       content: data.content,
       recommend: data.recommend,
       push_date: data.push_date,
+      is_available: data.is_available,
     });
   }
 }

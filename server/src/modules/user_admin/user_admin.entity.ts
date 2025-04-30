@@ -3,7 +3,6 @@ import { BaseEntity } from '@/common/base.entity';
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { News } from '../news/news.entity';
 import { AdminRole } from '../user_admin_role/user_admin_role.entity';
-import { Banner } from '../banner/banner.entity';
 
 /** 管理员账户 */
 @Entity({ orderBy: { is_root: 'DESC', create_date: 'DESC' } })
@@ -76,12 +75,4 @@ export class UserAdmin extends BaseEntity {
   @ApiHideProperty()
   @OneToMany(() => News, (col) => col.author)
   news: News[];
-
-  /** 广告 */
-  @ApiProperty({
-    description: '广告',
-  })
-  @ApiHideProperty()
-  @OneToMany(() => Banner, (col) => col.author)
-  banner: Banner[];
 }

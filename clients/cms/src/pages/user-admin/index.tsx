@@ -8,7 +8,7 @@ import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { useRequest } from 'ahooks';
 import { Button, Form, Input, Modal, Space, Spin, Tag, Transfer } from 'antd';
 import { Key, useRef, useState } from 'react';
-import { getListApi as getRoleListApi } from '../adminRole/module/services';
+import { getListApi as getRoleListApi } from '../admin-role/module/services';
 import { createUser, getUserList, resetpasswordUser, updateRole, updateUser } from './module';
 
 type TableItem = UserAdminInfo;

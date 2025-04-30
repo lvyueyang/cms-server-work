@@ -88,7 +88,7 @@ function expandHomeDir(dir: string) {
 }
 
 /** 创建排序查询 */
-export function createOrder<T extends string>({ order_key, order_type }: Order<T>) {
+export function createOrder<T extends Record<string, any>>({ order_key, order_type }: Order<T>) {
   if (order_key && order_type) {
     return {
       order: {

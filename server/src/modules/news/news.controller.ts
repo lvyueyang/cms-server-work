@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
-import { ApiBody, ApiExcludeEndpoint, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Param, Post, Query } from '@nestjs/common';
+import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import * as dayjs from 'dayjs';
 import { ResponseResult } from '@/interface';
 import { User } from '@/modules/user_admin/user-admin.decorator';
@@ -71,28 +71,28 @@ export class NewsController {
     };
   }
 
-  @Get('/api/admin/news')
+  @Post('/api/admin/news/list')
   @ApiOkResponse({
     type: NewsListResponseDto,
   })
   @ApiBody({ type: NewsQueryListDto })
   @AdminRoleGuard(createPerm('admin:news:list', `获取${MODULE_NAME}列表`))
-  async apiList(@Query() query: NewsQueryListDto) {
-    const [list, total] = await this.services.findList(query);
+  async apiList(@Body() body: NewsQueryListDto) {
+    const [list, total] = await this.services.findList(body);
     return successResponse({ list, total });
   }
 
-  @Get('/api/admin/news/:id')
+  @Post('/api/admin/news/info')
   @ApiOkResponse({
     type: NewsDetailResponseDto,
   })
   @AdminRoleGuard(createPerm('admin:news:info', `获取${MODULE_NAME}详情`))
-  async apiDetail(@Param() { id }: NewsByIdParamDto) {
+  async apiDetail(@Body() { id }: NewsByIdParamDto) {
     const data = await this.services.findById(id);
     return successResponse(data);
   }
 
-  @Post('/api/admin/news')
+  @Post('/api/admin/news/create')
   @ApiOkResponse({
     type: NewsDetailResponseDto,
   })
@@ -102,22 +102,22 @@ export class NewsController {
     return successResponse(newData, '创建成功');
   }
 
-  @Put('/api/admin/news/:id')
+  @Post('/api/admin/news/update')
   @ApiOkResponse({
     type: NewsDetailIdResponseDto,
   })
   @AdminRoleGuard(createPerm('admin:news:update', `修改${MODULE_NAME}`))
-  async apiUpdate(@Param() { id }: NewsByIdParamDto, @Body() data: NewsUpdateDto) {
-    await this.services.update(id, data);
-    return successResponse(id, '修改成功');
+  async apiUpdate(@Body() data: NewsUpdateDto) {
+    await this.services.update(data);
+    return successResponse(data.id, '修改成功');
   }
 
-  @Delete('/api/admin/news/:id')
+  @Post('/api/admin/news/delete')
   @ApiOkResponse({
     type: ResponseResult<null>,
   })
   @AdminRoleGuard(createPerm('admin:news:delete', `删除${MODULE_NAME}`))
-  async apiDelete(@Param() { id }: NewsByIdParamDto) {
+  async apiDelete(@Body() { id }: NewsByIdParamDto) {
     await this.services.remove(id);
     return successResponse(null, '删除成功');
   }

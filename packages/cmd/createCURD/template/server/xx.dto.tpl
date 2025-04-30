@@ -17,6 +17,7 @@ export class {{entityName}}CreateDto extends PickType({{entityName}}, [
   'title',
   'desc',
   'cover',
+  'cover',
   'content',
 ]) {}
 

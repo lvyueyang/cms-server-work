@@ -4,7 +4,7 @@ const router = {
   routes: [
     { path: '/login', component: 'login' },
     { path: '/nopassword', component: 'nopassword' },
-    { path: '/_init_root_user', component: 'initRootUser' },
+    { path: '/_init_root_user', component: 'init-root-user' },
     { path: '/', redirect: '/user-admin/user-list' },
     {
       path: '/',
@@ -30,7 +30,7 @@ const router = {
             },
             {
               path: '/user-admin/role-list',
-              component: 'adminRole',
+              component: 'admin-role',
               title: '角色管理',
             },
           ],
@@ -64,29 +64,29 @@ const router = {
             },
           ],
         },
-        {
-          path: '/banner',
-          title: '广告管理',
-          routes: [
-            {
-              path: '/banner/list',
-              component: 'banner',
-              title: '广告列表',
-            },
-            {
-              path: '/banner/create',
-              component: 'banner/form',
-              title: '新增广告',
-              menuHide: true,
-            },
-            {
-              path: '/banner/update/:id',
-              component: 'banner/form',
-              title: '修改广告',
-              menuHide: true,
-            },
-          ],
-        },
+        // {
+        //   path: '/banner',
+        //   title: '广告管理',
+        //   routes: [
+        //     {
+        //       path: '/banner/list',
+        //       component: 'banner',
+        //       title: '广告列表',
+        //     },
+        //     {
+        //       path: '/banner/create',
+        //       component: 'banner/form',
+        //       title: '新增广告',
+        //       menuHide: true,
+        //     },
+        //     {
+        //       path: '/banner/update/:id',
+        //       component: 'banner/form',
+        //       title: '修改广告',
+        //       menuHide: true,
+        //     },
+        //   ],
+        // },
       ],
     },
     { path: '*', component: '404' },

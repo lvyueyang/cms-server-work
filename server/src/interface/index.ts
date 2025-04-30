@@ -21,13 +21,13 @@ export class Pagination {
 }
 
 /** 排序 */
-export class Order<T extends string> {
+export class Order<T extends Record<string, any>> {
   /** key */
   @ApiPropertyOptional({
     default: 'create_at',
     description: '被排序的字段',
   })
-  readonly order_key?: T;
+  readonly order_key?: keyof T;
 
   /** 排序方式 */
   @ApiPropertyOptional({
@@ -63,3 +63,7 @@ export class ResponseResult<T = any> {
   readonly message: string;
   data: T;
 }
+
+/** 通用查询条件类型 */
+export type CRUDQuery<T extends Record<string, any>> = Pagination &
+  Order<T> & { keyword?: string } & Partial<Pick<T, 'is_available'>>;

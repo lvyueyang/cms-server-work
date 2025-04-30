@@ -6,7 +6,13 @@ import { News } from './news.entity';
 export class NewsInfo extends News {}
 
 export class NewsList {
+  @ApiProperty({
+    description: '列表',
+  })
   list: NewsInfo[];
+  @ApiProperty({
+    description: '总数',
+  })
   total: number;
 }
 
@@ -18,15 +24,22 @@ export class NewsCreateDto extends PickType(News, [
   'content',
   'recommend',
   'push_date',
+  'is_available',
 ]) {}
 
 /** 修改 */
-export class NewsUpdateDto extends NewsCreateDto {}
+export class NewsUpdateDto extends NewsCreateDto {
+  @ApiProperty({
+    description: '新闻 ID',
+  })
+  @IsNotEmpty()
+  readonly id: News['id'];
+}
 
 /** Params */
 export class NewsByIdParamDto {
   @ApiProperty({
-    description: '新闻中心 ID',
+    description: '新闻 ID',
   })
   @IsNotEmpty()
   readonly id: News['id'];
@@ -34,7 +47,7 @@ export class NewsByIdParamDto {
 
 /** 查询列表 */
 export class NewsQueryListDto extends Pagination {
-  @ApiProperty({ description: '新闻中心名称-模糊搜索' })
+  @ApiProperty({ description: '新闻名称-模糊搜索' })
   keyword?: string;
 }
 

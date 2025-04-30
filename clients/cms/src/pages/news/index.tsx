@@ -1,14 +1,15 @@
-import PageContainer from '@/components/PageContainer';
 import { NewsInfo } from '@cms/api-interface';
-import { transformPagination } from '@/utils';
+import { transformPagination, transformSort } from '@/utils';
 import { message } from '@/utils/notice';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, Input, Popconfirm, Space } from 'antd';
 import { useRef, useState } from 'react';
 import { Link, history } from 'umi';
 import { getListApi, removeApi } from './module';
+
 type TableItem = NewsInfo;
-export default function NewsListPage() {
+
+export default function NewsPage() {
   const [searchForm, setSearchForm] = useState({
     keyword: '',
   });
@@ -18,11 +19,13 @@ export default function NewsListPage() {
     {
       dataIndex: 'cover',
       title: '缩略图',
+      width: 60,
       valueType: 'image',
     },
     {
       dataIndex: 'title',
       title: '新闻名称',
+      sorter: true,
     },
     {
       dataIndex: 'recommend',
@@ -38,24 +41,25 @@ export default function NewsListPage() {
     {
       dataIndex: 'desc',
       title: '新闻描述',
-      width: 300,
       ellipsis: true,
     },
     {
       dataIndex: 'create_date',
       title: '创建时间',
       valueType: 'dateTime',
+      sorter: true,
     },
     {
       dataIndex: 'update_date',
       title: '修改时间',
       valueType: 'dateTime',
+      sorter: true,
     },
     {
       dataIndex: 'operate',
       title: '操作',
       hideInSearch: true,
-      width: 160,
+      width: 100,
       render: (_, row) => {
         return (
           <Space>
@@ -89,8 +93,12 @@ export default function NewsListPage() {
         rowKey="id"
         bordered
         search={false}
-        request={(params) => {
-          return getListApi({ ...transformPagination(params), ...searchForm }).then(({ data }) => {
+        request={(params, sorter) => {
+          return getListApi({
+            ...transformPagination(params),
+            ...transformSort(sorter),
+            ...searchForm,
+          }).then(({ data }) => {
             return { data: data.data.list, total: data.data.total || 0 };
           });
         }}
@@ -107,6 +115,7 @@ export default function NewsListPage() {
             style={{ width: 400 }}
             placeholder="请输入新闻名称搜索"
             enterButton={<>搜索</>}
+            allowClear
             onSearch={() => {
               tableRef.current?.setPageInfo?.({ current: 1 });
               tableRef.current?.reload();

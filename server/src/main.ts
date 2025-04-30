@@ -41,13 +41,12 @@ async function bootstrap() {
 
   // app.use(csurf());
 
-  /** Swagger */
-  if (process.env.NODE_ENV === 'development') {
-    useSwagger(app);
-    cssPretreatment();
-  }
+  const genSwagger = useSwagger(app);
 
-  await app.listen(PORT);
+  await app.listen(PORT, () => {
+    /** Swagger  */
+    genSwagger();
+  });
 
   // 打印地址
   const ipv4 = getLocalIPv4Address();
@@ -55,6 +54,7 @@ async function bootstrap() {
   console.log(`http://127.0.0.1:${PORT}/`);
   if (ipv4) {
     console.log(`http://${ipv4}:${PORT}/`);
+    console.log(`http://${ipv4}:${PORT}/api/admin`);
   }
 }
 bootstrap();

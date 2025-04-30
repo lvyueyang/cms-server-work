@@ -14,7 +14,6 @@ const TPL = {
   dto: loadTpl('server/xx.dto'),
   entity: loadTpl('server/xx.entity'),
   module: loadTpl('server/xx.module'),
-  permission: loadTpl('server/xx.permission'),
 };
 
 nunjucks.configure({ autoescape: true });
@@ -43,7 +42,7 @@ function createServerModule(name, cname) {
           return console.error(err);
         }
         console.log(`${key} success`);
-      }
+      },
     );
   });
 }
