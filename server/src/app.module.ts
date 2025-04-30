@@ -19,6 +19,8 @@ import { AdminRoleModule } from './modules/user_admin_role/user_admin_role.modul
 import { ValidateCode } from './modules/validate_code/validate_code.entity';
 import { ValidateCodeModule } from './modules/validate_code/validate_code.module';
 import { getWorkConfig } from './utils';
+import { Banner } from './modules/banner/banner.entity';
+import { BannerModule } from './modules/banner/banner.module';
 
 const workConfig = getWorkConfig();
 
@@ -39,7 +41,7 @@ const workConfig = getWorkConfig();
           username: configService.get<string>('DATABASE_USERNAME'),
           password: configService.get<string>('DATABASE_PASSWORD'),
           database: configService.get<string>('DATABASE_NAME'),
-          entities: [User, UserAdmin, AdminRole, ValidateCode, News],
+          entities: [User, UserAdmin, AdminRole, ValidateCode, News, Banner],
           synchronize: true,
           timezone: 'Z',
         };
@@ -60,6 +62,7 @@ const workConfig = getWorkConfig();
     LoggerModule,
 
     NewsModule,
+    BannerModule,
   ],
   controllers: [],
   providers: [],
