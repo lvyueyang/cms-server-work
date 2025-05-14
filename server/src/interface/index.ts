@@ -37,13 +37,12 @@ export class Order<T extends Record<string, any>> {
   readonly order_type?: 'DESC' | 'ASC';
 }
 
-export class PaginationAndOrder<T extends Record<string, any>> extends Pagination {
+export class PaginationAndOrder extends Pagination {
   /** key */
   @ApiPropertyOptional({
-    default: 'create_at',
-    description: '被排序的字段',
+    description: '被排序的字段 key',
   })
-  readonly order_key?: keyof T;
+  readonly order_key?: string;
 
   /** 排序方式 */
   @ApiPropertyOptional({
