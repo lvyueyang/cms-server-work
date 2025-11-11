@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ApiHeader } from '@nestjs/swagger';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { UserAdminService } from '../user_admin/user_admin.service';
 import { AuthService } from './auth.service';
 import { LOGIN_TYPE } from './auth.interface';

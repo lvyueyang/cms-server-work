@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { getLogDirPath, successResponse } from '@/utils';

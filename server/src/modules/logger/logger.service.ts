@@ -1,7 +1,7 @@
 import { ConsoleLogger } from '@nestjs/common';
 import { getLogDirPath } from '@/utils';
 import * as winston from 'winston';
-import * as DailyRotateFile from 'winston-daily-rotate-file';
+import DailyRotateFile from 'winston-daily-rotate-file';
 
 export class LoggerService extends ConsoleLogger {
   logger = winston.createLogger({
