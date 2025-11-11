@@ -577,11 +577,8 @@ export interface BannerQueryListDto {
    * @default 10
    */
   page_size?: number;
-  /**
-   * 被排序的字段
-   * @default "create_at"
-   */
-  order_key?: object;
+  /** 被排序的字段 key */
+  order_key?: string;
   /**
    * 排序方式 DESC 降序 ASC 倒序
    * @default 10
