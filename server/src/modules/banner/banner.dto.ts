@@ -45,7 +45,7 @@ export class BannerByIdParamDto {
 }
 
 /** 查询列表 */
-export class BannerQueryListDto extends PaginationAndOrder<Banner> {
+export class BannerQueryListDto extends PaginationAndOrder<keyof Banner> {
   @ApiProperty({ description: '广告名称-模糊搜索' })
   keyword?: string;
 }
