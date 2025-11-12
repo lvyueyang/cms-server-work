@@ -74,7 +74,6 @@ export class NewsController {
   @RenderView()
   async detail(@Param() { id }: { id: number }) {
     const { current, next, prev } = await this.services.findNextAndPrev(id);
-    console.log('current: ', current);
     const pageData = {
       info: {
         ...current,

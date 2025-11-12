@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { BaseLayout, ErrorPage, ReactTemplateEngine } from './render_view.engine';
+import { ErrorPage, ReactTemplateEngine } from './render_view.engine';
 import { RenderViewResult } from './render_view.decorator';
-import { cloneElement, createElement, isValidElement } from 'react';
+import {  isValidElement } from 'react';
 
 interface GlobalData {
   siteName: string;
@@ -20,7 +19,7 @@ export class RenderViewService {
     this.templateEngine = new ReactTemplateEngine();
   }
 
-  async handler(req: Request, res: Response, ctx?: RenderViewResult) {
+  async handler(ctx?: RenderViewResult) {
     const jsxElement = ctx?.render?.();
     try {
       // 检查是否返回了JSX组件（React元素）
@@ -45,9 +44,7 @@ export class RenderViewService {
         meta: ctx.meta,
         content: htmlContent,
       });
-
-      res.setHeader('Content-Type', 'text/html');
-      res.send(html);
+      return html;
     } catch (error) {
       console.error('Page render error:', error);
       const errorHtml = await this.templateEngine.renderPageHtml({
@@ -57,7 +54,7 @@ export class RenderViewService {
           <ErrorPage title="服务器错误" message="抱歉，页面渲染时发生了错误" />,
         ),
       });
-      res.status(500).send(errorHtml);
+      return errorHtml;
     }
   }
 
