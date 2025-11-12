@@ -59,7 +59,6 @@ const router = {
               path: '/news/create',
               component: 'news/form',
               title: '新增新闻',
-              menuHide: true,
             },
             {
               path: '/news/update/:id',
@@ -70,27 +69,9 @@ const router = {
           ],
         },
         {
-          path: '/banner',
+          path: '/banner/list',
+          component: 'banner',
           title: '广告管理',
-          routes: [
-            {
-              path: '/banner/list',
-              component: 'banner',
-              title: '广告列表',
-            },
-            {
-              path: '/banner/create',
-              component: 'banner/form',
-              title: '新增广告',
-              menuHide: true,
-            },
-            {
-              path: '/banner/update/:id',
-              component: 'banner/form',
-              title: '修改广告',
-              menuHide: true,
-            },
-          ],
         },
       ],
     },
