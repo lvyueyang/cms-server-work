@@ -3,6 +3,7 @@ import { BaseEntity } from '@/common/base.entity';
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { News } from '../news/news.entity';
 import { AdminRole } from '../user_admin_role/user_admin_role.entity';
+import { WebhookTrans } from '../webhook_trans/webhook_trans.entity';
 
 /** 管理员账户 */
 @Entity({ orderBy: { is_root: 'DESC', create_date: 'DESC' } })
@@ -67,6 +68,11 @@ export class UserAdmin extends BaseEntity {
   @ManyToMany(() => AdminRole, (role) => role.users)
   @JoinTable()
   roles: AdminRole[];
+
+  /** Webhook中转 */
+  @ApiHideProperty()
+  @OneToMany(() => WebhookTrans, (col) => col.author)
+  webhook_trans: WebhookTrans[];
 
   /** 新闻 */
   @ApiProperty({

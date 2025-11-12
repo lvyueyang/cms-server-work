@@ -40,6 +40,11 @@ const router = {
           component: 'logger',
           title: '系统日志',
         },
+        {
+          path: '/webhook-trans',
+          title: 'Webhook中转',
+          component: 'webhook-trans/index',
+        },
 
         {
           path: '/news',

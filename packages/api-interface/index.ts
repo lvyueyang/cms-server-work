@@ -383,7 +383,7 @@ export interface LoggerDetailResponseDto {
   data: string[];
 }
 
-export interface NewsQueryListDto {
+export interface WebhookTransQueryListDto {
   /**
    * 分页查询-当前页
    * @default 1
@@ -394,7 +394,14 @@ export interface NewsQueryListDto {
    * @default 10
    */
   page_size?: number;
-  /** 新闻名称-模糊搜索 */
+  /** 被排序的字段 key */
+  order_key?: string;
+  /**
+   * 排序方式 DESC 降序 ASC 倒序
+   * @default 10
+   */
+  order_type?: string;
+  /** Webhook中转名称-模糊搜索 */
   keyword?: string;
 }
 
@@ -430,6 +437,143 @@ export interface UserAdmin {
   roles: AdminRole[];
   /** 新闻 */
   news: string[];
+}
+
+export interface WebhookTransInfo {
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  create_date: string;
+  /**
+   * 更新时间
+   * @format date-time
+   */
+  update_date: string;
+  /** Webhook中转 ID */
+  id: number;
+  /** 唯一标识 */
+  code: string;
+  /** Webhook中转描述 */
+  desc?: string;
+  /** 前置钩子函数 */
+  before_hook_func: string;
+  /** 数据转换函数 */
+  data_trans_func: string;
+  /** 回调函数 */
+  callback_func: string;
+  /** 请求地址 */
+  url: string;
+  /** 请求方法 */
+  method: string;
+  /** 是否可用 */
+  is_available: boolean;
+  /** 是否已删除 */
+  is_delete: boolean;
+  /** Webhook中转创建者 ID */
+  authorId?: number;
+  /** Webhook中转创建者 */
+  author: UserAdmin;
+}
+
+export interface WebhookTransList {
+  list: WebhookTransInfo[];
+  total: number;
+}
+
+export interface WebhookTransListResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: WebhookTransList;
+}
+
+export interface WebhookTransDetailResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: WebhookTransInfo;
+}
+
+export interface WebhookTransCreateDto {
+  /** 唯一标识 */
+  code: string;
+  /** Webhook中转描述 */
+  desc?: string;
+  /** 前置钩子函数 */
+  before_hook_func: string;
+  /** 数据转换函数 */
+  data_trans_func: string;
+  /** 回调函数 */
+  callback_func: string;
+  /** 请求地址 */
+  url: string;
+  /** 请求方法 */
+  method: string;
+  /** 是否可用 */
+  is_available: boolean;
+}
+
+export interface WebhookTransUpdateDto {
+  /** 唯一标识 */
+  code?: string;
+  /** Webhook中转描述 */
+  desc?: string;
+  /** 前置钩子函数 */
+  before_hook_func?: string;
+  /** 数据转换函数 */
+  data_trans_func?: string;
+  /** 回调函数 */
+  callback_func?: string;
+  /** 请求地址 */
+  url?: string;
+  /** 请求方法 */
+  method?: string;
+  /** 是否可用 */
+  is_available?: boolean;
+}
+
+export interface WebhookTransDetailIdResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: number;
+}
+
+export interface NewsQueryListDto {
+  /**
+   * 分页查询-当前页
+   * @default 1
+   */
+  current?: number;
+  /**
+   * 分页查询-每页数量
+   * @default 10
+   */
+  page_size?: number;
+  /** 新闻名称-模糊搜索 */
+  keyword?: string;
 }
 
 export interface NewsInfo {

@@ -21,6 +21,8 @@ import { ValidateCodeModule } from './modules/validate_code/validate_code.module
 import { getWorkConfig } from './utils';
 import { Banner } from './modules/banner/banner.entity';
 import { BannerModule } from './modules/banner/banner.module';
+import { WebhookTrans } from './modules/webhook_trans/webhook_trans.entity';
+import { WebhookTransModule } from './modules/webhook_trans/webhook_trans.module';
 
 const workConfig = getWorkConfig();
 
@@ -41,7 +43,7 @@ const workConfig = getWorkConfig();
           username: configService.get<string>('DATABASE_USERNAME'),
           password: configService.get<string>('DATABASE_PASSWORD'),
           database: configService.get<string>('DATABASE_NAME'),
-          entities: [User, UserAdmin, AdminRole, ValidateCode, News, Banner],
+          entities: [User, UserAdmin, AdminRole, ValidateCode, WebhookTrans, News, Banner],
           synchronize: true,
           timezone: 'Z',
         };
@@ -60,6 +62,7 @@ const workConfig = getWorkConfig();
     AdminRoleModule,
     ValidateCodeModule,
     LoggerModule,
+    WebhookTransModule,
 
     NewsModule,
     BannerModule,
