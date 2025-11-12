@@ -1,11 +1,11 @@
-import { Body, Controller, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import dayjs from 'dayjs';
 import { ResponseResult } from '@/interface';
 import { User } from '@/modules/user_admin/user-admin.decorator';
 import { AdminRoleGuard } from '@/modules/user_admin_role/user_admin_role.guard';
 import { successResponse } from '@/utils';
-import { RenderView } from '../render_view/render_view.decorator';
+import { RenderView, RenderViewResult } from '../render_view/render_view.decorator';
 import {
   NewsByIdParamDto,
   NewsCreateDto,
@@ -26,7 +26,8 @@ const createPerm = createPermGroup(MODULE_NAME);
 export class NewsController {
   constructor(private services: NewsService) {}
 
-  @RenderView('/news')
+  @Get('/news')
+  @RenderView()
   async list(@Query() { current = 1 }: { current: number }) {
     const limit = 20;
     const [list, total] = await this.services.findList({
@@ -38,20 +39,43 @@ export class NewsController {
     const max = total / limit;
     const next = current < max ? current + 1 : 0;
     const prev = current > 1 ? current - 1 : 0;
-    return {
-      list: list.map((item) => ({
-        ...item,
-        create_date: dayjs(item.push_date || item.create_date).format('YYYY / MM / DD'),
-      })),
-      next,
-      prev,
-    };
+
+    const dataList = list.map((item) => ({
+      ...item,
+      create_date: dayjs(item.push_date || item.create_date).format('YYYY / MM / DD'),
+    }));
+
+    return new RenderViewResult({
+      render() {
+        return (
+          <div>
+            <h1>新闻列表</h1>
+            <ul>
+              {dataList.map((item) => {
+                return (
+                  <li key={item.id}>
+                    <a href={`/news/${item.id}`}>{item.title}</a>
+                    <span>{item.create_date}</span>
+                  </li>
+                );
+              })}
+            </ul>
+            <div>
+              {!!prev && <a href={`/news?current=${prev}`}>上一页</a>}
+              {!!next && <a href={`/news?current=${next}`}>下一页</a>}
+            </div>
+          </div>
+        );
+      },
+    });
   }
 
-  @RenderView('/news/:id')
+  @Get('/news/:id')
+  @RenderView()
   async detail(@Param() { id }: { id: number }) {
     const { current, next, prev } = await this.services.findNextAndPrev(id);
-    return {
+    console.log('current: ', current);
+    const pageData = {
       info: {
         ...current,
         create_date: dayjs(current.create_date).format('YYYY-MM-DD HH:mm'),
@@ -69,6 +93,33 @@ export class NewsController {
           }
         : null,
     };
+    return new RenderViewResult({
+      title: pageData.info.title,
+      render() {
+        return (
+          <div>
+            <h1>新闻详情：{pageData.info.title}</h1>
+            <hr />
+            <div>{pageData.info.desc}</div>
+            <div>{dayjs(pageData.info?.push_date).format('YYYY-MM-DD HH:mm:ss')}</div>
+            <div dangerouslySetInnerHTML={{ __html: pageData.info.content }}></div>
+            <hr />
+            <div>
+              {!!prev && (
+                <div>
+                  <a href={`/news/${pageData.prev?.id}`}>上一篇:{pageData.prev?.title}</a>
+                </div>
+              )}
+              {!!next && (
+                <div>
+                  <a href={`/news/${pageData.next?.id}`}>下一篇:{pageData.next?.title}</a>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      },
+    });
   }
 
   @Post('/api/admin/news/list')

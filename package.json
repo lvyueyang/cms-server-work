@@ -20,16 +20,18 @@
   "resolutions": {},
   "dependencies": {
     "@wangeditor/plugin-upload-attachment": "^1.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "body-parser": "^1.20.3",
     "chokidar": "^3.6.0",
     "dayjs": "^1.11.13",
     "path-to-regexp": "^6.3.0",
-    "react": "^18.2.0",
     "uuid": "^9.0.1",
     "zustand": "^4.5.5"
   },
   "devDependencies": {
-    "@types/react": "^18",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
     "@umijs/lint": "^4.3.20",
     "eslint": "^8.57.1",
     "prettier": "^3.3.3",
