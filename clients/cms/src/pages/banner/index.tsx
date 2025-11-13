@@ -1,11 +1,10 @@
 import { AvailableSwitch } from '@/components/Available';
 import { BannerCreateDto, BannerInfo, BannerUpdateDto } from '@cms/api-interface';
-import { transformPagination } from '@/utils';
+import { transformPagination, transformSort } from '@/utils';
 import { message } from '@/utils/notice';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, Input, Popconfirm, Space, Form, Modal, Switch } from 'antd';
 import { useRef, useState } from 'react';
-import { history, Link } from 'umi';
 import { createApi, getListApi, removeApi, updateApi } from './module';
 import { ModalType, useFormModal } from '@/hooks/useFormModal';
 import UploadImage from '@/components/UploadImage';
@@ -42,15 +41,18 @@ export default function BannerPage() {
       dataIndex: 'title',
       title: '广告名称',
       sorter: true,
+      width: 160,
     },
     {
       dataIndex: 'recommend',
       title: '推荐等级',
       sorter: true,
+      width: 100,
     },
     {
       dataIndex: 'is_available',
       title: '是否可用',
+      width: 100,
       render: (_, row) => {
         return (
           <AvailableSwitch
@@ -69,12 +71,14 @@ export default function BannerPage() {
     {
       dataIndex: 'desc',
       title: '广告描述',
+      width: 260,
       ellipsis: true,
     },
     {
       dataIndex: 'create_date',
       title: '创建时间',
       valueType: 'dateTime',
+      width: 180,
       sorter: true,
     },
     {
@@ -82,12 +86,12 @@ export default function BannerPage() {
       title: '修改时间',
       valueType: 'dateTime',
       sorter: true,
+      width: 180,
     },
     {
       dataIndex: 'operate',
       title: '操作',
       hideInSearch: true,
-      width: 160,
       render: (_, row) => {
         return (
           <Space>
@@ -128,8 +132,12 @@ export default function BannerPage() {
         rowKey="id"
         bordered
         search={false}
-        request={(params) => {
-          return getListApi({ ...transformPagination(params), ...searchForm }).then(({ data }) => {
+        request={(params, sorter) => {
+          return getListApi({
+            ...transformPagination(params),
+            ...transformSort(sorter),
+            ...searchForm,
+          }).then(({ data }) => {
             return { data: data.data.list, total: data.data.total || 0 };
           });
         }}
