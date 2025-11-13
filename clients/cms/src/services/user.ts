@@ -1,5 +1,5 @@
 import { AIP_FIX, SendEmailCaptchaType, SendPhoneCaptchaType, TOKEN_KEY } from '@/constants';
-import { UserAdminInfoResponseDto } from '@cms/api-interface';
+import { FileManageInfo, UserAdminInfoResponseDto } from '@cms/api-interface';
 import { Result } from '@/types';
 import { request } from '@/request';
 import { AxiosProgressEvent } from 'axios';
@@ -18,11 +18,14 @@ export const outLogin = () => {
 
 export const uploadFile = (
   file: File,
-  options?: { onUploadProgress?: (p: AxiosProgressEvent) => void },
+  options?: { onUploadProgress?: (p: AxiosProgressEvent) => void; tags?: string[] },
 ) => {
   const formData = new FormData();
   formData.append('file', file);
-  return request.post<Result<string>>(`${AIP_FIX}/upload`, formData, {
+  if (options?.tags?.length) {
+    formData.append('tags', options.tags.join(','));
+  }
+  return request.post<Result<FileManageInfo>>(`${AIP_FIX}/file_manage/upload`, formData, {
     onUploadProgress: options?.onUploadProgress,
   });
 };

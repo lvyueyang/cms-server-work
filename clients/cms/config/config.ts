@@ -16,6 +16,11 @@ export default defineConfig({
       changeOrigin: true,
       secure: false,
     },
+    '/getfile': {
+      target: 'http://127.0.0.1:7001/',
+      changeOrigin: true,
+      secure: false,
+    },
   },
   routes: router.routes,
   title: 'XX内容管理系统',

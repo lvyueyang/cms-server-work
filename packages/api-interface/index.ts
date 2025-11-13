@@ -561,6 +561,140 @@ export interface WebhookTransDetailIdResponseDto {
   data: number;
 }
 
+export interface FileUploadDto {
+  /** @format binary */
+  file: File;
+  /** 文件标签 */
+  tags: string[];
+}
+
+export interface FileManageQueryListDto {
+  /**
+   * 分页查询-当前页
+   * @default 1
+   */
+  current?: number;
+  /**
+   * 分页查询-每页数量
+   * @default 10
+   */
+  page_size?: number;
+  /** 被排序的字段 key */
+  order_key?: string;
+  /**
+   * 排序方式 DESC 降序 ASC 倒序
+   * @default 10
+   */
+  order_type?: string;
+  /** 文件管理名称-模糊搜索 */
+  keyword?: string;
+}
+
+export interface FileManageInfo {
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  create_date: string;
+  /**
+   * 更新时间
+   * @format date-time
+   */
+  update_date: string;
+  /** 文件 ID */
+  id: string;
+  /** 文件名称 */
+  name: string;
+  /** 文件大小 */
+  size: number;
+  /** 文件扩展名 */
+  ext: string;
+  /** 文件类型 */
+  type: string;
+  /** 文件哈希值 */
+  hash: string;
+  /** 文件路径 */
+  local_path: string;
+  /** 文件标签 */
+  tags: string[];
+  /** 文件备注 */
+  desc: string;
+  /** 是否已删除 */
+  is_delete: boolean;
+  /** 文件管理创建者 ID */
+  authorId?: number;
+  /** 文件创建者 */
+  author: UserAdmin;
+}
+
+export interface FileManageList {
+  /** 列表 */
+  list: FileManageInfo[];
+  /** 总数 */
+  total: number;
+}
+
+export interface FileManageListResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: FileManageList;
+}
+
+export interface FileManageDetailResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: FileManageInfo;
+}
+
+export interface FileManageUpdateDto {
+  /** 文件 ID */
+  id: string;
+  /** 文件备注 */
+  desc: string;
+}
+
+export interface FileManageDetailIdResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: number;
+}
+
+export interface FileManageAddOrRemoveTagsDto {
+  /** 文件 ID */
+  id: string;
+  /** 文件标签 */
+  tags: string[];
+}
+
+export interface FileManageByIdParamDto {
+  /** 文件 ID */
+  id: string;
+}
+
 export interface NewsQueryListDto {
   /**
    * 分页查询-当前页

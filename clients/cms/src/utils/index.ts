@@ -54,18 +54,18 @@ export function isJson(value: string) {
   }
 }
 
-/** 计算冗余数 */
-export function redundancyCount(len: number) {
-  if (len <= 4) {
-    return 1;
+/** 格式化文件大小 */
+export function formatFileSize(size: number) {
+  if (size < 1024) {
+    return `${size} B`;
   }
-  if (len > 4 && len <= 9) {
-    return 2;
+  if (size < 1024 * 1024) {
+    return `${(size / 1024).toFixed(2)} KB`;
   }
-  if (len > 9 && len <= 14) {
-    return 3;
+  if (size < 1024 * 1024 * 1024) {
+    return `${(size / 1024 / 1024).toFixed(2)} MB`;
   }
-  return 4;
+  return `${(size / 1024 / 1024 / 1024).toFixed(2)} GB`;
 }
 
 /** 合并 className */

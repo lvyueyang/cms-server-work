@@ -20,7 +20,8 @@ export default function UploadFile({ value, onChange }: UploadImageProps) {
       customRequest={({ file, onError, onProgress, onSuccess }) => {
         uploadFile(file as File, { onUploadProgress: onProgress })
           .then((res) => {
-            onSuccess?.(res.data.data);
+            const data = res.data.data;
+            onSuccess?.(`/getfile/${data.id}`);
             message.success('上传成功');
           })
           .catch(onError);

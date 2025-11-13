@@ -1,15 +1,16 @@
-import { createCipheriv, createDecipher, createDecipheriv, createHash, randomBytes } from 'crypto';
+import { createCipheriv, createDecipheriv, createHash } from 'crypto';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import { Order } from '@/interface';
+import { Readable } from 'stream';
 
 const homedir = process.env[process.platform == 'win32' ? 'USERPROFILE' : 'HOME'];
 
-let dataDirPath = '';
-let logDataDirPath = '';
-let uploadFileDataDirPath = '';
+let dataDirPath = ''; // 资源存储目录
+let logDataDirPath = ''; // 日志目录
+let uploadFileDataDirPath = ''; // 文件上传目录
 
 /** 密码加盐 */
 export const passwordCrypto = (passwordStr: string, salt: string) => {
@@ -71,6 +72,7 @@ export const getUploadFileDirPath = () => {
   uploadFileDataDirPath = uploadFileDir;
   return uploadFileDir;
 };
+
 /** 日志文件存储位置 */
 export const getLogDirPath = () => {
   if (logDataDirPath) {
@@ -113,4 +115,42 @@ export function decryptString(input: string, password: string): string {
   let decrypted = decipher.update(input, 'hex', 'utf8');
   decrypted += decipher.final('utf8');
   return decrypted;
+}
+
+/** 文件计算md5 */
+export function getFileMd5(file: Express.Multer.File) {
+  return new Promise((resolve, reject) => {
+    const md5sum = createHash('md5');
+    const stream = fs.createReadStream(file.path);
+    stream.on('data', function (chunk) {
+      md5sum.update(chunk as string);
+    });
+    stream.on('end', function () {
+      resolve(md5sum.digest('hex').toUpperCase());
+    });
+    stream.on('error', function (err) {
+      reject(err);
+    });
+  });
+}
+
+export function fileBuffer2md5(buffer: Buffer) {
+  const md5sum = createHash('md5');
+  md5sum.update(buffer as Uint8Array);
+  return md5sum.digest('hex').toUpperCase();
+}
+
+export function streamReadable2md5(stream: Readable): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const md5sum = createHash('md5');
+    stream.on('data', function (chunk) {
+      md5sum.update(chunk as string);
+    });
+    stream.on('end', function () {
+      resolve(md5sum.digest('hex').toUpperCase());
+    });
+    stream.on('error', function (err) {
+      reject(err);
+    });
+  });
 }

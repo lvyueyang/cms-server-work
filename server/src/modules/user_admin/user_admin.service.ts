@@ -160,7 +160,7 @@ export class UserAdminService {
     } catch (e) {
       await fs.promises.mkdir(dir, { recursive: true });
     }
-    await fs.promises.writeFile(path.join(dir, Key), file.buffer);
+    await fs.promises.writeFile(path.join(dir, Key), file.buffer as Uint8Array);
     return `/uploadfile/${dirPath}/${Key}`;
   }
 }

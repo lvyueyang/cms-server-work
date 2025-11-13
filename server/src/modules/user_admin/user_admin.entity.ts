@@ -4,6 +4,7 @@ import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColum
 import { News } from '../news/news.entity';
 import { AdminRole } from '../user_admin_role/user_admin_role.entity';
 import { WebhookTrans } from '../webhook_trans/webhook_trans.entity';
+import { FileManage } from '../file_manage/file_manage.entity';
 
 /** 管理员账户 */
 @Entity({ orderBy: { is_root: 'DESC', create_date: 'DESC' } })
@@ -73,6 +74,11 @@ export class UserAdmin extends BaseEntity {
   @ApiHideProperty()
   @OneToMany(() => WebhookTrans, (col) => col.author)
   webhook_trans: WebhookTrans[];
+
+  /** 文件管理 */
+  @ApiHideProperty()
+  @OneToMany(() => FileManage, (col) => col.author)
+  file_manage: FileManage[];
 
   /** 新闻 */
   @ApiProperty({

@@ -41,6 +41,11 @@ const router = {
           title: '系统日志',
         },
         {
+          path: '/file-manage',
+          component: 'file-manage',
+          title: '文件管理',
+        },
+        {
           path: '/webhook-trans',
           title: 'Webhook中转',
           component: 'webhook-trans/index',
