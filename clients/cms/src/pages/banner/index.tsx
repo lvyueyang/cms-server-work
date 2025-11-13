@@ -11,20 +11,23 @@ import UploadImage from '@/components/UploadImage';
 import { RecommendFormItem } from '@/components/RecommendFormItem';
 
 type TableItem = BannerInfo;
+type CreateFormValues = BannerCreateDto;
+type UpdateFormValues = BannerUpdateDto;
+type FormValues = CreateFormValues | UpdateFormValues;
 
 export default function BannerPage() {
   const [searchForm, setSearchForm] = useState({
     keyword: '',
   });
   const tableRef = useRef<ActionType>();
-  const formModal = useFormModal<BannerCreateDto | BannerUpdateDto>({
+  const formModal = useFormModal<FormValues>({
     submit: (values, modal) => {
       if (modal.type === ModalType.UPDATE) {
-        return updateApi(values as BannerUpdateDto).then(() => {
+        return updateApi(values as UpdateFormValues).then(() => {
           tableRef.current?.reload();
         });
       }
-      return createApi(values as BannerCreateDto).then(() => {
+      return createApi(values as CreateFormValues).then(() => {
         tableRef.current?.reload();
       });
     },
@@ -39,7 +42,7 @@ export default function BannerPage() {
     },
     {
       dataIndex: 'title',
-      title: '广告名称',
+      title: '名称',
       sorter: true,
       width: 160,
     },
@@ -70,7 +73,7 @@ export default function BannerPage() {
     },
     {
       dataIndex: 'desc',
-      title: '广告描述',
+      title: '描述',
       width: 260,
       ellipsis: true,
     },
