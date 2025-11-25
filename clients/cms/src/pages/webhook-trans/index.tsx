@@ -1,7 +1,7 @@
 import { AvailableSwitch } from '@/components/Available';
 import { WebhookTransInfo } from '@cms/api-interface';
 import { copyText, transformPagination } from '@/utils';
-import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
+import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Input, Popconfirm, Space, Form, Drawer, Flex, Select, Modal, Divider } from 'antd';
 import { useRef, useState } from 'react';
 import { createApi, getListApi, removeApi, updateApi } from './module';
@@ -10,6 +10,7 @@ import CodeEditor from '@/components/CodeEditor';
 import { v4 as uuid } from 'uuid';
 import axios from 'axios';
 import { message } from '@/utils/notice';
+import PageTable from '@/components/PageTable';
 
 type TableItem = WebhookTransInfo;
 type FormValues = WebhookTransInfo & { id?: number };
@@ -141,7 +142,7 @@ export default function WebhookTransListPage() {
 
   return (
     <>
-      <ProTable<TableItem>
+      <PageTable<TableItem>
         columns={columns}
         rowKey="id"
         bordered

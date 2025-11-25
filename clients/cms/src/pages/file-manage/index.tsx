@@ -1,12 +1,13 @@
 import { FileManageInfo, FileManageUpdateDto } from '@cms/api-interface';
 import { formatFileSize, transformPagination, transformSort } from '@/utils';
 import { message } from '@/utils/notice';
-import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
+import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Input, Popconfirm, Space, Form, Modal } from 'antd';
 import { useRef, useState } from 'react';
 import { getListApi, removeApi, updateApi } from './module';
 import { ModalType, useFormModal } from '@/hooks/useFormModal';
 import UploadFile from '@/components/UploadFile';
+import PageTable from '@/components/PageTable';
 
 type TableItem = FileManageInfo;
 
@@ -98,6 +99,7 @@ export default function FileManagePage() {
       dataIndex: 'operate',
       title: '操作',
       hideInSearch: true,
+      fixed: 'right',
       render: (_, row) => {
         return (
           <Space>
@@ -113,7 +115,7 @@ export default function FileManagePage() {
               编辑
             </a>
             <Popconfirm
-              title="确定要删除这个广告吗？"
+              title="确定要删除这个文件吗？"
               onConfirm={() => {
                 const close = message.loading('删除中...', 0);
                 removeApi(row.id)
@@ -136,11 +138,12 @@ export default function FileManagePage() {
 
   return (
     <>
-      <ProTable<TableItem>
+      <PageTable<TableItem>
         columns={columns}
         rowKey="id"
         bordered
         search={false}
+        scroll={{ x: 1200 }}
         request={(params, sorter) => {
           return getListApi({
             ...transformPagination(params),

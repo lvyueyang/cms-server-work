@@ -1,9 +1,8 @@
-import PageContainer from '@/components/PageContainer';
 import { ModalType, useFormModal } from '@/hooks/useFormModal';
 import { AdminRoleCreateDto, AdminRoleInfo } from '@cms/api-interface';
 import { transformPagination } from '@/utils';
 import { message } from '@/utils/notice';
-import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
+import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { useRequest } from 'ahooks';
 import { Button, Form, Input, Modal, Popconfirm, Space, Spin, Transfer } from 'antd';
 import { Key, useRef, useState } from 'react';
@@ -15,6 +14,7 @@ import {
   updateApi,
   updateCodeApi,
 } from './module';
+import PageTable from '@/components/PageTable';
 
 type TableItem = AdminRoleInfo;
 type FormValues = AdminRoleCreateDto;
@@ -141,7 +141,7 @@ export default function AdminRoleList() {
 
   return (
     <>
-      <ProTable<TableItem>
+      <PageTable<TableItem>
         columns={columns}
         rowKey="id"
         bordered

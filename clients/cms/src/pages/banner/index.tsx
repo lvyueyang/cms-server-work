@@ -2,13 +2,14 @@ import { AvailableSwitch } from '@/components/Available';
 import { BannerCreateDto, BannerInfo, BannerUpdateDto } from '@cms/api-interface';
 import { transformPagination, transformSort } from '@/utils';
 import { message } from '@/utils/notice';
-import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
+import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Input, Popconfirm, Space, Form, Modal, Switch } from 'antd';
 import { useRef, useState } from 'react';
 import { createApi, getListApi, removeApi, updateApi } from './module';
 import { ModalType, useFormModal } from '@/hooks/useFormModal';
 import UploadImage from '@/components/UploadImage';
 import { RecommendFormItem } from '@/components/RecommendFormItem';
+import PageTable from '@/components/PageTable';
 
 type TableItem = BannerInfo;
 type CreateFormValues = BannerCreateDto;
@@ -130,7 +131,7 @@ export default function BannerPage() {
 
   return (
     <>
-      <ProTable<TableItem>
+      <PageTable<TableItem>
         columns={columns}
         rowKey="id"
         bordered

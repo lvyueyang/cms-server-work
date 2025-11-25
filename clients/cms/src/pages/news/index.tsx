@@ -1,13 +1,13 @@
-import { NewsCreateDto, NewsInfo, NewsUpdateDto } from '@cms/api-interface';
+import { NewsInfo } from '@cms/api-interface';
 import { transformPagination, transformSort } from '@/utils';
 import { message } from '@/utils/notice';
-import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
+import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Input, Popconfirm, Space } from 'antd';
 import { useRef, useState } from 'react';
 import { Link, history } from 'umi';
-import { createApi, getListApi, removeApi, updateApi } from './module';
+import { getListApi, removeApi, updateApi } from './module';
 import { AvailableSwitch } from '@/components/Available';
-import { ModalType, useFormModal } from '@/hooks/useFormModal';
+import PageTable from '@/components/PageTable';
 
 type TableItem = NewsInfo;
 
@@ -16,19 +16,6 @@ export default function NewsPage() {
     keyword: '',
   });
   const tableRef = useRef<ActionType>();
-  const formModal = useFormModal<NewsCreateDto | NewsUpdateDto>({
-    submit: (values, modal) => {
-      if (modal.type === ModalType.UPDATE) {
-        return updateApi(values as NewsUpdateDto).then(() => {
-          tableRef.current?.reload();
-        });
-      }
-      return createApi(values as NewsCreateDto).then(() => {
-        tableRef.current?.reload();
-      });
-    },
-  });
-
   const columns: ProColumns<TableItem>[] = [
     {
       dataIndex: 'cover',
@@ -120,7 +107,7 @@ export default function NewsPage() {
 
   return (
     <>
-      <ProTable<TableItem>
+      <PageTable<TableItem>
         columns={columns}
         rowKey="id"
         bordered
