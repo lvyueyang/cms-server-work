@@ -2,7 +2,6 @@ import { BadRequestException, Body, Controller, Get, Post } from '@nestjs/common
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SMS_CODE_KEY, USER_PONIT_TYPE, VALIDATE_CODE_TYPE } from '@/constants';
 import { successResponse } from '../../utils';
-import { RenderViewService } from '../render_view/render_view.service';
 import { UserAdminService } from '../user_admin/user_admin.service';
 import {
   EmailValidateCodeCreateDto,
@@ -16,7 +15,6 @@ import { ValidateCodeService } from './validate_code.service';
 export class ValidateCodeController {
   constructor(
     private services: ValidateCodeService,
-    private nunjucksServices: RenderViewService,
     private userAdminServices: UserAdminService,
   ) {}
 
