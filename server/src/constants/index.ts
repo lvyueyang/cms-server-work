@@ -18,3 +18,12 @@ export const enum SMS_CODE_KEY {
 }
 
 export const PERM_CODE_METADATA = 'PERM_CODE_ITEM';
+
+export enum ContentLang {
+  ZH_CN = 'zh-CN',
+  EN_US = 'en-US',
+}
+export const ContentLangMap = new Map([
+  [ContentLang.ZH_CN, { label: '中文', value: ContentLang.ZH_CN }],
+  [ContentLang.EN_US, { label: '英文', value: ContentLang.EN_US }],
+]);

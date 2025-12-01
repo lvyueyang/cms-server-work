@@ -36,6 +36,22 @@ const router = {
           ],
         },
         {
+          path: '/dict',
+          title: '字典管理',
+          component: 'dict',
+        },
+        {
+          path: '/dict/:id',
+          title: '字典',
+          component: 'dict-value',
+          menuHide: true,
+        },
+        {
+          path: '/content_translation/list',
+          title: '内容翻译',
+          component: 'content_translation/index',
+        },
+        {
           path: '/logger',
           component: 'logger',
           title: '系统日志',

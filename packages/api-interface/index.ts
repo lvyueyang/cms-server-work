@@ -695,6 +695,479 @@ export interface FileManageByIdParamDto {
   id: string;
 }
 
+export interface ContentTranslationUpsertBodyDto {
+  /** 实体名，如 news、product */
+  entity: string;
+  /** 实体记录 ID */
+  entityId: number;
+  /** 字段名，如 title、desc、content */
+  field: string;
+  /** 语言代码 */
+  lang: 'zh-CN' | 'en-US';
+  /** 翻译值 */
+  value: string;
+}
+
+export interface ContentTranslationUpsertResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  /** 翻译记录 ID */
+  data: number;
+}
+
+export interface ContentTranslationQueryListDto {
+  /**
+   * 分页查询-当前页
+   * @default 1
+   */
+  current?: number;
+  /**
+   * 分页查询-每页数量
+   * @default 10
+   */
+  page_size?: number;
+  /** 被排序的字段 key */
+  order_key?: string;
+  /**
+   * 排序方式 DESC 降序 ASC 倒序
+   * @default 10
+   */
+  order_type?: string;
+  /** 实体名，如 news、product */
+  entity: string;
+  /** 字段名，如 title、desc、content */
+  field: string;
+  /** 语言代码 */
+  lang: 'zh-CN' | 'en-US';
+}
+
+export interface ContentTranslationInfo {
+  /** 实体名，如 news、product */
+  entity: string;
+  /** 实体记录 ID */
+  entityId: number;
+  /** 字段名，如 title、desc、content */
+  field: string;
+  /** 语言代码 */
+  lang: 'zh-CN' | 'en-US';
+  /** 翻译值 */
+  value: string;
+  id: number;
+}
+
+export interface ContentTranslationList {
+  /** 列表 */
+  list: ContentTranslationInfo[];
+  /** 总数 */
+  total: number;
+}
+
+export interface ContentTranslationListResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: ContentTranslationList;
+}
+
+export interface ContentTranslationQueryParamsDto {
+  /** 实体记录 ID */
+  entityId?: number;
+  /** 字段名，如 title、desc、content */
+  field?: string;
+  /** 语言代码 */
+  lang?: 'zh-CN' | 'en-US';
+  /** 实体名，如 news、product */
+  entity: string;
+}
+
+export interface ContentTranslationMulitUpsertBodyDto {
+  /** 批量翻译数据 */
+  translations: ContentTranslationUpsertBodyDto[];
+}
+
+export interface ContentTranslationMulitUpsertResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  /** 翻译记录 ID 列表 */
+  data: number[];
+}
+
+export interface DictType {
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  create_date: string;
+  /**
+   * 更新时间
+   * @format date-time
+   */
+  update_date: string;
+  /** 字典类型 ID */
+  id: number;
+  /** 字典名称 */
+  name: string;
+  /** 字典类型 */
+  type: string;
+  /** 字典描述 */
+  desc?: string;
+  /** 是否可用 */
+  is_available: boolean;
+  /** 是否已删除 */
+  is_delete: boolean;
+  /** 字典值列表 */
+  values: DictValue[];
+}
+
+export interface DictValue {
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  create_date: string;
+  /**
+   * 更新时间
+   * @format date-time
+   */
+  update_date: string;
+  /** 字典值 ID */
+  id: number;
+  /** 字典值名称 */
+  label: string;
+  /** 字典值 */
+  value: string;
+  /** 字典值附加属性 */
+  attr?: string;
+  /** 类型ID */
+  typeId: number;
+  /**
+   * 排序
+   * @min 0
+   */
+  recommend: number;
+  /** 字典值描述 */
+  desc?: string;
+  /** 是否可用 */
+  is_available: boolean;
+  type: DictType;
+}
+
+export interface DictTypeInfo {
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  create_date: string;
+  /**
+   * 更新时间
+   * @format date-time
+   */
+  update_date: string;
+  /** 字典类型 ID */
+  id: number;
+  /** 字典名称 */
+  name: string;
+  /** 字典类型 */
+  type: string;
+  /** 字典描述 */
+  desc?: string;
+  /** 是否可用 */
+  is_available: boolean;
+  /** 是否已删除 */
+  is_delete: boolean;
+  /** 字典值列表 */
+  values: DictValue[];
+}
+
+export interface DictTypeListAllResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: DictTypeInfo[];
+}
+
+export interface DictTypeQueryListDto {
+  /**
+   * 分页查询-当前页
+   * @default 1
+   */
+  current?: number;
+  /**
+   * 分页查询-每页数量
+   * @default 10
+   */
+  page_size?: number;
+  /** 被排序的字段 key */
+  order_key?: string;
+  /**
+   * 排序方式 DESC 降序 ASC 倒序
+   * @default 10
+   */
+  order_type?: string;
+  /** 字典类型名称-模糊搜索 */
+  keyword?: string;
+}
+
+export interface DictTypeList {
+  list: DictTypeInfo[];
+  total: number;
+}
+
+export interface DictTypeListResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: DictTypeList;
+}
+
+export interface DictTypeByIdParamDto {
+  /** 字典类型 ID */
+  id: number;
+}
+
+export interface DictTypeDetailResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: DictTypeInfo;
+}
+
+export interface DictTypeCreateDto {
+  /** 字典名称 */
+  name: string;
+  /** 字典类型 */
+  type: string;
+  /** 字典描述 */
+  desc?: string;
+  /** 是否可用 */
+  is_available: boolean;
+}
+
+export interface DictTypeUpdateDto {
+  /** 字典名称 */
+  name?: string;
+  /** 字典类型 */
+  type?: string;
+  /** 字典描述 */
+  desc?: string;
+  /** 是否可用 */
+  is_available?: boolean;
+  /** 字典类型 ID */
+  id: number;
+}
+
+export interface DictTypeDetailIdResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: number;
+}
+
+export interface DictValueQueryListByTypeDto {
+  /** 字典类型 */
+  type: string;
+}
+
+export interface DictValueInfo {
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  create_date: string;
+  /**
+   * 更新时间
+   * @format date-time
+   */
+  update_date: string;
+  /** 字典值 ID */
+  id: number;
+  /** 字典值名称 */
+  label: string;
+  /** 字典值 */
+  value: string;
+  /** 字典值附加属性 */
+  attr?: string;
+  /** 类型ID */
+  typeId: number;
+  /**
+   * 排序
+   * @min 0
+   */
+  recommend: number;
+  /** 字典值描述 */
+  desc?: string;
+  /** 是否可用 */
+  is_available: boolean;
+  type: DictType;
+}
+
+export interface DictValueListByTypeResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: {
+    type: DictType;
+    list: DictValueInfo[];
+  };
+}
+
+export interface DictValueQueryListDto {
+  /** 字典值名称-模糊搜索 */
+  keyword?: string;
+  /** 字典类型ID */
+  typeId: number;
+}
+
+export interface DictValueList {
+  list: DictValueInfo[];
+  total: number;
+}
+
+export interface DictValueListResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: DictValueList;
+}
+
+export interface DictValueByIdParamDto {
+  /** 字典值 ID */
+  id: number;
+}
+
+export interface DictValueDetailResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: DictValueInfo;
+}
+
+export interface DictValueCreateDto {
+  /** 字典值名称 */
+  label: string;
+  /** 字典值 */
+  value: string;
+  /** 字典值附加属性 */
+  attr?: string;
+  /** 类型ID */
+  typeId: number;
+  /**
+   * 排序
+   * @min 0
+   */
+  recommend: number;
+  /** 字典值描述 */
+  desc?: string;
+  /** 是否可用 */
+  is_available: boolean;
+}
+
+export interface DictValueUpdateDto {
+  /** 字典值名称 */
+  label?: string;
+  /** 字典值 */
+  value?: string;
+  /** 字典值附加属性 */
+  attr?: string;
+  /**
+   * 排序
+   * @min 0
+   */
+  recommend?: number;
+  /** 字典值描述 */
+  desc?: string;
+  /** 是否可用 */
+  is_available?: boolean;
+  /** 字典值 ID */
+  id: number;
+}
+
+export interface DictValueDetailIdResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: number;
+}
+
 export interface NewsQueryListDto {
   /**
    * 分页查询-当前页

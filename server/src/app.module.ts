@@ -25,6 +25,12 @@ import { WebhookTrans } from './modules/webhook_trans/webhook_trans.entity';
 import { WebhookTransModule } from './modules/webhook_trans/webhook_trans.module';
 import { FileManage } from './modules/file_manage/file_manage.entity';
 import { FileManageModule } from './modules/file_manage/file_manage.module';
+import { ContentTranslation } from './modules/content_translation/content_translation.entity';
+import { ContentTranslationModule } from './modules/content_translation/content_translation.module';
+import { DictType } from './modules/dict_type/dict_type.entity';
+import { DictValue } from './modules/dict_value/dict_value.entity';
+import { DictTypeModule } from './modules/dict_type/dict_type.module';
+import { DictValueModule } from './modules/dict_value/dict_value.module';
 
 const workConfig = getWorkConfig();
 
@@ -52,6 +58,9 @@ const workConfig = getWorkConfig();
             ValidateCode,
             WebhookTrans,
             FileManage,
+            ContentTranslation,
+            DictType,
+            DictValue,
             News,
             Banner,
           ],
@@ -75,6 +84,9 @@ const workConfig = getWorkConfig();
     LoggerModule,
     WebhookTransModule,
     FileManageModule,
+    ContentTranslationModule,
+    DictTypeModule,
+    DictValueModule,
 
     NewsModule,
     BannerModule,

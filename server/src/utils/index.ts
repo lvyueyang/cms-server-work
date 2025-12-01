@@ -5,6 +5,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { Order } from '@/interface';
 import { Readable } from 'stream';
+import { ContentLang } from '@/constants';
 
 const homedir = process.env[process.platform == 'win32' ? 'USERPROFILE' : 'HOME'];
 
@@ -153,4 +154,10 @@ export function streamReadable2md5(stream: Readable): Promise<string> {
       reject(err);
     });
   });
+}
+
+// 是否为默认国际化语言
+export function isDefaultI18nLang(lang?: string | ContentLang) {
+  if (!lang || lang === ContentLang.ZH_CN) return true;
+  return false;
 }

@@ -1,6 +1,6 @@
 import { message } from '@/utils/notice';
 import { SortOrder } from 'antd/es/table/interface';
-
+export * from './i18n';
 interface TransformPaginationOption {
   current?: number;
   pageSize?: number;

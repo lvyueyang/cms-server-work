@@ -15,6 +15,7 @@
   "dependencies": {},
   "devDependencies": {
     "@cms/api-interface": "workspace:*",
+    "@cms/server": "workspace:*",
     "@ant-design/icons": "^6.1.0",
     "@ant-design/pro-components": "^2.8.10",
     "@aws-sdk/client-s3": "^3.554.0",
