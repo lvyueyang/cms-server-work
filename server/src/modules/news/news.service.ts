@@ -1,18 +1,21 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CRUDQuery } from '@/interface';
-import { createOrder } from '../../utils';
+import { createOrder, isDefaultI18nLang } from '../../utils';
 import { paginationTransform } from '../../utils/whereTransform';
 import { LessThan, Like, MoreThan, Repository } from 'typeorm';
 import { UserAdmin } from '../user_admin/user_admin.entity';
 import { News } from './news.entity';
 import { NewsCreateDto, NewsUpdateDto } from './news.dto';
+import { ContentLang } from '@/constants';
+import { ContentTranslationService } from '../content_translation/content_translation.service';
 
 @Injectable()
 export class NewsService {
   constructor(
     @InjectRepository(News)
     private repository: Repository<News>,
+    private contentTranslationService: ContentTranslationService,
   ) {}
 
   findAll() {
@@ -21,7 +24,7 @@ export class NewsService {
     });
   }
 
-  findList({ keyword = '', ...params }: CRUDQuery<News>) {
+  findList({ keyword = '', ...params }: CRUDQuery<News>, lang?: ContentLang) {
     const { skip, take } = paginationTransform(params);
     const { order } = createOrder(params) || {};
     const find = this.repository
@@ -37,22 +40,36 @@ export class NewsService {
     });
     /** 在 push_date 为空时,按创建时间排序 */
     find.addOrderBy('COALESCE(news.push_date, news.create_date)', 'DESC');
-    return find.getManyAndCount();
+    return find.getManyAndCount().then(async ([list, total]) => {
+      if (isDefaultI18nLang(lang)) return [list, total] as const;
+      const patched = await this.contentTranslationService.overlayTranslations(list, {
+        entity: 'news',
+        fields: ['title', 'desc', 'content'],
+        lang,
+      });
+      return [patched, total] as const;
+    });
   }
 
-  async findById(id: number) {
-    const isExisted = await this.repository.findOneBy({
+  async findById(id: number, lang?: ContentLang) {
+    const info = await this.repository.findOneBy({
       id,
       is_delete: false,
     });
-    if (!isExisted) {
+    if (!info) {
       throw new BadRequestException('新闻不存在', 'news not found');
     }
-    return isExisted;
+    if (!isDefaultI18nLang(lang)) return info;
+    const [patched] = await this.contentTranslationService.overlayTranslations([info], {
+      entity: 'news',
+      fields: ['title', 'desc', 'content'],
+      lang,
+    });
+    return patched;
   }
 
-  async findNextAndPrev(id: number) {
-    const currentInfo = await this.findById(id);
+  async findNextAndPrev(id: number, lang?: ContentLang) {
+    const currentInfo = await this.findById(id, lang);
     const [nextInfo, prevInfo] = await Promise.all([
       this.repository.findOne({
         where: {
@@ -73,9 +90,24 @@ export class NewsService {
         },
       }),
     ]);
+    let patchedNext = nextInfo || null;
+    let patchedPrev = prevInfo || null;
+    if (!isDefaultI18nLang(lang)) {
+      const items = [nextInfo, prevInfo].filter(Boolean) as News[];
+      if (items.length) {
+        const patched = await this.contentTranslationService.overlayTranslations(items, {
+          entity: 'news',
+          fields: ['title', 'desc', 'content'],
+          lang,
+        });
+        const map = new Map<number, News>(patched.map((i) => [i.id, i]));
+        if (nextInfo) patchedNext = map.get(nextInfo.id);
+        if (prevInfo) patchedPrev = map.get(prevInfo.id);
+      }
+    }
     return {
-      next: nextInfo || null,
-      prev: prevInfo || null,
+      next: patchedNext || null,
+      prev: patchedPrev || null,
       current: currentInfo,
     };
   }

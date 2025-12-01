@@ -1,5 +1,6 @@
 import { ContentLang } from '@/constants';
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { Request } from 'express';
 
 function pickCookieLang(req: any): string | undefined {
   // Prefer cookie-parser result
@@ -36,18 +37,10 @@ function pickUaLang(req: any): string | undefined {
   if (typeof ua !== 'string' || !ua) return undefined;
   const lower = ua.toLowerCase();
   // Simple heuristics; many UA strings include locale like "zh-cn" or "en-us"
-  if (
-    lower.includes('zh-cn') ||
-    lower.includes(' chinese ') ||
-    lower.includes(' zh ')
-  ) {
+  if (lower.includes('zh-cn') || lower.includes(' chinese ') || lower.includes(' zh ')) {
     return ContentLang.ZH_CN;
   }
-  if (
-    lower.includes('en-us') ||
-    lower.includes(' english ') ||
-    lower.includes(' en ')
-  ) {
+  if (lower.includes('en-us') || lower.includes(' english ') || lower.includes(' en ')) {
     return ContentLang.EN_US;
   }
   return undefined;
@@ -63,21 +56,22 @@ function toContentLang(input?: string): ContentLang | undefined {
   return undefined;
 }
 
-export const Lang = createParamDecorator(
-  (_data: unknown, ctx: ExecutionContext): ContentLang => {
-    const req = ctx.switchToHttp().getRequest();
+export function getReqLang(req: Request) {
+  const fromCookie = toContentLang(pickCookieLang(req));
+  if (fromCookie) return fromCookie;
 
-    const fromCookie = toContentLang(pickCookieLang(req));
-    if (fromCookie) return fromCookie;
+  const fromHeader = toContentLang(pickHeaderLang(req));
+  if (fromHeader) return fromHeader;
 
-    const fromHeader = toContentLang(pickHeaderLang(req));
-    if (fromHeader) return fromHeader;
+  const fromUa = toContentLang(pickUaLang(req));
+  if (fromUa) return fromUa;
 
-    const fromUa = toContentLang(pickUaLang(req));
-    if (fromUa) return fromUa;
+  return ContentLang.ZH_CN;
+}
 
-    return ContentLang.ZH_CN;
-  },
-);
+export const Lang = createParamDecorator((_data: unknown, ctx: ExecutionContext): ContentLang => {
+  const req = ctx.switchToHttp().getRequest();
+  return getReqLang(req);
+});
 
 export default Lang;

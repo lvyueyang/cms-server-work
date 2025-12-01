@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErrorPage, ReactTemplateEngine } from './render_view.engine';
 import { RenderViewResult } from './render_view.decorator';
-import {  isValidElement } from 'react';
+import { isValidElement } from 'react';
+import { Request, Response } from 'express';
 
 interface GlobalData {
   siteName: string;
@@ -19,8 +20,9 @@ export class RenderViewService {
     this.templateEngine = new ReactTemplateEngine();
   }
 
-  async handler(ctx?: RenderViewResult) {
-    const jsxElement = ctx?.render?.();
+  async handler(renderCtx: RenderViewResult, context: ExecutionContext) {
+    renderCtx.useContext(context);
+    const jsxElement = renderCtx?._render();
     try {
       // 检查是否返回了JSX组件（React元素）
       let htmlContent = '';
@@ -37,11 +39,11 @@ export class RenderViewService {
 
       // 包装在布局中
       const html = this.templateEngine.renderPageHtml({
-        title: ctx?.title,
-        description: ctx.description,
-        styles: ctx.styles,
-        scripts: ctx.scripts,
-        meta: ctx.meta,
+        title: renderCtx?.title,
+        description: renderCtx.description,
+        styles: renderCtx.styles,
+        scripts: renderCtx.scripts,
+        meta: renderCtx.meta,
         content: htmlContent,
       });
       return html;

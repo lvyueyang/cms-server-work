@@ -11,10 +11,9 @@ export class RenderViewInterceptor implements NestInterceptor {
     private reflector: Reflector,
   ) {}
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-
     return next.handle().pipe(
-      switchMap(async (context) => {
-        return await this.renderViewService.handler(context);
+      switchMap(async (data) => {
+        return await this.renderViewService.handler(data, context);
       }),
     );
   }

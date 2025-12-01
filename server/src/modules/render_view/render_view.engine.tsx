@@ -53,23 +53,18 @@ export class ReactTemplateEngine {
 }
 
 export interface BaseLayoutProps {
-  title: string;
   children?: React.ReactNode;
-  siteName: string;
-  currentYear: number;
+  // title: string;
+  // siteName: string;
+  // currentYear: number;
 }
 
 // 基础布局组件
-export const BaseLayout: React.FC<BaseLayoutProps> = ({
-  title,
-  children,
-  siteName,
-  currentYear,
-}) => {
+export const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   return (
     <>
       <header style={{ background: '#f0f0f0', padding: '20px', marginBottom: '20px' }}>
-        <h1>{siteName}</h1>
+        <h1>CMS</h1>
         <nav>
           <a href="/" style={{ margin: '0 10px', color: '#007bff', textDecoration: 'none' }}>
             首页
@@ -91,9 +86,7 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({
       <footer
         style={{ background: '#f0f0f0', padding: '10px', marginTop: '20px', textAlign: 'center' }}
       >
-        <p>
-          &copy; {currentYear} {siteName}. 版权所有.
-        </p>
+        <p>&copy; 2025. 版权所有.</p>
       </footer>
     </>
   );
@@ -106,7 +99,7 @@ interface ErrorPageProps {
 // 错误页面组件
 export const ErrorPage: React.FC<ErrorPageProps> = ({ title, message }) => {
   return (
-    <BaseLayout title={title} siteName="CMS" currentYear={2025}>
+    <BaseLayout>
       <div style={{ textAlign: 'center', padding: '50px' }}>
         <h1 style={{ color: '#dc3545' }}>{title}</h1>
         <p>{message || '抱歉，页面加载时发生错误。'}</p>
@@ -124,13 +117,8 @@ export const JSXWrapper: React.FC<{ component: React.ReactElement }> = ({ compon
 };
 
 export function getBaseLayout() {
-  const { siteName } = RenderViewService.globalData;
   const Comp: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
-    return (
-      <BaseLayout title="CMS" siteName={siteName} currentYear={new Date().getFullYear()}>
-        {children}
-      </BaseLayout>
-    );
+    return <BaseLayout>{children}</BaseLayout>;
   };
   return Comp;
 }

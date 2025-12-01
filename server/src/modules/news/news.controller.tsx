@@ -17,6 +17,8 @@ import {
 } from './news.dto';
 import { NewsService } from './news.service';
 import { createPermGroup } from '@/common/common.permission';
+import Lang from '@/common/lang.decorator';
+import { ContentLang } from '@/constants';
 
 const MODULE_NAME = '新闻';
 const createPerm = createPermGroup(MODULE_NAME);
@@ -28,14 +30,17 @@ export class NewsController {
 
   @Get('/news')
   @RenderView()
-  async list(@Query() { current = 1 }: { current: number }) {
+  async list(@Query() { current = 1 }: { current: number }, @Lang() lang: ContentLang) {
     const limit = 20;
-    const [list, total] = await this.services.findList({
-      current,
-      page_size: limit,
-      order_key: 'recommend',
-      order_type: 'DESC',
-    });
+    const [list, total] = await this.services.findList(
+      {
+        current,
+        page_size: limit,
+        order_key: 'recommend',
+        order_type: 'DESC',
+      },
+      lang,
+    );
     const max = total / limit;
     const next = current < max ? current + 1 : 0;
     const prev = current > 1 ? current - 1 : 0;
@@ -72,8 +77,8 @@ export class NewsController {
 
   @Get('/news/:id')
   @RenderView()
-  async detail(@Param() { id }: { id: number }) {
-    const { current, next, prev } = await this.services.findNextAndPrev(id);
+  async detail(@Param() { id }: { id: number }, @Lang() lang: ContentLang) {
+    const { current, next, prev } = await this.services.findNextAndPrev(id, lang);
     const pageData = {
       info: {
         ...current,
@@ -94,10 +99,13 @@ export class NewsController {
     };
     return new RenderViewResult({
       title: pageData.info.title,
-      render() {
+      layout: 'base',
+      render({ t }) {
         return (
           <div>
-            <h1>新闻详情：{pageData.info.title}</h1>
+            <h1>
+              {t('新闻详情')}：{pageData.info.title}
+            </h1>
             <hr />
             <div>{pageData.info.desc}</div>
             <div>{dayjs(pageData.info?.push_date).format('YYYY-MM-DD HH:mm:ss')}</div>
