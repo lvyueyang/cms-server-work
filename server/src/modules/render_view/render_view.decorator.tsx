@@ -8,7 +8,9 @@ import { getReqLang } from '@/common/lang.decorator';
 import i18next from 'i18next';
 import ZH_CN from '@/i18n/zh';
 import EN_US from '@/i18n/en';
-import { BaseLayout } from './render_view.engine';
+import { BaseLayout } from './components/BaseLayout';
+
+export { BaseLayout };
 
 export type LayoutType = 'base';
 
@@ -24,8 +26,6 @@ i18next.init({
     },
   },
 });
-
-export { BaseLayout, getBaseLayout } from './render_view.engine';
 
 export function RenderView() {
   return applyDecorators(UseInterceptors(RenderViewInterceptor), ApiExcludeEndpoint());
@@ -61,8 +61,8 @@ export class RenderViewResult {
     this.title = options.title || '';
     this.description = options.description || '';
     this.meta = options.meta || {};
-    this.styles = [...(options.styles || [])];
-    this.scripts = [...(options.scripts || [])];
+    this.styles = ['/_fe_/common.css', ...(options.styles || [])];
+    this.scripts = ['/_fe_/common.js', ...(options.scripts || [])];
     this.render = options.render;
     this.layout = options.layout;
   }
@@ -96,13 +96,16 @@ export class RenderViewResult {
     return null;
   };
 
-  // 国际化匹配方法
-  t = (...args: Parameters<typeof i18next.t>) => {
+  getLang = () => {
     if (!this._lang) {
       this._lang = getReqLang(this.getRequest());
     }
-    const lang = this._lang;
-    // 设置 lang 为 this._lang
+    return this._lang;
+  };
+
+  // 国际化匹配方法
+  t = (...args: Parameters<typeof i18next.t>) => {
+    const lang = this.getLang();
     const t = i18next.getFixedT(lang);
     return t(...args);
   };

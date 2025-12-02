@@ -51,6 +51,8 @@ export class NewsController {
     }));
 
     return new RenderViewResult({
+      title: '新闻列表',
+      layout: 'base',
       render() {
         return (
           <div>

@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
-import { getBaseLayout, RenderView, RenderViewResult } from '../render_view/render_view.decorator';
+import { RenderView, RenderViewResult } from '../render_view/render_view.decorator';
 
 @Controller()
 export class HomeController {
@@ -8,16 +8,16 @@ export class HomeController {
   @ApiExcludeEndpoint()
   @Get('/')
   index() {
-    const BaseLayout = getBaseLayout();
     return new RenderViewResult({
       title: '首页',
       description: '这是一个使用JSX直接渲染的页面。',
       meta: {
         keywords: '首页, 示例, JSX',
       },
+      layout: 'base',
       render() {
         return (
-          <BaseLayout>
+          <>
             <h1>首页</h1>
             <p>这是一个使用JSX直接渲染的页面。</p>
             <div style={{ marginTop: '20px' }}>
@@ -30,7 +30,7 @@ export class HomeController {
                 <li>SEO友好</li>
               </ul>
             </div>
-          </BaseLayout>
+          </>
         );
       },
     });

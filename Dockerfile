@@ -17,7 +17,7 @@ RUN npm run build:fe
 # 打包 server
 RUN npm run build:server
 
-
+# 生产环境镜像
 FROM node:20-alpine
 
 WORKDIR /app
@@ -27,7 +27,6 @@ COPY ./pnpm-lock.yaml /app/pnpm-lock.yaml
 COPY ./pnpm-workspace.yaml /app/pnpm-workspace.yaml
 COPY ./work.config.json /app/work.config.json
 COPY ./.npmrc /app/.npmrc
-COPY ./clients/fe /app/clients/fe
 
 COPY --from=build /app/server /app/server
 
@@ -40,7 +39,7 @@ RUN pnpm install --prod --frozen-lockfile
 
 # 不需要 src 下源码了
 RUN rm -rf /app/server/src
-RUN rm -rf /app/clients/fe/src
+RUN rm -rf /app/clients
 
 ENV TZ="Asia/Shanghai"
 

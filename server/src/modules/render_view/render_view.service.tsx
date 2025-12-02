@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { ErrorPage, ReactTemplateEngine } from './render_view.engine';
 import { RenderViewResult } from './render_view.decorator';
 import { isValidElement } from 'react';
-import { Request, Response } from 'express';
 
 interface GlobalData {
   siteName: string;
@@ -45,6 +44,7 @@ export class RenderViewService {
         scripts: renderCtx.scripts,
         meta: renderCtx.meta,
         content: htmlContent,
+        lang: renderCtx.getLang(),
       });
       return html;
     } catch (error) {
