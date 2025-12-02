@@ -18,7 +18,7 @@ export interface I18nListResult {
 }
 
 export function queryTranslations(params: { entity: string; entityId: number; field: string }) {
-  return request.post<Result<I18nListResult>>(`${AIP_FIX}/i18n/list/by-entity`, { params });
+  return request.post<Result<I18nListResult>>(`${AIP_FIX}/i18n/list/by-entity`, params);
 }
 
 export function upsertTranslation(body: {

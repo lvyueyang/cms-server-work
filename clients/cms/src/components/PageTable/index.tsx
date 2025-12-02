@@ -11,10 +11,10 @@ function PageTable<
     <ProTable<DataType, Params, ValueType>
       search={false}
       bordered
-      scroll={{ y: window.innerHeight - 215 }}
       rowKey="id"
       className={cls(props.className, styles.tablePageContainer)}
       {...props}
+      scroll={{ y: window.innerHeight - 215, ...props.scroll }}
     />
   );
 }

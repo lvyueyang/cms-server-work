@@ -7,6 +7,8 @@ import { LessThan, Like, MoreThan, Repository } from 'typeorm';
 import { UserAdmin } from '../user_admin/user_admin.entity';
 import { {{entityName}} } from './{{name}}.entity';
 import { {{entityName}}CreateDto, {{entityName}}UpdateDto } from './{{name}}.dto';
+import { ContentLang } from '@/constants';
+import { ContentTranslationService } from '../content_translation/content_translation.service';
 
 @Injectable()
 export class {{entityName}}Service {
@@ -21,7 +23,7 @@ export class {{entityName}}Service {
     });
   }
 
-  findList({ keyword = '', ...params }: CRUDQuery<{{entityName}}>) {
+  findList({ keyword = '', ...params }: CRUDQuery<{{entityName}}>, lang?: ContentLang) {
     const { skip, take } = paginationTransform(params);
     const { order } = createOrder(params) || {};
     const find = this.repository
@@ -36,21 +38,35 @@ export class {{entityName}}Service {
       find.addOrderBy('{{name}}.' + key, value);
     });
     
-    return find.getManyAndCount();
+    return find.getManyAndCount().then(async ([list, total]) => {
+      if (isDefaultI18nLang(lang)) return [list, total] as const;
+      const patched = await this.contentTranslationService.overlayTranslations(list, {
+        entity: '{{name}}',
+        fields: ['title', 'desc', 'content'],
+        lang,
+      });
+      return [patched, total] as const;
+    });;
   }
 
-  async findById(id: number) {
-    const isExisted = await this.repository.findOneBy({
+  async findById(id: number, lang?: ContentLang) {
+    const info = await this.repository.findOneBy({
       id,
       is_delete: false,
     });
-    if (!isExisted) {
+    if (!info) {
       throw new BadRequestException('{{cname}}不存在', '{{name}} not found');
     }
-    return isExisted;
+    if (!isDefaultI18nLang(lang)) return info;
+    const [patched] = await this.contentTranslationService.overlayTranslations([info], {
+      entity: '{{name}}',
+      fields: ['title', 'desc', 'content'],
+      lang,
+    });
+    return patched;
   }
 
-  async findNextAndPrev(id: number) {
+  async findNextAndPrev(id: number, lang?: ContentLang) {
     const currentInfo = await this.findById(id);
     const [nextInfo, prevInfo] = await Promise.all([
       this.repository.findOne({
@@ -72,9 +88,25 @@ export class {{entityName}}Service {
         },
       }),
     ]);
+    
+    let patchedNext = nextInfo || null;
+    let patchedPrev = prevInfo || null;
+    if (!isDefaultI18nLang(lang)) {
+      const items = [nextInfo, prevInfo].filter(Boolean);
+      if (items.length) {
+        const patched = await this.contentTranslationService.overlayTranslations(items, {
+          entity: '{{name}}',
+          fields: ['title', 'desc', 'content'],
+          lang,
+        });
+        const map = new Map(patched.map((i) => [i.id, i]));
+        if (nextInfo) patchedNext = map.get(nextInfo.id);
+        if (prevInfo) patchedPrev = map.get(prevInfo.id);
+      }
+    }
     return {
-      next: nextInfo || null,
-      prev: prevInfo || null,
+      next: patchedNext || null,
+      prev: patchedPrev || null,
       current: currentInfo,
     };
   }

@@ -1,5 +1,5 @@
 import { NewsInfo } from '@cms/api-interface';
-import { transformPagination, transformSort } from '@/utils';
+import { createI18nColumn, transformPagination, transformSort } from '@/utils';
 import { message } from '@/utils/notice';
 import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Input, Popconfirm, Space } from 'antd';
@@ -10,6 +10,7 @@ import { AvailableSwitch } from '@/components/Available';
 import PageTable from '@/components/PageTable';
 
 type TableItem = NewsInfo;
+const i18nColumn = createI18nColumn<TableItem>('news');
 
 export default function NewsPage() {
   const [searchForm, setSearchForm] = useState({
@@ -26,16 +27,19 @@ export default function NewsPage() {
     {
       dataIndex: 'title',
       title: '新闻名称',
+      width: 160,
       sorter: true,
     },
     {
       dataIndex: 'recommend',
       title: '推荐等级',
+      width: 100,
       sorter: true,
     },
     {
       dataIndex: 'is_available',
       title: '是否可用',
+      width: 90,
       render: (_, row) => {
         return (
           <AvailableSwitch
@@ -56,29 +60,39 @@ export default function NewsPage() {
       title: '发布日期',
       valueType: 'dateTime',
       sorter: true,
+      width: 180,
     },
     {
       dataIndex: 'desc',
       title: '新闻描述',
       ellipsis: true,
+      width: 200,
     },
+    i18nColumn({
+      dataIndex: 'content',
+      title: '内容',
+      width: 50,
+      ellipsis: true,
+      transType: 'rich',
+    }),
     {
       dataIndex: 'create_date',
       title: '创建时间',
       valueType: 'dateTime',
+      width: 180,
       sorter: true,
     },
     {
       dataIndex: 'update_date',
       title: '修改时间',
       valueType: 'dateTime',
+      width: 180,
       sorter: true,
     },
     {
       dataIndex: 'operate',
       title: '操作',
       hideInSearch: true,
-      width: 100,
       render: (_, row) => {
         return (
           <Space>
@@ -112,6 +126,7 @@ export default function NewsPage() {
         rowKey="id"
         bordered
         search={false}
+        scroll={{ x: 1100 }}
         request={(params, sorter) => {
           return getListApi({
             ...transformPagination(params),

@@ -93,14 +93,14 @@ export class NewsService {
     let patchedNext = nextInfo || null;
     let patchedPrev = prevInfo || null;
     if (!isDefaultI18nLang(lang)) {
-      const items = [nextInfo, prevInfo].filter(Boolean) as News[];
+      const items = [nextInfo, prevInfo].filter(Boolean);
       if (items.length) {
         const patched = await this.contentTranslationService.overlayTranslations(items, {
           entity: 'news',
           fields: ['title', 'desc', 'content'],
           lang,
         });
-        const map = new Map<number, News>(patched.map((i) => [i.id, i]));
+        const map = new Map(patched.map((i) => [i.id, i]));
         if (nextInfo) patchedNext = map.get(nextInfo.id);
         if (prevInfo) patchedPrev = map.get(prevInfo.id);
       }

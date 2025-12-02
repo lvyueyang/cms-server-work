@@ -15,6 +15,8 @@ import {
 } from './{{name}}.dto';
 import { {{entityName}}Service } from './{{name}}.service';
 import { createPermGroup } from '@/common/common.permission';
+import Lang from '@/common/lang.decorator';
+import { ContentLang } from '@/constants';
 
 const MODULE_NAME = '{{cname}}';
 const createPerm = createPermGroup(MODULE_NAME);

@@ -1,6 +1,6 @@
 import { AvailableSwitch } from '@/components/Available';
 import { {{entityName}}CreateDto, {{entityName}}Info, {{entityName}}UpdateDto } from '@cms/api-interface';
-import { transformPagination, transformSort } from '@/utils';
+import { createI18nColumn, transformPagination, transformSort } from '@/utils';
 import { message } from '@/utils/notice';
 import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Input, Popconfirm, Space, Form, Modal, Switch } from 'antd';
@@ -15,6 +15,8 @@ type TableItem = {{entityName}}Info;
 type CreateFormValues = {{entityName}}CreateDto;
 type UpdateFormValues = {{entityName}}UpdateDto;
 type FormValues = CreateFormValues | UpdateFormValues;
+
+const i18nColumn = createI18nColumn<TableItem>('{{name}}');
 
 export default function {{entityName}}Page() {
   const [searchForm, setSearchForm] = useState({
@@ -41,12 +43,12 @@ export default function {{entityName}}Page() {
       width: 60,
       valueType: 'image',
     },
-    {
+    i18nColumn({
       dataIndex: 'title',
       title: '名称',
       sorter: true,
       width: 160,
-    },
+    }),
     {
       dataIndex: 'recommend',
       title: '推荐等级',
@@ -72,12 +74,19 @@ export default function {{entityName}}Page() {
         );
       },
     },
-    {
+    i18nColumn({
       dataIndex: 'desc',
       title: '描述',
-      width: 260,
+      width: 200,
       ellipsis: true,
-    },
+    }),
+    i18nColumn({
+      dataIndex: 'content',
+      title: '内容',
+      width: 120,
+      ellipsis: true,
+      transType: 'rich',
+    }),
     {
       dataIndex: 'create_date',
       title: '创建时间',
@@ -96,6 +105,7 @@ export default function {{entityName}}Page() {
       dataIndex: 'operate',
       title: '操作',
       hideInSearch: true,
+      fixed: 'right',
       render: (_, row) => {
         return (
           <Space>
@@ -135,6 +145,7 @@ export default function {{entityName}}Page() {
         columns={columns}
         rowKey="id"
         bordered
+        scroll={{x:1400}}
         search={false}
         request={(params, sorter) => {
           return getListApi({
