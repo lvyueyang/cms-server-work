@@ -46,6 +46,7 @@ export class HomeController {
       meta: {
         keywords: '404, 页面未找到, 错误',
       },
+      layout: 'base',
       render() {
         return (
           <div style={{ textAlign: 'center', padding: '50px' }}>

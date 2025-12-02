@@ -1,8 +1,5 @@
 export interface BaseLayoutProps {
   children?: React.ReactNode;
-  // title: string;
-  // siteName: string;
-  // currentYear: number;
 }
 
 // 基础布局组件
