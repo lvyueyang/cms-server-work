@@ -1,9 +1,11 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { join } from 'path';
 import config from './config';
+import { NotFoundFilter } from './common/filters/not-found.filter';
 import { AuthModule } from './modules/auth/auth.module';
 import { HomeModule } from './modules/home/home.module';
 import { LoggerModule } from './modules/logger/logger.module';
@@ -92,7 +94,12 @@ const workConfig = getWorkConfig();
     BannerModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: NotFoundFilter,
+    },
+  ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {}
