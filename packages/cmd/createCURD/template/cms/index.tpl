@@ -145,7 +145,7 @@ export default function {{entityName}}Page() {
         columns={columns}
         rowKey="id"
         bordered
-        scroll={{x:1400}}
+        scroll={{'{{'}} x: 1400 {{'}}'}}
         search={false}
         request={(params, sorter) => {
           return getListApi({
