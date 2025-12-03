@@ -45,7 +45,7 @@ export class {{entityName}}ByIdParamDto {
 }
 
 /** 查询列表 */
-export class {{entityName}}QueryListDto extends PaginationAndOrder<{{entityName}}> {
+export class {{entityName}}QueryListDto extends PaginationAndOrder<keyof {{entityName}}> {
   @ApiProperty({ description: '{{cname}}名称-模糊搜索' })
   keyword?: string;
 }

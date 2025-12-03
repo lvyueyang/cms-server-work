@@ -11,6 +11,7 @@ function PageTable<
     <ProTable<DataType, Params, ValueType>
       search={false}
       bordered
+      cardBordered
       rowKey="id"
       className={cls(props.className, styles.tablePageContainer)}
       {...props}

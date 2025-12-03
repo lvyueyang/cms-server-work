@@ -1,5 +1,6 @@
 import { EditorView, basicSetup } from 'codemirror';
 import { javascript } from '@codemirror/lang-javascript';
+import { json } from '@codemirror/lang-json';
 import React, { useEffect, useRef, useState } from 'react';
 import './index.module.less';
 
@@ -50,6 +51,7 @@ export default function CodeEditor({ value, className, style, onChange }: CodeEd
       extensions: [
         basicSetup,
         javascript(),
+        json(),
         EditorView.updateListener.of((update) => {
           if (update.docChanged && onChangeRef.current) {
             const newValue = update.state.doc.toString();

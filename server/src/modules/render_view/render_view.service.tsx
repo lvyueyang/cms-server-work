@@ -3,7 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { ErrorPage, ReactTemplateEngine } from './render_view.engine';
 import { RenderViewResult } from './render_view.decorator';
 import { isValidElement } from 'react';
-
+import i18next from 'i18next';
+import { SystemTranslationService } from '../system_translation/system_translation.service';
+import { ContentLang } from '@/constants';
 interface GlobalData {
   siteName: string;
   version: string;
@@ -14,9 +16,17 @@ export class RenderViewService {
   static globalData: GlobalData = {} as GlobalData;
   private templateEngine: ReactTemplateEngine;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private systemTranslationService: SystemTranslationService,
+  ) {
+    i18next.init({
+      lng: ContentLang.ZH_CN,
+      debug: false,
+    });
     this.loadGlobal();
     this.templateEngine = new ReactTemplateEngine();
+    this.loadI18n();
   }
 
   async handler(renderCtx: RenderViewResult, context: ExecutionContext) {
@@ -67,4 +77,23 @@ export class RenderViewService {
       version: '1.0.0',
     };
   }
+
+  // 加载国际化数据
+  async loadI18n() {
+    const locals = await this.systemTranslationService.findAll();
+    const localsEn = locals.filter((item) => item.lang === ContentLang.EN_US);
+    const localsZh = locals.filter((item) => item.lang === ContentLang.ZH_CN);
+    const en = transI18n(localsEn);
+    const zh = transI18n(localsZh);
+    i18next.addResourceBundle(ContentLang.EN_US, 'translation', en);
+    i18next.addResourceBundle(ContentLang.ZH_CN, 'translation', zh);
+  }
+}
+
+function transI18n(list: { key: string; value: string }[]) {
+  const obj: Record<string, string> = {};
+  list.forEach((item) => {
+    obj[item.key] = item.value;
+  });
+  return obj;
 }

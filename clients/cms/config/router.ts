@@ -47,9 +47,20 @@ const router = {
           menuHide: true,
         },
         {
-          path: '/content_translation/list',
-          title: '内容翻译',
-          component: 'content_translation/index',
+          path: '/i18n',
+          title: '国际化管理',
+          routes: [
+            {
+              path: '/i18n/content-translation',
+              title: '内容翻译',
+              component: 'content-translation/index',
+            },
+            {
+              path: '/i18n/system-translation',
+              title: '系统翻译',
+              component: 'system-translation/index',
+            },
+          ],
         },
         {
           path: '/logger',

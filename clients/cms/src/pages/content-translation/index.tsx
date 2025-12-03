@@ -1,10 +1,14 @@
 import { transformPagination, transformSort } from '@/utils';
 import { ActionType, ProColumns } from '@ant-design/pro-components';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import { useRef, useState } from 'react';
-import { getTranslationListApi, ContentTranslationItem } from './module';
-import { BatchImportModal } from './components';
+import {
+  getTranslationListApi,
+  ContentTranslationItem,
+  batchUpsertTranslationsApi,
+} from './module';
 import PageTable from '@/components/PageTable';
+import { openImportJsonModal } from '@/components/ImportData';
 
 export default function ContentTranslationPage() {
   const [importModalVisible, setImportModalVisible] = useState(false);
@@ -46,8 +50,32 @@ export default function ContentTranslationPage() {
       hideInSearch: true,
     },
   ];
-  const handleImport = () => {
-    setImportModalVisible(true);
+  const handleImportSubmit = async (jsonValue: string) => {
+    try {
+      const translations = JSON.parse(jsonValue);
+      if (!Array.isArray(translations)) {
+        message.error('JSON数据必须是数组格式');
+        throw new Error('JSON数据必须是数组格式');
+      }
+
+      // 验证数据格式
+      for (const item of translations) {
+        if (!item.entity || !item.entityId || !item.field || !item.lang) {
+          console.log(item);
+          message.error('翻译数据缺少必要字段');
+          throw new Error('翻译数据缺少必要字段');
+        }
+      }
+      await batchUpsertTranslationsApi({ translations });
+      tableRef.current?.reload();
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        message.error('JSON格式错误，请检查输入');
+      } else {
+        message.error('导入失败：' + (error as Error).message);
+      }
+      throw error;
+    }
   };
   const handleImportSuccess = () => {
     tableRef.current?.reload();
@@ -65,7 +93,27 @@ export default function ContentTranslationPage() {
         }}
         search={{}}
         toolBarRender={() => [
-          <Button type="primary" key="import" onClick={handleImport}>
+          <Button
+            type="primary"
+            key="import"
+            onClick={() => {
+              openImportJsonModal({
+                onOk: async (value) => {
+                  await handleImportSubmit(value);
+                },
+                help: (
+                  <>
+                    <strong>数据格式说明：</strong>
+                    <div>• entity: 实体名（如 news, product）</div>
+                    <div>• entityId: 实体记录ID</div>
+                    <div>• field: 字段名（如 title, content）</div>
+                    <div>• lang: 语言代码（如 en-US, zh-CN）</div>
+                    <div>• value: 翻译值</div>
+                  </>
+                ),
+              });
+            }}
+          >
             批量导入
           </Button>,
         ]}
@@ -86,11 +134,6 @@ export default function ContentTranslationPage() {
         pagination={{
           showSizeChanger: true,
         }}
-      />
-      <BatchImportModal
-        visible={importModalVisible}
-        onClose={() => setImportModalVisible(false)}
-        onSuccess={handleImportSuccess}
       />
     </>
   );

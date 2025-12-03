@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CRUDQuery } from '@/interface';
-import { createOrder } from '../../utils';
-import { paginationTransform } from '../../utils/whereTransform';
+import { createOrder, isDefaultI18nLang } from '@/utils';
+import { paginationTransform } from '@/utils/whereTransform';
 import { LessThan, Like, MoreThan, Repository } from 'typeorm';
 import { UserAdmin } from '../user_admin/user_admin.entity';
 import { {{entityName}} } from './{{name}}.entity';
@@ -15,6 +15,7 @@ export class {{entityName}}Service {
   constructor(
     @InjectRepository({{entityName}})
     private repository: Repository<{{entityName}}>,
+    private contentTranslationService: ContentTranslationService,
   ) {}
 
   findAll() {

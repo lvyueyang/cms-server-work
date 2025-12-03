@@ -3,7 +3,7 @@ import UploadImage from '@/components/UploadImage';
 import { NewsCreateDto, NewsUpdateDto } from '@cms/api-interface';
 import { message } from '@/utils/notice';
 import { useRequest } from 'ahooks';
-import { Button, DatePicker, Form, Input, Row, Switch } from 'antd';
+import { Button, Card, DatePicker, Form, Input, Row, Switch } from 'antd';
 import { useEffect } from 'react';
 import { history, useParams } from 'umi';
 import { createApi, getDetailApi, updateApi } from './module';
@@ -55,8 +55,8 @@ export default function NewsFormPage() {
   }, [id]);
 
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', padding: '20px' }}>
-      <Form<FormValues> form={form} onFinish={submitHandler} labelCol={{ xs: 3 }}>
+    <Card style={{ maxWidth: 1000, margin: '0 auto' }}>
+      <Form<FormValues> form={form} onFinish={submitHandler} labelCol={{ flex: '100px' }}>
         <Form.Item label="新闻ID" name="id" hidden={!id}>
           <Input disabled />
         </Form.Item>
@@ -95,6 +95,6 @@ export default function NewsFormPage() {
           </Row>
         </Form.Item>
       </Form>
-    </div>
+    </Card>
   );
 }

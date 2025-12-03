@@ -33,6 +33,8 @@ import { DictType } from './modules/dict_type/dict_type.entity';
 import { DictValue } from './modules/dict_value/dict_value.entity';
 import { DictTypeModule } from './modules/dict_type/dict_type.module';
 import { DictValueModule } from './modules/dict_value/dict_value.module';
+import { SystemTranslation } from './modules/system_translation/system_translation.entity';
+import { SystemTranslationModule } from './modules/system_translation/system_translation.module';
 
 const workConfig = getWorkConfig();
 
@@ -63,6 +65,7 @@ const workConfig = getWorkConfig();
             ContentTranslation,
             DictType,
             DictValue,
+            SystemTranslation,
             News,
             Banner,
           ],
@@ -89,7 +92,7 @@ const workConfig = getWorkConfig();
     ContentTranslationModule,
     DictTypeModule,
     DictValueModule,
-
+    SystemTranslationModule,
     NewsModule,
     BannerModule,
   ],

@@ -6,26 +6,10 @@ import { Request, Response } from 'express';
 import { ContentLang } from '@/constants';
 import { getReqLang } from '@/common/lang.decorator';
 import i18next from 'i18next';
-import ZH_CN from '@/i18n/zh';
-import EN_US from '@/i18n/en';
 import { BaseLayout } from './components/BaseLayout';
 
 export { BaseLayout };
-
 export type LayoutType = 'base';
-
-i18next.init({
-  lng: ContentLang.ZH_CN,
-  debug: true,
-  resources: {
-    [ContentLang.ZH_CN]: {
-      translation: ZH_CN,
-    },
-    [ContentLang.EN_US]: {
-      translation: EN_US,
-    },
-  },
-});
 
 export function RenderView() {
   return applyDecorators(UseInterceptors(RenderViewInterceptor), ApiExcludeEndpoint());
