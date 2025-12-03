@@ -1,4 +1,5 @@
 import { message } from '@/utils/notice';
+import { FileManageInfo } from '@cms/api-interface';
 import { SortOrder } from 'antd/es/table/interface';
 export * from './i18n';
 interface TransformPaginationOption {
@@ -88,4 +89,12 @@ export function transformSort(sort: { [key: string]: SortOrder }) {
   });
 
   return res[0];
+}
+
+export function fileToUrl(file: FileManageInfo | string, useName?: boolean) {
+  const prefix = useName ? 'getfilebyname' : 'getfile';
+  if (typeof file === 'string') {
+    return `/${prefix}/${file}`;
+  }
+  return `/${prefix}/${useName ? file.name : file.id}`;
 }

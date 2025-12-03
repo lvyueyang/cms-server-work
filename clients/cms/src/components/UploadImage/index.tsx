@@ -1,4 +1,5 @@
 import { uploadFile } from '@/services';
+import { fileToUrl } from '@/utils';
 import { message } from '@/utils/notice';
 import { PlusOutlined } from '@ant-design/icons';
 import { Upload, UploadProps } from 'antd';
@@ -22,7 +23,7 @@ export default function UploadImage({ value, onChange }: UploadImageProps) {
         uploadFile(file as File, { onUploadProgress: onProgress })
           .then((res) => {
             const data = res.data.data;
-            onSuccess?.(`/getfile/${data.id}`);
+            onSuccess?.(fileToUrl(data));
             message.success('上传成功');
           })
           .catch(onError);

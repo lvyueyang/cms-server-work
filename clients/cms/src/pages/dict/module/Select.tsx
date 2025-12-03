@@ -1,11 +1,14 @@
 import { Button, Divider, Empty, RefSelectProps, Select, SelectProps, Space } from 'antd';
-import { forwardRef } from 'react';
+import { forwardRef, useEffect } from 'react';
 import { useDictStore } from '@/store/dict';
 import { Link } from 'umi';
 
 type DictSelectProps = SelectProps & { type: string };
 export const DictSelect = forwardRef<RefSelectProps, DictSelectProps>((props, ref) => {
   const dictStore = useDictStore();
+  useEffect(() => {
+    dictStore.init();
+  }, []);
   const currentType = dictStore.list?.find((o) => o.type === props.type);
   const list = currentType?.values.map((d) => {
     return {

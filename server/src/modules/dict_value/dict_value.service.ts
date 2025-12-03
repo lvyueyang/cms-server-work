@@ -7,6 +7,7 @@ import { DictTypeService } from '../dict_type/dict_type.service';
 import { ContentLang } from '@/constants';
 import { isDefaultI18nLang } from '@/utils';
 import { ContentTranslationService } from '../content_translation/content_translation.service';
+import { DICT_PRESET } from '../../common/dict';
 
 type FormValues = DictValueCreateDto;
 
@@ -17,7 +18,10 @@ export class DictValueService {
     private repository: Repository<DictValue>,
     private readonly dictTypeService: DictTypeService,
     private readonly contentI18n: ContentTranslationService,
-  ) {}
+  ) {
+    // 初始化预置的字典
+    this.importPreset();
+  }
 
   findAll(lang?: ContentLang | string) {
     return this.repository.find().then((list) => {
@@ -134,5 +138,49 @@ export class DictValueService {
       attr: data.attr,
       recommend: data.recommend,
     });
+  }
+
+  async importPreset() {
+    for (const preset of DICT_PRESET) {
+      let dictType = await this.dictTypeService.findByTypeOrigin(preset.type);
+      if (!dictType) {
+        try {
+          dictType = await this.dictTypeService.create({
+            name: preset.name,
+            type: preset.type,
+            desc: preset.desc || '',
+            is_available: true,
+          });
+        } catch (e) {
+          console.warn(`Failed to create dict type ${preset.type}:`, e);
+          continue;
+        }
+      } else {
+        if (dictType.is_delete) {
+          await this.dictTypeService.recover(dictType.id);
+        }
+      }
+
+      for (const val of preset.values) {
+        const exists = await this.repository.findOne({
+          where: {
+            typeId: dictType.id,
+            value: val.value,
+          },
+        });
+        if (!exists) {
+          await this.repository.save({
+            label: val.label,
+            value: val.value,
+            desc: val.desc || '',
+            attr: val.attr || '',
+            type: dictType,
+            is_available: true,
+            recommend: 0,
+          });
+        }
+      }
+    }
+    return true;
   }
 }

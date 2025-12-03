@@ -1,5 +1,5 @@
 import { FileManageInfo, FileManageUpdateDto } from '@cms/api-interface';
-import { formatFileSize, transformPagination, transformSort } from '@/utils';
+import { fileToUrl, formatFileSize, transformPagination, transformSort } from '@/utils';
 import { message } from '@/utils/notice';
 import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Input, Popconfirm, Space, Form, Modal } from 'antd';
@@ -103,7 +103,7 @@ export default function FileManagePage() {
       render: (_, row) => {
         return (
           <Space>
-            <a href={`/getfile/${row.id}`} target="_blank" rel="noreferrer">
+            <a href={fileToUrl(row.id)} target="_blank" rel="noreferrer">
               下载
             </a>
             <a

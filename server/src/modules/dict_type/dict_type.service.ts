@@ -91,6 +91,15 @@ export class DictTypeService {
     }
     return isExisted[0];
   }
+  async findByTypeOrigin(type: string) {
+    const infos = await this.repository.find({
+      where: {
+        type,
+      },
+      relations: ['values'],
+    });
+    return infos[0];
+  }
 
   async create(data: FormValues) {
     const isExisted = await this.repository.find({
@@ -139,5 +148,16 @@ export class DictTypeService {
       type: data.type,
       desc: data.desc,
     });
+  }
+  // 恢复删除
+  async recover(id: number) {
+    const isExisted = await this.repository.findOneBy({
+      id,
+      is_delete: true,
+    });
+    if (!isExisted) {
+      throw new BadRequestException('字典不存在', 'dict_type not found');
+    }
+    return this.repository.update(id, { is_delete: false });
   }
 }

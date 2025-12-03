@@ -69,8 +69,30 @@ export class FileManageController {
   @ApiOkResponse({
     type: FileManageDetailResponseDto,
   })
-  async getFile(@Param('id') id: string) {
+  async getFileById(@Param('id') id: string) {
     const info = await this.services.findById(id);
+    const absolutePath = await this.services.getFileAbsolutePath(info);
+    const stream = createReadStream(absolutePath);
+    const type = info.type || 'application/octet-stream';
+    // res.set({
+    //   'content-type': 'application/octet-stream',
+    //   'content-disposition':
+    //     'attachment;filename=' + encodeURI(filename + '.xlsx'),
+    // });
+    return new StreamableFile(stream, {
+      type,
+      disposition: `attachment; filename=${encodeURI(info.name)}`,
+      length: info.size,
+    });
+  }
+
+  // 根据文件名称返回文件流
+  @Get('/getfilebyname/:name')
+  @ApiOkResponse({
+    type: FileManageDetailResponseDto,
+  })
+  async getFileByName(@Param('name') name: string) {
+    const info = await this.services.findByName(name);
     const absolutePath = await this.services.getFileAbsolutePath(info);
     const stream = createReadStream(absolutePath);
     const type = info.type || 'application/octet-stream';

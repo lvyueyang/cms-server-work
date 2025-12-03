@@ -8,7 +8,7 @@ import { UserAdmin } from '../user_admin/user_admin.entity';
 import { FileManage } from './file_manage.entity';
 import fse from 'fs-extra';
 import path from 'path';
-import filetype from 'file-type';
+import filetype, { FileTypeResult } from 'file-type';
 import { v4 as uuid } from 'uuid';
 import { FileManageUpdateDto } from './file_manage.dto';
 
@@ -105,7 +105,14 @@ export class FileManageService {
       await this.repository.update(dbInfo.id, { is_delete: false });
       return dbInfo;
     }
+    // 中文文件名需要编码
     let filename = file.originalname;
+    // 尝试修正编码
+    try {
+      filename = Buffer.from(file.originalname, 'latin1').toString('utf8');
+    } catch (e) {
+      console.warn('filename decode error:', e);
+    }
     const filenameFind = await this.repository.findOneBy({
       name: filename,
     });
@@ -114,14 +121,16 @@ export class FileManageService {
       fns.splice(1, 0, '_' + Date.now());
       filename = fns.join('.');
     }
-    const fileType = await filetype.fileTypeFromBuffer(file.buffer as Uint8Array);
-    const local_path = path.join(dirPath, uuid() + '.' + fileType.ext);
+    const ft: FileTypeResult | null = await filetype.fileTypeFromBuffer(file.buffer as Uint8Array);
+    const mime = ft?.mime || 'application/octet-stream';
+    const ext = ft?.ext || file.originalname.split('.').pop();
+    const local_path = path.join(dirPath, uuid() + (ext ? '.' + ext : '_' + file.originalname));
     const saveInfo = await this.repository.save({
       name: filename,
       hash: fileMd5,
       size: file.size,
-      type: fileType.mime,
-      ext: fileType.ext,
+      type: mime,
+      ext: ext,
       local_path,
       author,
       tags,
