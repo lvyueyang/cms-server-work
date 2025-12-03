@@ -9,8 +9,9 @@ import { useEffect, useState } from 'react';
 interface UploadFileProps {
   value?: string;
   onChange?: (value: string) => void;
+  onSelect?: (files: { url: string; name: string; size: number; type: string }) => void;
 }
-export default function UploadFile({ value, onChange }: UploadFileProps) {
+export default function UploadFile({ value, onChange, onSelect }: UploadFileProps) {
   const changeHandler: UploadProps<string>['onChange'] = (e) => {
     if (e.file.response) {
       onChange?.(e.file.response);
@@ -25,8 +26,15 @@ export default function UploadFile({ value, onChange }: UploadFileProps) {
         uploadFile(file as File, { onUploadProgress: onProgress })
           .then((res) => {
             const data = res.data.data;
-            onSuccess?.(fileToUrl(data));
+            const url = fileToUrl(data);
+            onSuccess?.(url);
             message.success('上传成功');
+            onSelect?.({
+              url,
+              name: data.name,
+              size: data.size,
+              type: data.type,
+            });
           })
           .catch(onError);
         return {
@@ -40,7 +48,28 @@ export default function UploadFile({ value, onChange }: UploadFileProps) {
         <p className="ant-upload-drag-icon">
           <UploadOutlined />
         </p>
-        <p className="ant-upload-text">单击或拖动文件到此区域以上传</p>
+        <p className="ant-upload-text">单击或拖动文件到此区域以上传或</p>
+        <div>
+          <Button
+            type="primary"
+            ghost
+            onClick={(e) => {
+              e.stopPropagation();
+              openSelectFile({ multiple: false }).then(([file]) => {
+                const url = fileToUrl(file.id);
+                onChange?.(url);
+                onSelect?.({
+                  url,
+                  name: file.name,
+                  size: file.size,
+                  type: file.type,
+                });
+              });
+            }}
+          >
+            选择文件
+          </Button>
+        </div>
         {value && (
           <a
             className="ant-upload-hint"

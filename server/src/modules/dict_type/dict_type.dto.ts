@@ -14,6 +14,7 @@ export class DictTypeCreateDto extends PickType(DictType, [
   'name',
   'type',
   'desc',
+  'attr_type',
   'is_available',
 ]) {}
 

@@ -1,14 +1,15 @@
 import { AvailableSwitch } from '@/components/Available';
 import { DictTypeCreateDto, DictTypeInfo, DictTypeUpdateDto } from '@cms/api-interface';
-import { createI18nColumn, transformPagination } from '@/utils';
+import { createI18nColumn, enumMapToOptions, transformPagination } from '@/utils';
 import { ActionType, ProColumns } from '@ant-design/pro-components';
-import { Button, Input, Popconfirm, Space, Form, Modal, Switch, message } from 'antd';
+import { Button, Input, Popconfirm, Space, Form, Modal, Switch, message, Select } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { createApi, getListApi, removeApi, updateApi } from './module';
 import { ModalType, useFormModal } from '@/hooks/useFormModal';
 import { Link, history } from 'umi';
 import { useDictStore } from '@/store/dict';
 import PageTable from '@/components/PageTable';
+import { DictAttrMap } from '@/constants';
 
 type TableItem = DictTypeInfo;
 type CreateFormValues = DictTypeCreateDto;
@@ -62,6 +63,11 @@ export default function DictTypeListPage() {
       width: 220,
       ellipsis: true,
     }),
+    {
+      dataIndex: 'attr_type',
+      title: '附加属性类型',
+      width: 160,
+    },
     {
       dataIndex: 'is_available',
       title: '是否可用',
@@ -216,6 +222,9 @@ export default function DictTypeListPage() {
           </Form.Item>
           <Form.Item label="描述" name="desc">
             <Input.TextArea />
+          </Form.Item>
+          <Form.Item label="属性类型" name="attr_type" tooltip="可选，用于定义字典项的附加属性类型">
+            <Select options={enumMapToOptions(DictAttrMap)} allowClear />
           </Form.Item>
         </Form>
       </Modal>

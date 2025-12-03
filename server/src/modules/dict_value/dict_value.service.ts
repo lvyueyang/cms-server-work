@@ -28,7 +28,7 @@ export class DictValueService {
       if (!isDefaultI18nLang(lang)) {
         return this.contentI18n.overlayTranslations(list, {
           entity: 'dict_value',
-          fields: ['label', 'desc'],
+          fields: ['label', 'desc', 'attr'],
           lang,
         });
       }
@@ -108,6 +108,7 @@ export class DictValueService {
       is_available: data.is_available,
       desc: data.desc,
       attr: data.attr,
+      attr_type: data.attr_type,
       type,
       recommend: data.recommend,
     });
@@ -136,6 +137,7 @@ export class DictValueService {
       is_available: data.is_available,
       desc: data.desc,
       attr: data.attr,
+      attr_type: data.attr_type,
       recommend: data.recommend,
     });
   }
@@ -169,11 +171,20 @@ export class DictValueService {
           },
         });
         if (!exists) {
+          let attr = '';
+          if (val.attr) {
+            if (typeof val.attr === 'object') {
+              attr = JSON.stringify(val.attr, null, 2);
+            }
+            if (typeof val.attr === 'string') {
+              attr = val.attr;
+            }
+          }
           await this.repository.save({
             label: val.label,
             value: val.value,
             desc: val.desc || '',
-            attr: val.attr || '',
+            attr,
             type: dictType,
             is_available: true,
             recommend: 0,

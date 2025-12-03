@@ -8,6 +8,7 @@ interface DictStore {
   loading: boolean;
   load: () => Promise<void>;
   init: () => Promise<void>;
+  getEnum: (type: string) => Record<string, string>;
 }
 
 export const dictStore = create<DictStore>()((set, get) => ({
@@ -31,6 +32,16 @@ export const dictStore = create<DictStore>()((set, get) => ({
       return get().load();
     }
     return Promise.resolve();
+  },
+  getEnum(type: string) {
+    const list = get().list.find((item) => item.type === type)?.values || [];
+    return list.reduce(
+      (prev, cur) => {
+        prev[cur.value] = cur.label;
+        return prev;
+      },
+      {} as Record<string, string>,
+    );
   },
 }));
 

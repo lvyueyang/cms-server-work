@@ -1,13 +1,27 @@
 import { AvailableSwitch } from '@/components/Available';
 import { DictValueCreateDto, DictValueInfo, DictValueUpdateDto } from '@cms/api-interface';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
-import { Button, Input, Popconfirm, Space, Form, Modal, Switch, InputNumber, message } from 'antd';
+import {
+  Button,
+  Input,
+  Popconfirm,
+  Space,
+  Form,
+  Modal,
+  Switch,
+  InputNumber,
+  message,
+  Select,
+} from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useParams, history } from 'umi';
 import { createApi, getListApi, removeApi, updateApi } from './module';
 import { ModalType, useFormModal } from '@/hooks/useFormModal';
 import { useDictStore } from '@/store/dict';
-import { createI18nColumn } from '@/utils';
+import { createI18nColumn, enumMapToOptions } from '@/utils';
+import CodeEditor from '@/components/CodeEditor';
+import { DictAttrMap, DictAttrType } from '@/constants';
+import Editor from '@/components/Editor';
 
 type TableItem = DictValueInfo;
 type CreateFormValues = DictValueCreateDto;
@@ -68,12 +82,13 @@ export default function DictValueListPage() {
       ellipsis: true,
       width: 180,
     }),
-    {
+    i18nColumn({
       dataIndex: 'attr',
       title: '属性',
       ellipsis: true,
       width: 180,
-    },
+      transType: 'code',
+    }),
     {
       dataIndex: 'is_available',
       title: '是否可用',
@@ -144,6 +159,8 @@ export default function DictValueListPage() {
     },
   ];
 
+  const dictType = dictStore.list.find((item) => item.id === Number(params.id));
+
   useEffect(() => {
     const historyState = history.location.state;
     if (historyState) {
@@ -211,12 +228,13 @@ export default function DictValueListPage() {
         okButtonProps={{
           loading: formModal.submitLoading,
         }}
+        width={700}
       >
         <br />
         <Form
           form={formModal.form}
-          labelCol={{ span: 4 }}
-          initialValues={{ recommend: 0, is_available: true }}
+          labelCol={{ flex: '80px' }}
+          initialValues={{ recommend: 0, is_available: true, attr_type: dictType?.attr_type }}
         >
           {formModal.formModal.type !== ModalType.CREATE && (
             <Form.Item name="id" label="ID">
@@ -238,9 +256,22 @@ export default function DictValueListPage() {
           <Form.Item label="上架状态" name="is_available" valuePropName="checked">
             <Switch checkedChildren="上架" unCheckedChildren="下架" />
           </Form.Item>
-
+          <Form.Item label="属性类型" name="attr_type" tooltip="可选，用于定义字典项的附加属性类型">
+            <Select options={enumMapToOptions(DictAttrMap)} allowClear style={{ width: 200 }} />
+          </Form.Item>
           <Form.Item label="附加属性" name="attr">
-            <Input.TextArea />
+            <Form.Item noStyle dependencies={['attr_type']}>
+              {() => {
+                const attrType = formModal.form.getFieldValue('attr_type');
+                if (attrType === DictAttrType.Json) {
+                  return <CodeEditor />;
+                }
+                if (attrType === DictAttrType.Rich) {
+                  return <Editor />;
+                }
+                return <Input.TextArea />;
+              }}
+            </Form.Item>
           </Form.Item>
         </Form>
       </Modal>

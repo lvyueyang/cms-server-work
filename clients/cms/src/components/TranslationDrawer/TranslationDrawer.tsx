@@ -6,8 +6,9 @@ import { useEffect, useState } from 'react';
 import UploadImage from '@/components/UploadImage';
 import Editor from '@/components/Editor';
 import UploadFile from '../UploadFile';
+import CodeEditor from '../CodeEditor';
 
-export type TranslationType = 'text' | 'image' | 'rich' | 'file';
+export type TranslationType = 'text' | 'image' | 'rich' | 'file' | 'code';
 
 const LangList = [ContentLang.EN_US];
 
@@ -64,7 +65,7 @@ export function TranslationDrawer({
     }
   };
 
-  const drawerWidth = type === 'rich' ? 1000 : 520;
+  const drawerWidth = ['rich', 'code'].includes(type) ? 1000 : 520;
 
   useEffect(() => {
     if (props.open) {
@@ -75,30 +76,29 @@ export function TranslationDrawer({
   return (
     <Drawer {...props} width={drawerWidth} loading={loading} destroyOnHidden>
       <>
-        <Space direction="vertical" style={{ width: '100%' }} size={12}>
+        <Space orientation="vertical" style={{ width: '100%' }} size={12}>
           {typeof originValue !== 'undefined' && (
             <Card key="origin" title="原文" size="small">
-              {type === 'image' ? (
-                originValue ? (
+              {type === 'image' &&
+                (originValue ? (
                   <img
                     src={originValue}
                     style={{ maxWidth: '100%', display: 'block', objectFit: 'contain' }}
                   />
                 ) : (
                   <Empty description="无原图" />
-                )
-              ) : type === 'rich' ? (
+                ))}
+              {['text', 'rich', 'code', 'file'].includes(type) && (
                 <div
                   style={{
                     border: '1px solid #f0f0f0',
                     padding: 8,
                     overflow: 'auto',
                     maxHeight: 400,
+                    whiteSpace: 'pre-wrap',
                   }}
                   dangerouslySetInnerHTML={{ __html: originValue || '' }}
                 />
-              ) : (
-                <div style={{ whiteSpace: 'pre-wrap' }}>{originValue || ''}</div>
               )}
             </Card>
           )}
@@ -120,26 +120,32 @@ export function TranslationDrawer({
                   </Button>
                 }
               >
-                {type === 'file' ? (
+                {type === 'file' && (
                   <div>
                     {value && <div style={{ marginBottom: 8 }}>{value}</div>}
                     <UploadFile value={value} onChange={(e) => onChange(lang, e)} />
                   </div>
-                ) : type === 'image' ? (
+                )}
+                {type === 'image' && (
                   <UploadImage value={value} onChange={(val) => onChange(lang, val)} />
-                ) : type === 'rich' ? (
+                )}
+                {type === 'rich' && (
                   <Editor
                     value={value}
                     onChange={(val) => onChange(lang, val)}
                     style={{ minHeight: 300 }}
                   />
-                ) : (
+                )}
+                {type === 'text' && (
                   <Input.TextArea
                     autoSize={{ minRows: 3, maxRows: 10 }}
                     value={value}
                     placeholder="请输入翻译内容"
                     onChange={(e) => onChange(lang, e.target.value)}
                   />
+                )}
+                {type === 'code' && (
+                  <CodeEditor value={value} onChange={(e) => onChange(lang, e)} />
                 )}
               </Card>
             );

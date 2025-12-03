@@ -98,3 +98,14 @@ export function fileToUrl(file: FileManageInfo | string, useName?: boolean) {
   }
   return `/${prefix}/${useName ? file.name : file.id}`;
 }
+
+export function enumMapToOptions<T extends string>(enumMap: Map<T, { label: string; value: T }>) {
+  const options = [];
+  for (const [key, item] of enumMap.entries()) {
+    options.push({
+      label: item.label,
+      value: key || item.value,
+    });
+  }
+  return options;
+}

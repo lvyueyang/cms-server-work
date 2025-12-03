@@ -120,6 +120,7 @@ export class DictTypeService {
       name: data.name,
       type: data.type,
       desc: data.desc,
+      attr_type: data.attr_type,
     });
   }
 
@@ -146,6 +147,7 @@ export class DictTypeService {
       is_available: data.is_available,
       name: data.name,
       type: data.type,
+      attr_type: data.attr_type,
       desc: data.desc,
     });
   }

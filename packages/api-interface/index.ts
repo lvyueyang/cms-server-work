@@ -834,6 +834,8 @@ export interface DictType {
   type: string;
   /** 字典描述 */
   desc?: string;
+  /** 附加属性类型：例如 code rich lowcode */
+  attr_type?: string;
   /** 是否可用 */
   is_available: boolean;
   /** 是否已删除 */
@@ -861,6 +863,8 @@ export interface DictValue {
   value: string;
   /** 字典值附加属性 */
   attr?: string;
+  /** 附加属性类型：例如 code rich lowcode */
+  attr_type?: string;
   /** 类型ID */
   typeId: number;
   /**
@@ -894,6 +898,8 @@ export interface DictTypeInfo {
   type: string;
   /** 字典描述 */
   desc?: string;
+  /** 附加属性类型：例如 code rich lowcode */
+  attr_type?: string;
   /** 是否可用 */
   is_available: boolean;
   /** 是否已删除 */
@@ -983,6 +989,8 @@ export interface DictTypeCreateDto {
   type: string;
   /** 字典描述 */
   desc?: string;
+  /** 附加属性类型：例如 code rich lowcode */
+  attr_type?: string;
   /** 是否可用 */
   is_available: boolean;
 }
@@ -994,6 +1002,8 @@ export interface DictTypeUpdateDto {
   type?: string;
   /** 字典描述 */
   desc?: string;
+  /** 附加属性类型：例如 code rich lowcode */
+  attr_type?: string;
   /** 是否可用 */
   is_available?: boolean;
   /** 字典类型 ID */
@@ -1038,6 +1048,8 @@ export interface DictValueInfo {
   value: string;
   /** 字典值附加属性 */
   attr?: string;
+  /** 附加属性类型：例如 code rich lowcode */
+  attr_type?: string;
   /** 类型ID */
   typeId: number;
   /**
@@ -1121,6 +1133,8 @@ export interface DictValueCreateDto {
   value: string;
   /** 字典值附加属性 */
   attr?: string;
+  /** 附加属性类型：例如 code rich lowcode */
+  attr_type?: string;
   /** 类型ID */
   typeId: number;
   /**
@@ -1141,6 +1155,8 @@ export interface DictValueUpdateDto {
   value?: string;
   /** 字典值附加属性 */
   attr?: string;
+  /** 附加属性类型：例如 code rich lowcode */
+  attr_type?: string;
   /**
    * 排序
    * @min 0
@@ -1155,6 +1171,137 @@ export interface DictValueUpdateDto {
 }
 
 export interface DictValueDetailIdResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: number;
+}
+
+export interface SystemTranslationQueryListDto {
+  /**
+   * 分页查询-当前页
+   * @default 1
+   */
+  current?: number;
+  /**
+   * 分页查询-每页数量
+   * @default 10
+   */
+  page_size?: number;
+  /** 被排序的字段 key */
+  order_key?: string;
+  /**
+   * 排序方式 DESC 降序 ASC 倒序
+   * @default 10
+   */
+  order_type?: string;
+  /** Key */
+  key?: string;
+  /** 语言 */
+  lang?: 'zh-CN' | 'en-US';
+  /** 值 */
+  value?: string;
+}
+
+export interface SystemTranslationInfo {
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  create_date: string;
+  /**
+   * 更新时间
+   * @format date-time
+   */
+  update_date: string;
+  /** 国际化 ID */
+  id: number;
+  /** 国际化Key */
+  key: string;
+  /** 国际化描述 */
+  desc?: string;
+  /** 国际化Value */
+  value: string;
+  /** 语言 */
+  lang: 'zh-CN' | 'en-US';
+}
+
+export interface SystemTranslationList {
+  /** 列表 */
+  list: SystemTranslationInfo[];
+  /** 总数 */
+  total: number;
+}
+
+export interface SystemTranslationListResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: SystemTranslationList;
+}
+
+export interface SystemTranslationByIdParamDto {
+  /** 国际化 ID */
+  id: number;
+}
+
+export interface SystemTranslationDetailResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: SystemTranslationInfo;
+}
+
+export interface SystemTranslationCreateDto {
+  /** 国际化Key */
+  key: string;
+  /** 国际化描述 */
+  desc?: string;
+  /** 国际化Value */
+  value: string;
+  /** 语言 */
+  lang: 'zh-CN' | 'en-US';
+}
+
+export interface SystemTranslationMultiCreateDto {
+  list: SystemTranslationCreateDto[];
+}
+
+export interface SystemTranslationUpdateDto {
+  /** 国际化Key */
+  key?: string;
+  /** 国际化描述 */
+  desc?: string;
+  /** 国际化Value */
+  value?: string;
+  /** 语言 */
+  lang?: 'zh-CN' | 'en-US';
+  /** 国际化 ID */
+  id: number;
+}
+
+export interface SystemTranslationDetailIdResponseDto {
   /**
    * 状态码
    * @default 200

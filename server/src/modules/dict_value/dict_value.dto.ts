@@ -8,6 +8,7 @@ const CreateDto = PickType(DictValue, [
   'label',
   'value',
   'desc',
+  'attr_type',
   'recommend',
   'typeId',
   'is_available',

@@ -34,6 +34,12 @@ export class DictValue extends BaseEntity {
   attr?: string;
 
   @ApiProperty({
+    description: '附加属性类型：例如 code rich lowcode',
+  })
+  @Column({ default: '' })
+  attr_type?: string;
+
+  @ApiProperty({
     description: '类型ID',
   })
   @IsNotEmpty()

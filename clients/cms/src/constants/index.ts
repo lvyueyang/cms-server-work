@@ -19,3 +19,17 @@ export const enum SendEmailCaptchaType {
   /** 邮箱更新 */
   Update = 'update_email_code',
 }
+
+export const enum DictAttrType {
+  /** Json */
+  Json = 'json',
+  /** 富文本 */
+  Rich = 'rich',
+  /** 低代码 */
+  // LowCode = 'lowcode',
+}
+export const DictAttrMap = new Map([
+  [DictAttrType.Json, { label: 'Json', value: DictAttrType.Json }],
+  [DictAttrType.Rich, { label: '富文本', value: DictAttrType.Rich }],
+  // [DictAttrType.LowCode, { label: '低代码', value: DictAttrType.LowCode }],
+]);
