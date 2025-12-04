@@ -19,9 +19,9 @@ import { createApi, getListApi, removeApi, updateApi } from './module';
 import { ModalType, useFormModal } from '@/hooks/useFormModal';
 import { useDictStore } from '@/store/dict';
 import { createI18nColumn, enumMapToOptions } from '@/utils';
-import CodeEditor from '@/components/CodeEditor';
-import { DictAttrMap, DictAttrType } from '@/constants';
-import Editor from '@/components/Editor';
+import { ContentTypeMap } from '@/constants';
+
+import { AutoContentInput } from '@/components/AutoContentInput';
 
 type TableItem = DictValueInfo;
 type CreateFormValues = DictValueCreateDto;
@@ -257,21 +257,17 @@ export default function DictValueListPage() {
             <Switch checkedChildren="上架" unCheckedChildren="下架" />
           </Form.Item>
           <Form.Item label="属性类型" name="attr_type" tooltip="可选，用于定义字典项的附加属性类型">
-            <Select options={enumMapToOptions(DictAttrMap)} allowClear style={{ width: 200 }} />
+            <Select options={enumMapToOptions(ContentTypeMap)} allowClear style={{ width: 200 }} />
           </Form.Item>
-          <Form.Item label="附加属性" name="attr">
-            <Form.Item noStyle dependencies={['attr_type']}>
-              {() => {
-                const attrType = formModal.form.getFieldValue('attr_type');
-                if (attrType === DictAttrType.Json) {
-                  return <CodeEditor />;
-                }
-                if (attrType === DictAttrType.Rich) {
-                  return <Editor />;
-                }
-                return <Input.TextArea />;
-              }}
-            </Form.Item>
+          <Form.Item label="附件属性" dependencies={['attr_type']}>
+            {() => {
+              const attrType = formModal.form.getFieldValue('attr_type');
+              return (
+                <Form.Item noStyle name="attr">
+                  <AutoContentInput type={attrType} />
+                </Form.Item>
+              );
+            }}
           </Form.Item>
         </Form>
       </Modal>

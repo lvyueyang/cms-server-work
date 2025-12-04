@@ -73,6 +73,11 @@ const router = {
           title: '文件管理',
         },
         {
+          path: '/system-config',
+          component: 'system-config',
+          title: '系统配置',
+        },
+        {
           path: '/webhook-trans',
           title: 'Webhook中转',
           component: 'webhook-trans/index',

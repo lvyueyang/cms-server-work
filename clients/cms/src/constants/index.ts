@@ -20,16 +20,25 @@ export const enum SendEmailCaptchaType {
   Update = 'update_email_code',
 }
 
-export const enum DictAttrType {
+export const enum ContentType {
+  /** 输入框 */
+  INPUT = 'input',
+  /** 文本 */
+  TEXT = 'text',
   /** Json */
   Json = 'json',
   /** 富文本 */
   Rich = 'rich',
-  /** 低代码 */
-  // LowCode = 'lowcode',
+  /** 图片 */
+  IMAGE = 'image',
+  /** 文件 */
+  FILE = 'file',
 }
-export const DictAttrMap = new Map([
-  [DictAttrType.Json, { label: 'Json', value: DictAttrType.Json }],
-  [DictAttrType.Rich, { label: '富文本', value: DictAttrType.Rich }],
-  // [DictAttrType.LowCode, { label: '低代码', value: DictAttrType.LowCode }],
+export const ContentTypeMap = new Map([
+  [ContentType.INPUT, { label: '单行文本', value: ContentType.INPUT }],
+  [ContentType.TEXT, { label: '多行文本', value: ContentType.TEXT }],
+  [ContentType.Json, { label: 'Json', value: ContentType.Json }],
+  [ContentType.Rich, { label: '富文本', value: ContentType.Rich }],
+  [ContentType.IMAGE, { label: '图片', value: ContentType.IMAGE }],
+  [ContentType.FILE, { label: '文件', value: ContentType.FILE }],
 ]);
