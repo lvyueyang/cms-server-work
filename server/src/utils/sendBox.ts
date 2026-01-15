@@ -13,8 +13,8 @@ function createMaxWhitelist() {
 
   // 安全的全局函数
   const safeFunctions = {
-    isNaN: isNaN,
-    isFinite: isFinite,
+    isNaN,
+    isFinite,
     parseFloat: parseFloat,
     parseInt: parseInt,
     decodeURI: decodeURI,
@@ -52,8 +52,8 @@ export function createMaxSafeFunction(code: string) {
   `;
   try {
     const func = new Function(...allowedKeys, safeCode);
-    return (...args) => func(...Object.values(whitelist), ...args);
-  } catch (err) {
+    return (...args: any[]) => func(...Object.values(whitelist), ...args);
+  } catch (err: any) {
     throw new Error(`代码解析错误: ${err.message}`);
   }
 }

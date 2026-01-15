@@ -1,0 +1,10 @@
+@use './styles/reset.scss' as resetStyle;
+
+@use '../../components/form/style.scss' as formStyle;
+@use '../../components/pageHeader/style.scss' as pageHeaderStyle;
+@use '../../components/pageFooter/style.scss' as pageFooterStyle;
+@use '../../components/videoPlayer/style.scss' as videoPlayerStyle;
+@use '../../components/breadcrumb/style.scss' as breadcrumbStyle;
+@use '../../components/pageTopBanner/style.scss' as pageTopBannerStyle;
+@use '../../components/imgcodeInput/style.scss' as imgcodeInputStyle;
+@use '../../components/vcodeInput/style.scss' as vcodeInputStyle;

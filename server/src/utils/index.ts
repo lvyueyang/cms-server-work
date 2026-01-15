@@ -1,14 +1,17 @@
-import { createCipheriv, createDecipheriv, createHash } from 'crypto';
-import * as fs from 'fs';
+import { type BinaryLike, type CipherKey, createCipheriv, createDecipheriv, createHash } from 'node:crypto';
+import * as fs from 'node:fs';
+import * as os from 'node:os';
+import * as path from 'node:path';
+import type { Readable } from 'node:stream';
 import * as fse from 'fs-extra';
-import * as os from 'os';
-import * as path from 'path';
-import { Order } from '@/interface';
-import { Readable } from 'stream';
 import { ContentLang } from '@/constants';
+import type { Order } from '@/interface';
+import type { FileManage } from '@/modules/file_manage/file_manage.entity';
 
-const homedir = process.env[process.platform == 'win32' ? 'USERPROFILE' : 'HOME'];
-
+const homedir = process.env[process.platform === 'win32' ? 'USERPROFILE' : 'HOME'];
+if (!homedir) {
+  console.warn('无法获取用户主目录 homedir 不存在');
+}
 let dataDirPath = ''; // 资源存储目录
 let logDataDirPath = ''; // 日志目录
 let uploadFileDataDirPath = ''; // 文件上传目录
@@ -26,7 +29,7 @@ export const passwordCrypto = (passwordStr: string, salt: string) => {
 export function getLocalIPv4Address() {
   const interfaces = os.networkInterfaces();
   for (const interfaceName in interfaces) {
-    const addresses = interfaces[interfaceName];
+    const addresses = interfaces[interfaceName] || [];
     for (const address of addresses) {
       if (!address.internal && address.family === 'IPv4') {
         return address.address;
@@ -44,9 +47,7 @@ export function successResponse<T>(data: T, message = '请求成功') {
     data,
   };
 }
-const workConfigJson = fs
-  .readFileSync(path.join(process.cwd(), '../', 'work.config.json'))
-  .toString('utf-8');
+const workConfigJson = fs.readFileSync(path.join(process.cwd(), '../', 'work.config.json')).toString('utf-8');
 
 export function getWorkConfig() {
   return JSON.parse(workConfigJson) as { cms_admin_path: string };
@@ -56,6 +57,9 @@ export function getWorkConfig() {
 export const getDataDirPath = () => {
   if (dataDirPath) return dataDirPath;
   const defPath = process.env.FILE_DATA_DIR_PATH;
+  if (!defPath) {
+    throw new Error('请配置 FILE_DATA_DIR_PATH 环境变量');
+  }
   const dataDir = expandHomeDir(defPath);
   fse.ensureDirSync(dataDir);
   dataDirPath = dataDir;
@@ -87,7 +91,10 @@ export const getLogDirPath = () => {
 };
 function expandHomeDir(dir: string) {
   if (!dir || !dir.startsWith('~/')) return dir;
-  return path.join(homedir, dir.slice(2));
+  if (!homedir) {
+    console.log('无法获取用户主目录 homedir 不存在');
+  }
+  return path.join(homedir || '', dir.slice(2));
 }
 
 /** 创建排序查询 */
@@ -101,10 +108,12 @@ export function createOrder<T extends Record<string, any>>({ order_key, order_ty
   }
 }
 
-const iv = 'cms-admin-iv';
+const iv = Buffer.alloc(16, 'cms_admin_iv_2025'); // Ensure 16 bytes
 /** 文字加密 */
 export function encryptString(input: string, password: string): string {
-  const cipher = createCipheriv('aes-256-cbc', password, iv);
+  // aes-256-cbc requires 32 byte key
+  const key = createHash('sha256').update(password).digest();
+  const cipher = createCipheriv('aes-256-cbc', key as CipherKey, iv as BinaryLike);
   let encrypted = cipher.update(input, 'utf8', 'hex');
   encrypted += cipher.final('hex');
   return encrypted;
@@ -112,7 +121,9 @@ export function encryptString(input: string, password: string): string {
 
 /** 文字解密 */
 export function decryptString(input: string, password: string): string {
-  const decipher = createDecipheriv('aes-256-cbc', password, iv);
+  // aes-256-cbc requires 32 byte key
+  const key = createHash('sha256').update(password).digest();
+  const decipher = createDecipheriv('aes-256-cbc', key as CipherKey, iv as BinaryLike);
   let decrypted = decipher.update(input, 'hex', 'utf8');
   decrypted += decipher.final('utf8');
   return decrypted;
@@ -123,13 +134,13 @@ export function getFileMd5(file: Express.Multer.File) {
   return new Promise((resolve, reject) => {
     const md5sum = createHash('md5');
     const stream = fs.createReadStream(file.path);
-    stream.on('data', function (chunk) {
+    stream.on('data', (chunk) => {
       md5sum.update(chunk as string);
     });
-    stream.on('end', function () {
+    stream.on('end', () => {
       resolve(md5sum.digest('hex').toUpperCase());
     });
-    stream.on('error', function (err) {
+    stream.on('error', (err) => {
       reject(err);
     });
   });
@@ -144,13 +155,13 @@ export function fileBuffer2md5(buffer: Buffer) {
 export function streamReadable2md5(stream: Readable): Promise<string> {
   return new Promise((resolve, reject) => {
     const md5sum = createHash('md5');
-    stream.on('data', function (chunk) {
+    stream.on('data', (chunk) => {
       md5sum.update(chunk as string);
     });
-    stream.on('end', function () {
+    stream.on('end', () => {
       resolve(md5sum.digest('hex').toUpperCase());
     });
-    stream.on('error', function (err) {
+    stream.on('error', (err) => {
       reject(err);
     });
   });
@@ -160,4 +171,26 @@ export function streamReadable2md5(stream: Readable): Promise<string> {
 export function isDefaultI18nLang(lang?: string | ContentLang) {
   if (!lang || lang === ContentLang.ZH_CN) return true;
   return false;
+}
+
+/** 合并 className */
+export function cls(...classList: (string | undefined | boolean)[]) {
+  return classList.filter((i) => !!i).join(' ');
+}
+
+export function fileToUrl(file: FileManage | string, useName?: boolean) {
+  const prefix = useName ? 'getfilebyname' : 'getfile';
+  if (typeof file === 'string') {
+    return `/${prefix}/${file}`;
+  }
+  return `/${prefix}/${useName ? file.name : file.id}`;
+}
+
+export function safeJsonParse<T>(val: string) {
+  try {
+    const result = JSON.parse(val);
+    return result as T;
+  } catch (e) {
+    return void 0;
+  }
 }

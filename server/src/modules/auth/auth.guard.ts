@@ -1,6 +1,7 @@
 import {
   applyDecorators,
   CanActivate,
+  createParamDecorator,
   ExecutionContext,
   Injectable,
   SetMetadata,
@@ -9,51 +10,48 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ApiHeader } from '@nestjs/swagger';
-import dayjs from 'dayjs';
-import { UserAdminService } from '../user_admin/user_admin.service';
-import { AuthService } from './auth.service';
+import { Request } from 'express';
+import { createLoginPageUrl } from '@/views';
 import { LOGIN_TYPE } from './auth.interface';
-
+import { AuthService } from './auth.service';
 @Injectable()
 export class LoginAuthGuard implements CanActivate {
-  constructor(
-    private authService: AuthService,
-    private reflector: Reflector,
-    private userAdminService: UserAdminService,
-  ) {}
+  constructor(private authService: AuthService, private reflector: Reflector) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const loginType = this.reflector.get<LOGIN_TYPE>('loginType', context.getHandler());
     const req = context.switchToHttp().getRequest();
-    const { headers } = req;
-    const token = headers.token;
-    if (!token) {
-      throw new UnauthorizedException('token 不存在');
-    }
-    try {
-      const tokenData = await this.authService.validateJwt(token);
-      if (loginType !== tokenData.type) {
-        throw new UnauthorizedException('token 类型错误');
-      }
-      const user = await this.userAdminService.findOneById(tokenData.id);
-
-      // 退出登陆逻辑校验
-      if (dayjs(tokenData.create_date).isBefore(dayjs(user.out_login_date))) {
-        throw new UnauthorizedException('身份过期');
-      }
-      if (!user) {
-        throw new UnauthorizedException('用户不存在');
+    const token = getToken(req);
+    if (loginType === LOGIN_TYPE.USER_ADMIN) {
+      const [user, errMsg] = await this.authService.userAdminIsLogin({ token });
+      if (errMsg) {
+        throw new UnauthorizedException(errMsg);
       }
       req.user = user;
       return true;
-    } catch (e) {
-      throw new UnauthorizedException(e?.message || '身份过期');
     }
+    if (loginType === LOGIN_TYPE.USER_CLIENT) {
+      const [user, errMsg] = await this.authService.userClientIsLogin({
+        token,
+      });
+      if (errMsg) {
+        req.redirect(
+          createLoginPageUrl({
+            redirect_uri: req.originalUrl,
+          })
+        );
+
+        return false;
+      }
+      req.user = user;
+      return true;
+    }
+    return false;
   }
 }
 
 /** C 端用户登录校验 */
-export function Login() {
-  return applyDecorators(SetMetadata('loginType', LOGIN_TYPE.USER), UseGuards(LoginAuthGuard));
+export function ClientLogin() {
+  return applyDecorators(SetMetadata('loginType', LOGIN_TYPE.USER_CLIENT), UseGuards(LoginAuthGuard));
 }
 
 /** 管理后台登录 */
@@ -64,6 +62,20 @@ export function AdminLogin() {
     ApiHeader({
       name: 'token',
       description: '用户 TOKEN',
-    }),
+    })
   );
+}
+
+/** 获取Token */
+export const Token = createParamDecorator((_data: unknown, ctx: ExecutionContext): string | undefined => {
+  const req = ctx.switchToHttp().getRequest() as Request;
+  return getToken(req);
+});
+
+function getToken(req: Request) {
+  let token = req.headers?.token as string | undefined;
+  if (!token) {
+    token = req.cookies?.['token'];
+  }
+  return token;
 }

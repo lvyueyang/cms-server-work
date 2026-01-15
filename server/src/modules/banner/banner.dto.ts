@@ -22,6 +22,8 @@ export class BannerCreateDto extends PickType(Banner, [
   'desc',
   'cover',
   'content',
+  'url',
+  'position',
   'recommend',
   'is_available',
 ]) {}

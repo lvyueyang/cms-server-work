@@ -1,0 +1,51 @@
+.result-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  padding: 40px 20px;
+  background-color: #fff;
+
+  .result-content {
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+  }
+
+  .icon-box {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .description {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+
+  .actions {
+    .btn-primary {
+      display: inline-block;
+      padding: 10px 24px;
+      background-color: #1890ff;
+      color: #fff;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.3s;
+
+      &:hover {
+        background-color: #40a9ff;
+      }
+    }
+  }
+}

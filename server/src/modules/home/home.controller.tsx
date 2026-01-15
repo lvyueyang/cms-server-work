@@ -1,39 +1,114 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param, Req, Res } from '@nestjs/common';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
+import { Request, Response } from 'express';
+import Lang from '@/common/lang.decorator';
+import { ContentLang, FE_PREFIX } from '@/constants';
+import { AppScenarioPage, HomePage, NotFoundPage } from '@/views';
+import { BannerService } from '../banner/banner.service';
+import { DictValueService } from '../dict_value/dict_value.service';
+import { NewsService } from '../news/news.service';
 import { RenderView, RenderViewResult } from '../render_view/render_view.decorator';
 
 @Controller()
 export class HomeController {
+  constructor(
+    private readonly bannerService: BannerService,
+    private readonly newsService: NewsService,
+    private readonly dictValueService: DictValueService
+  ) {}
+
   @RenderView()
-  @ApiExcludeEndpoint()
   @Get('/')
-  index() {
+  async index(@Lang() lang: ContentLang) {
+    const [[banners], [news]] = await Promise.all([
+      this.bannerService.findList(
+        {
+          position: ['home_top'],
+          is_available: true,
+          current: 1,
+          page_size: 20,
+          order_key: 'recommend',
+          order_type: 'DESC',
+        },
+        lang
+      ),
+      this.newsService.findList(
+        {
+          is_available: true,
+          current: 1,
+          page_size: 1,
+          order_key: 'recommend',
+          order_type: 'DESC',
+        },
+        lang
+      ),
+    ]);
     return new RenderViewResult({
       title: '首页',
-      description: '这是一个使用JSX直接渲染的页面。',
-      meta: {
-        keywords: '首页, 示例, JSX',
-      },
       layout: 'base',
+      scripts: [`${FE_PREFIX}/home.js`],
+      styles: [`${FE_PREFIX}/home.css`],
       render() {
         return (
-          <>
-            <h1>首页</h1>
-            <p>这是一个使用JSX直接渲染的页面。</p>
-            <div style={{ marginTop: '20px' }}>
-              <h3>系统特性</h3>
-              <ul>
-                <li>简单易用</li>
-                <li>高性能</li>
-                <li>可扩展</li>
-                <li>响应式设计</li>
-                <li>SEO友好</li>
-              </ul>
-            </div>
-          </>
+          <HomePage
+            banners={banners}
+            news={news[0]}
+          />
         );
       },
     });
+  }
+
+  @RenderView()
+  @Get('/app-scenario/:type')
+  async appScenario(@Param() { type }: { type: string }, @Lang() lang: ContentLang) {
+    const dictValue = await this.dictValueService.findByType('app_scenario');
+    const dictValueList = await this.dictValueService.i18nTrans(dictValue.list, lang);
+    const info = dictValueList.find((i) => i.value === type);
+    return new RenderViewResult({
+      title: '应用场景',
+      layout: 'base',
+      scripts: [`${FE_PREFIX}/app_scenario.js`],
+      styles: [`${FE_PREFIX}/app_scenario.css`],
+      render() {
+        return (
+          <AppScenarioPage
+            type={type}
+            info={info}
+          />
+        );
+      },
+    });
+  }
+
+  @Get(['/en', '/en/*'])
+  @ApiExcludeEndpoint()
+  enPage(@Req() req: Request, @Res() res: Response) {
+    // 设置语言cookie为en
+    res.cookie('lang', ContentLang.EN_US);
+
+    // 获取原始路径，去掉开头的/en
+    const originalUrl = req.url;
+    const redirectPath = originalUrl.replace(/^\/en/, '') || '/';
+
+    // 重定向到去掉/en的路径
+    res.redirect(redirectPath);
+    return;
+  }
+
+  @Get(['/zh', '/zh/*'])
+  @ApiExcludeEndpoint()
+  zhPage(@Req() req: Request, @Res() res: Response) {
+    // 设置语言cookie为zh
+    res.cookie('lang', ContentLang.ZH_CN);
+
+    // 获取原始路径，去掉开头的/zh
+    const originalUrl = req.url;
+    const redirectPath = originalUrl.replace(/^\/zh/, '') || '/';
+
+    // 重定向到去掉/zh的路径
+    res.redirect(redirectPath);
+    return;
   }
 
   @RenderView()
@@ -48,15 +123,7 @@ export class HomeController {
       },
       layout: 'base',
       render() {
-        return (
-          <div style={{ textAlign: 'center', padding: '50px' }}>
-            <h1 style={{ color: '#dc3545' }}>404 - 页面未找到</h1>
-            <p>抱歉，您访问的页面不存在。</p>
-            <a href="/" style={{ color: '#007bff' }}>
-              返回首页
-            </a>
-          </div>
-        );
+        return <NotFoundPage />;
       },
     });
   }

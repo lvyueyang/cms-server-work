@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Pagination } from '@/interface';
 import { paginationTransform } from '@/utils/whereTransform';
-import { Repository } from 'typeorm';
 import { AdminRoleUpdateDto, AdminRoleUpdatePermissionCodeDto } from './user_admin_role.dto';
 import { AdminRole } from './user_admin_role.entity';
 
@@ -22,7 +22,9 @@ export class AdminRoleService {
     const roles = await this.findByIds(ids);
     const codes: string[] = [];
     roles.forEach((role) => {
-      codes.push(...role.permission_code);
+      if (role.permission_code) {
+        codes.push(...role.permission_code);
+      }
     });
     return [...new Set(codes)];
   }
@@ -45,10 +47,7 @@ export class AdminRoleService {
     });
   }
 
-  async update(
-    id: number,
-    { name, desc, codes }: Partial<AdminRoleUpdateDto & AdminRoleUpdatePermissionCodeDto>,
-  ) {
+  async update(id: number, { name, desc, codes }: Partial<AdminRoleUpdateDto & AdminRoleUpdatePermissionCodeDto>) {
     const isExisted = await this.repository.findOneBy({
       id,
     });

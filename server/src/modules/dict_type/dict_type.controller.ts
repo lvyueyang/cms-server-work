@@ -1,8 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { createPermGroup } from '@/common/common.permission';
 import { ResponseResult } from '@/interface';
 import { AdminRoleGuard } from '../../modules/user_admin_role/user_admin_role.guard';
 import { successResponse } from '../../utils';
+import { AdminLogin } from '../auth/auth.guard';
 import {
   DictTypeByIdParamDto,
   DictTypeCreateDto,
@@ -14,8 +16,6 @@ import {
   DictTypeUpdateDto,
 } from './dict_type.dto';
 import { DictTypeService } from './dict_type.service';
-import { createPermGroup } from '@/common/common.permission';
-import { AdminLogin } from '../auth/auth.guard';
 
 const MODULE_NAME = '字典类型';
 const createPerm = createPermGroup(MODULE_NAME);

@@ -4,3 +4,11 @@ declare namespace NodeJS {
     readonly NODE_ENV: 'development' | 'production';
   }
 }
+
+// Window 类型定义
+interface Window {
+  /** 语言 */
+  lang: ContentLang;
+  /** 本地语言资源 */
+  locals: Record<ContentLang, Record<string, string>>;
+}

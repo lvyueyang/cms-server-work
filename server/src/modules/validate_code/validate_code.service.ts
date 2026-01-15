@@ -1,67 +1,139 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import dayjs from 'dayjs';
-import { Transporter, createTransport } from 'nodemailer';
+import { createTransport, Transporter } from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import * as svgCaptcha from 'svg-captcha';
+import { LessThan, Repository } from 'typeorm';
 import { aliSmsClientConfig, emailClientConfig } from '@/config';
+import { VALIDATE_CODE_TYPE } from '@/constants';
 import { decryptString, encryptString } from '@/utils';
 import SMSClient from '@/utils/SMSClient';
-import * as svgCaptcha from 'svg-captcha';
-import { Repository } from 'typeorm';
 import { ValidateCode } from './validate_code.entity';
 
-interface CodeHash {
+interface CodeHash<T = Record<string, string>> {
   value: string;
   expire_date: number;
-  data?: Record<string, string>;
+  data?: T;
 }
 
 const IMAGE_CODE_KEY = 'cms2023';
 
 @Injectable()
 export class ValidateCodeService {
-  mainClient: Transporter<SMTPTransport.SentMessageInfo>;
-  smsClient: SMSClient;
+  private readonly logger = new Logger(ValidateCodeService.name);
+
+  constructor(
+    @InjectRepository(ValidateCode)
+    private repository: Repository<ValidateCode>
+  ) {}
+
+  // 清理过期的验证码
+  @Cron(CronExpression.EVERY_5_MINUTES)
+  async cleanExpiredCodes() {
+    this.logger.log('开始清理过期验证码...');
+    const result = await this.repository.delete({
+      expire_date: LessThan(dayjs().toDate()),
+    });
+    this.logger.log(`清理过期验证码 ${result.affected} 条`);
+  }
+}
+
+// 短信验证码服务
+@Injectable()
+export class ValidateCodeBySMSService {
+  private smsClient: SMSClient;
 
   constructor(
     @InjectRepository(ValidateCode)
     private repository: Repository<ValidateCode>,
-    @Inject(emailClientConfig.KEY)
-    private emailConfig: ConfigType<typeof emailClientConfig>,
     @Inject(aliSmsClientConfig.KEY)
-    private aliSmsConfig: ConfigType<typeof aliSmsClientConfig>,
+    private aliSmsConfig: ConfigType<typeof aliSmsClientConfig>
   ) {
-    this.initMainClient();
-    // console.log('aliSmsConfig: ', aliSmsConfig);
-    if (this.aliSmsConfig.templateCode) {
-      this.smsClient = new SMSClient({
-        templateCode: this.aliSmsConfig.templateCode,
-        signName: this.aliSmsConfig.signName,
-        accessKeyId: this.aliSmsConfig.accessKeyId,
-        accessKeySecret: this.aliSmsConfig.accessKeySecret,
-        endpoint: this.aliSmsConfig.endpoint,
-      });
-    } else {
-      console.log('短信未配置，无法使用发送短信相关功能');
+    if (
+      !this.aliSmsConfig.accessKeyId ||
+      !this.aliSmsConfig.accessKeySecret ||
+      !this.aliSmsConfig.endpoint ||
+      !this.aliSmsConfig.templateCode ||
+      !this.aliSmsConfig.signName
+    ) {
+      setTimeout(() => {
+        console.warn('短信配置缺失, 会影响发送短信相关功能');
+      }, 0);
     }
+    this.smsClient = new SMSClient({
+      templateCode: this.aliSmsConfig.templateCode || '',
+      signName: this.aliSmsConfig.signName || '',
+      accessKeyId: this.aliSmsConfig.accessKeyId || '',
+      accessKeySecret: this.aliSmsConfig.accessKeySecret || '',
+      endpoint: this.aliSmsConfig.endpoint || '',
+    });
   }
 
-  initMainClient() {
+  // 创建并发送短信验证码
+  async createAndSendCode(phone: string, type: VALIDATE_CODE_TYPE) {
+    const code = createCode();
+    await this.smsClient.sendSms({ phone, code });
+    const info = await this.repository.save({
+      key: phone,
+      code,
+      code_type: type,
+      expire_date: dayjs().add(5, 'minutes').toDate(),
+    });
+    return info;
+  }
+
+  // 校验短信验证码
+  async validateCode({ phone, type, code }: { phone: string; type: VALIDATE_CODE_TYPE; code: string }) {
+    try {
+      const info = await this.repository.findOne({
+        where: {
+          key: phone,
+          code_type: type,
+        },
+      });
+      if (!info) {
+        return [null, '验证码不存在'] as const;
+      }
+      if (dayjs(info.expire_date).isBefore(dayjs())) {
+        return [null, '验证码已过期'] as const;
+      }
+      if (info.code !== code) {
+        return [null, '验证码错误'] as const;
+      }
+      return [info, null] as const;
+    } catch (error) {
+      return [null, '数据库查询失败'] as const;
+    }
+  }
+}
+
+// 邮箱验证码服务
+@Injectable()
+export class ValidateCodeByEmailService {
+  private mailClient: Transporter<SMTPTransport.SentMessageInfo>;
+  constructor(
+    @Inject(emailClientConfig.KEY)
+    private emailConfig: ConfigType<typeof emailClientConfig>,
+    @InjectRepository(ValidateCode)
+    private repository: Repository<ValidateCode>
+  ) {
     const { host, port, secure, auth } = this.emailConfig;
     if (!host) {
       console.log('邮箱未配置， 无法使用找回密码功能和发送邮件功能');
       return;
     }
 
-    this.mainClient = createTransport({
+    this.mailClient = createTransport({
       host,
       port,
       secure,
       auth,
     });
 
-    this.mainClient.verify(function (error) {
+    this.mailClient.verify((error) => {
       if (error) {
         console.error(error);
       } else {
@@ -70,117 +142,71 @@ export class ValidateCodeService {
     });
   }
 
-  /** 创建6位长度验证码 */
-  createCode() {
-    const number = Math.floor(Math.random() * 900000) + 100000;
-    return number.toString();
-  }
-
-  /** 创建验证码 */
-  async create(
-    { user_id, point_type, code_type }: Pick<ValidateCode, 'code_type' | 'point_type' | 'user_id'>,
-    expiresIn: number | Date = 5,
-  ) {
-    const code = this.createCode();
-
-    let expire_date: Date;
-    if (typeof expiresIn === 'number') {
-      expire_date = dayjs().set('minute', expiresIn).toDate();
-    } else {
-      expire_date = expiresIn;
-    }
-
-    const current = await this.repository.findOne({
-      where: {
-        user_id,
-        point_type,
-        code_type,
-      },
+  // 创建并发送邮箱验证码
+  async createAndSendCode(title: string, email: string, type: VALIDATE_CODE_TYPE) {
+    const code = createCode();
+    await this.mailClient.sendMail({
+      from: `xxxx <${this.emailConfig.from}>`,
+      to: email,
+      subject: title,
+      html: codeTemplate(title, code),
     });
-    if (current) {
-      await this.repository.update(current.id, {
-        code,
-        expire_date,
-      });
-      return await this.repository.findOneBy({ id: current.id });
-    } else {
-      return await this.repository.save({
-        user_id,
-        point_type,
-        code_type,
-        code,
-        expire_date,
-      });
-    }
-  }
-
-  /** 验证验证码 */
-  async validate({
-    code_type,
-    point_type,
-    user_id,
-    code,
-  }: Pick<ValidateCode, 'code_type' | 'point_type' | 'user_id' | 'code'>) {
-    const codeRes = await this.repository.findOne({
-      where: {
-        code_type,
-        point_type,
-        user_id,
-        code,
-      },
+    const info = await this.repository.save({
+      key: email,
+      code,
+      code_type: type,
+      expire_date: dayjs().add(5, 'minutes').toDate(),
     });
-    if (!codeRes) {
-      return [false, 'code_not_found'];
-    }
-    if (dayjs().isBefore(dayjs(codeRes.expire_date))) {
-      return [false, 'code_expire'];
-    }
-    return [codeRes];
+    return info;
   }
 
-  senEmail({
-    to,
-    title,
-    content,
-  }: {
-    title: string;
-    content: string;
-    to: string;
-  }): Promise<SMTPTransport.SentMessageInfo> {
-    return new Promise((resolve, reject) => {
-      this.mainClient.sendMail(
-        {
-          from: `CMS <${this.emailConfig.from}>`,
-          to,
-          subject: title,
-          html: content,
-        },
-        (err, data) => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve(data);
-        },
-      );
-    });
-  }
-
-  sendSmsCode(phone: string, code: string) {
-    return this.smsClient.sendSms({ phone, code });
-  }
-
-  createImageCode() {
-    const { data, text } = svgCaptcha.create();
+  // 校验邮箱验证码
+  async validateCode({ email, type, code }: { email: string; type: VALIDATE_CODE_TYPE; code: string }) {
     try {
-      const hash = this.createHashCode(text);
-      return {
-        data,
-        text,
-        hash,
-      };
-    } catch (e) {
-      return e;
+      const info = await this.repository.findOne({
+        where: {
+          key: email,
+          code_type: type,
+        },
+        order: {
+          create_date: 'DESC',
+        },
+      });
+      if (!info) {
+        return [null, '验证码不存在'] as const;
+      }
+      if (dayjs(info.expire_date).isBefore(dayjs())) {
+        return [null, '验证码已过期'] as const;
+      }
+      if (info.code !== code) {
+        return [null, '验证码错误'] as const;
+      }
+      return [info, null] as const;
+    } catch (error) {
+      return [null, '数据库查询失败'] as const;
     }
+  }
+}
+
+// 图片验证码服务
+@Injectable()
+export class ValidateCodeByImageService {
+  static IMAGE_CODE_KEY = 'cms2023';
+
+  constructor(
+    @InjectRepository(ValidateCode)
+    private repository: Repository<ValidateCode>
+  ) {}
+
+  // 创建验证码
+  create() {
+    const { data, text } = svgCaptcha.create();
+    const hash = this.createHashCode(text);
+    return {
+      data,
+      text,
+      hash,
+    };
   }
 
   /** 使用 code 生成 带有过期时间的加密过的 hash */
@@ -194,55 +220,13 @@ export class ValidateCodeService {
     return hash;
   }
 
-  /** 创建手机短信验证码 */
-  createPhoneHashCode(phone: string, key: string) {
-    const code = this.createCode();
-    const hashValue: CodeHash = {
-      value: code,
-      data: { phone, key },
-      expire_date: dayjs().add(5, 'minutes').unix(),
-    };
-    const hash = encryptString(JSON.stringify(hashValue), IMAGE_CODE_KEY);
-    return { hash, code };
-  }
-  /** 验证短信验证码 */
-  validatePhoneHashCode(options: {
-    hashCode: string;
-    code: string;
-    phone: string;
-    key: string; // 自定义 key 区别同手机号的不同用途
-  }) {
-    try {
-      const parseValue = this.parseHash(options.hashCode);
-      const {
-        value,
-        expire_date,
-        data: { phone, key },
-      } = parseValue;
-      // 校验有效期
-      if (dayjs(expire_date).isAfter(dayjs())) {
-        return false;
-      }
-      // 用途校验
-      if (options.key !== key) {
-        return false;
-      }
-      // 值是否相等
-      return (
-        value.toLocaleLowerCase() === options.code.toLocaleLowerCase() && options.phone === phone
-      );
-    } catch (e) {
-      return false;
-    }
-  }
-
-  parseHash(hashCode: string) {
-    const data = JSON.parse(decryptString(hashCode, IMAGE_CODE_KEY)) as CodeHash;
+  parseHash<T = Record<string, string>>(hashCode: string) {
+    const data = JSON.parse(decryptString(hashCode, IMAGE_CODE_KEY)) as CodeHash<T>;
     return data;
   }
 
   /** 验证 code 和 hash */
-  validateHashCode(hashCode: string, code: string) {
+  validate(hashCode: string, code: string) {
     const { value, expire_date } = this.parseHash(hashCode);
     // 校验有效期
     if (dayjs(expire_date).isAfter(dayjs())) {
@@ -251,4 +235,27 @@ export class ValidateCodeService {
     // 值是否相等
     return value.toLocaleLowerCase() === code.toLocaleLowerCase();
   }
+}
+
+// 创建6位长度验证码
+function createCode() {
+  const number = Math.floor(Math.random() * 900000) + 100000;
+  return number.toString();
+}
+
+// 验证码邮件模板
+function codeTemplate(title: string, code: string) {
+  return `<div style="width: 600px;margin: 20px auto;color:#000;background:#fff;border: 1px solid #415A94;">
+  <div style="padding-left:30px;background-color:#415A94;color:#fff;padding:20px 40px;font-size: 21px;">xxxx</div>
+  <div style="padding:40px;">
+    <div style="font-size:24px;line-height:1.5;">${title}</div>
+    <div style="margin-top: 15px;">
+      <span>您的验证码是：</span>
+      <span style="padding: 0 3px;font-size: 18px;">
+        <b>${code}</b>
+      </span>
+      <span>，请在 5 分钟内进行验证。如果该验证码不为您本人申请，请无视。</span>
+    </div>
+  </div>
+</div>`;
 }

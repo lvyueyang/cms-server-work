@@ -1,0 +1,73 @@
+:root {
+  --color-primary: #123875;
+  --color-primary-hover: #154289;
+  --color-primary-active: #1951ab;
+
+  --color-link: rgb(0, 98, 211);
+  --color-link-hover: rgb(0, 68, 153);
+  --color-link-active: rgb(0, 68, 153);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+// 滚动过渡
+html {
+  scroll-behavior: smooth;
+  // 距离顶部的距离
+  scroll-padding-top: 130px;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  font-family: 'Helvetica', 'Microsoft YaHei', sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  color: #111;
+}
+
+.baseLayoutContainer {
+  flex: 1;
+}
+
+.wp {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+
+  @media (max-width: 1260px) {
+    padding: 0 15px;
+  }
+}
+
+.html-content {
+  line-height: 1.6;
+  p {
+    margin: 0 0 10px 0;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    td,
+    th {
+      border: 1px solid #eee;
+      padding: 10px;
+    }
+    th {
+      background: #f9f9f9;
+      text-align: left;
+    }
+  }
+}
+
+.i-icon {
+  line-height: 0;
+}

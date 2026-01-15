@@ -8,5 +8,6 @@ import { BannerService } from './banner.service';
   imports: [TypeOrmModule.forFeature([Banner])],
   controllers: [BannerController],
   providers: [BannerService],
+  exports: [BannerService],
 })
 export class BannerModule {}

@@ -1,23 +1,40 @@
+import { randomUUID } from 'node:crypto';
+import path from 'node:path';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CRUDQuery } from '@/interface';
-import { createOrder, fileBuffer2md5, getUploadFileDirPath } from '@/utils';
-import { paginationTransform } from '../../utils/whereTransform';
-import { In, Like, Repository } from 'typeorm';
-import { UserAdmin } from '../user_admin/user_admin.entity';
-import { FileManage } from './file_manage.entity';
-import fse from 'fs-extra';
-import path from 'path';
 import filetype, { FileTypeResult } from 'file-type';
-import { v4 as uuid } from 'uuid';
-import { FileManageUpdateDto } from './file_manage.dto';
+import fse from 'fs-extra';
+import { In, Like, Repository } from 'typeorm';
+import { ContentLang } from '@/constants';
+import { CRUDQuery } from '@/interface';
+import { createOrder, fileBuffer2md5, getUploadFileDirPath, isDefaultI18nLang } from '@/utils';
+import { paginationTransform } from '../../utils/whereTransform';
+import { ContentTranslationService, StringKeys } from '../content_translation/content_translation.service';
+import { UserAdmin } from '../user_admin/user_admin.entity';
+import { FileManageRenameDto, FileManageUpdateDto } from './file_manage.dto';
+import { FileManage } from './file_manage.entity';
 
 @Injectable()
 export class FileManageService {
+  static I18N_KEY = 'file_manage';
+  static I18N_FIELDS: StringKeys<FileManage>[] = ['name'];
+
   constructor(
     @InjectRepository(FileManage)
     private repository: Repository<FileManage>,
+    private contentTranslationService: ContentTranslationService
   ) {}
+
+  async i18nTrans(res: FileManage[], lang?: ContentLang) {
+    if (lang && !isDefaultI18nLang(lang)) {
+      return this.contentTranslationService.overlayTranslations(res, {
+        entity: FileManageService.I18N_KEY,
+        fields: FileManageService.I18N_FIELDS,
+        lang,
+      });
+    }
+    return res;
+  }
 
   findAll() {
     return this.repository.find({
@@ -35,6 +52,9 @@ export class FileManageService {
       })
       .skip(skip)
       .take(take);
+    find.orWhere({
+      id: keyword,
+    });
     if (tags?.length) {
       find.andWhere({
         tags: In(tags),
@@ -46,6 +66,20 @@ export class FileManageService {
     });
 
     return find.getManyAndCount();
+  }
+  // 文件地址转换为文件实体
+  async fileIDUrl2File(urls: string[], lang?: ContentLang) {
+    const ids = urls.map((url) => {
+      const id = url.split('?')[0].split('/').pop();
+      return id;
+    });
+    const files = await this.repository.find({
+      where: {
+        id: In(ids),
+        is_delete: false,
+      },
+    });
+    return this.i18nTrans(files, lang);
   }
   findByID(id: string) {
     const info = this.repository.findOneBy({
@@ -94,7 +128,7 @@ export class FileManageService {
     file: Express.Multer.File,
     dirPath: string,
     author: UserAdmin,
-    tags?: string[],
+    tags?: string[]
   ): Promise<FileManage> {
     const fileMd5 = fileBuffer2md5(file.buffer);
     const dbInfo = await this.repository.findOneBy({
@@ -121,10 +155,10 @@ export class FileManageService {
       fns.splice(1, 0, '_' + Date.now());
       filename = fns.join('.');
     }
-    const ft: FileTypeResult | null = await filetype.fileTypeFromBuffer(file.buffer as Uint8Array);
+    const ft: FileTypeResult | undefined = await filetype.fromBuffer(file.buffer as Uint8Array);
     const mime = ft?.mime || 'application/octet-stream';
     const ext = ft?.ext || file.originalname.split('.').pop();
-    const local_path = path.join(dirPath, uuid() + (ext ? '.' + ext : '_' + file.originalname));
+    const local_path = path.join(dirPath, randomUUID() + (ext ? '.' + ext : '_' + file.originalname));
     const saveInfo = await this.repository.save({
       name: filename,
       hash: fileMd5,
@@ -152,7 +186,7 @@ export class FileManageService {
       console.log('e: ', e);
       // 删了
       this.repository.delete(saveInfo.id);
-      throw new BadRequestException('文件写入失败', e);
+      throw new BadRequestException('文件写入失败', e!);
     }
   }
 
@@ -160,9 +194,13 @@ export class FileManageService {
   async getFileAbsolutePath(id: string | FileManage): Promise<string> {
     let info: FileManage;
     if (typeof id === 'string') {
-      info = await this.repository.findOneBy({
+      const infoFind = await this.repository.findOneBy({
         id,
       });
+      if (!infoFind) {
+        throw new BadRequestException('文件不存在', 'file_manage not found');
+      }
+      info = infoFind;
     } else {
       info = id;
     }
@@ -170,12 +208,25 @@ export class FileManageService {
   }
 
   // 更新文件信息
-  async update({ id, desc }: FileManageUpdateDto) {
+  async update({ id, desc, login_download_auth }: FileManageUpdateDto) {
     const info = await this.findById(id);
     if (!info) {
       throw new BadRequestException('文件不存在', 'file_manage not found');
     }
-    return this.repository.update(id, { desc });
+    return this.repository.update(id, { desc, login_download_auth });
+  }
+
+  // 文件重命名
+  async rename({ id, name }: FileManageRenameDto) {
+    const info = await this.findById(id);
+    if (!info) {
+      throw new BadRequestException('文件不存在', 'file_manage not found');
+    }
+    const old = await this.repository.findBy({ name });
+    if (old.length > 0) {
+      throw new BadRequestException('文件名已存在');
+    }
+    return this.repository.update(id, { name });
   }
 
   // 将文件移动到回收站

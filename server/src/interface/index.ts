@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsNumber, IsOptional } from 'class-validator';
+import { ExportFileType } from '@/constants';
 
 /** 分页 */
 export class Pagination {
@@ -66,3 +67,12 @@ export class ResponseResult<T = any> {
 /** 通用查询条件类型 */
 export type CRUDQuery<T extends Record<string, any>> = Pagination &
   Order<T> & { keyword?: string } & Partial<Pick<T, 'is_available'>>;
+
+/** 导出参数 */
+export class ExportParamsDto {
+  @ApiProperty({
+    description: '导出文件类型',
+    enum: ExportFileType,
+  })
+  readonly export_type: ExportFileType;
+}

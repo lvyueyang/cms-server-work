@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-import { BaseEntity } from '../../common/base.entity';
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity } from '../../common/base.entity';
 
 /** 系统配置 */
 @Entity({ orderBy: { create_date: 'DESC' } })

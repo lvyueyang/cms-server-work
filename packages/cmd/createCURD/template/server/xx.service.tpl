@@ -8,15 +8,32 @@ import { UserAdmin } from '../user_admin/user_admin.entity';
 import { {{entityName}} } from './{{name}}.entity';
 import { {{entityName}}CreateDto, {{entityName}}UpdateDto } from './{{name}}.dto';
 import { ContentLang } from '@/constants';
-import { ContentTranslationService } from '../content_translation/content_translation.service';
+import {
+  ContentTranslationService,
+  StringKeys,
+} from '../content_translation/content_translation.service';
 
 @Injectable()
 export class {{entityName}}Service {
+  static I18N_KEY = '{{name}}';
+  static I18N_FIELDS: StringKeys<{{entityName}}>[] = ['title', 'desc', 'content'];
+
   constructor(
     @InjectRepository({{entityName}})
-    private repository: Repository<{{entityName}}>,
+    readonly repository: Repository<{{entityName}}>,
     private contentTranslationService: ContentTranslationService,
   ) {}
+
+  async i18nTrans(res: {{entityName}}[], lang?: ContentLang) {
+    if (lang && !isDefaultI18nLang(lang)) {
+      return this.contentTranslationService.overlayTranslations(res, {
+        entity: {{entityName}}Service.I18N_KEY,
+        fields: {{entityName}}Service.I18N_FIELDS,
+        lang,
+      });
+    }
+    return res;
+  }
 
   findAll() {
     return this.repository.find({
@@ -24,7 +41,11 @@ export class {{entityName}}Service {
     });
   }
 
-  findList({ keyword = '', ...params }: CRUDQuery<{{entityName}}>, lang?: ContentLang) {
+  findExportAll() {
+    return this.repository.find();
+  }
+
+  findList({ keyword = '', ...params }: CRUDQuery<{{entityName}}>) {
     const { skip, take } = paginationTransform(params);
     const { order } = createOrder(params) || {};
     const find = this.repository
@@ -39,18 +60,10 @@ export class {{entityName}}Service {
       find.addOrderBy('{{name}}.' + key, value);
     });
     
-    return find.getManyAndCount().then(async ([list, total]) => {
-      if (isDefaultI18nLang(lang)) return [list, total] as const;
-      const patched = await this.contentTranslationService.overlayTranslations(list, {
-        entity: '{{name}}',
-        fields: ['title', 'desc', 'content'],
-        lang,
-      });
-      return [patched, total] as const;
-    });;
+    return find.getManyAndCount();
   }
 
-  async findById(id: number, lang?: ContentLang) {
+  async findById(id: number) {
     const info = await this.repository.findOneBy({
       id,
       is_delete: false,
@@ -58,16 +71,10 @@ export class {{entityName}}Service {
     if (!info) {
       throw new BadRequestException('{{cname}}不存在', '{{name}} not found');
     }
-    if (!isDefaultI18nLang(lang)) return info;
-    const [patched] = await this.contentTranslationService.overlayTranslations([info], {
-      entity: '{{name}}',
-      fields: ['title', 'desc', 'content'],
-      lang,
-    });
-    return patched;
+    return info;
   }
 
-  async findNextAndPrev(id: number, lang?: ContentLang) {
+  async findNextAndPrev(id: number) {
     const currentInfo = await this.findById(id);
     const [nextInfo, prevInfo] = await Promise.all([
       this.repository.findOne({
@@ -89,35 +96,19 @@ export class {{entityName}}Service {
         },
       }),
     ]);
-    
-    let patchedNext = nextInfo || null;
-    let patchedPrev = prevInfo || null;
-    if (!isDefaultI18nLang(lang)) {
-      const items = [nextInfo, prevInfo].filter(Boolean);
-      if (items.length) {
-        const patched = await this.contentTranslationService.overlayTranslations(items, {
-          entity: '{{name}}',
-          fields: ['title', 'desc', 'content'],
-          lang,
-        });
-        const map = new Map(patched.map((i) => [i.id, i]));
-        if (nextInfo) patchedNext = map.get(nextInfo.id);
-        if (prevInfo) patchedPrev = map.get(prevInfo.id);
-      }
-    }
     return {
-      next: patchedNext || null,
-      prev: patchedPrev || null,
+      next: nextInfo,
+      prev: prevInfo,
       current: currentInfo,
     };
   }
 
   async create(data: {{entityName}}CreateDto, author: UserAdmin) {
-    const isExisted = await this.repository.findOneBy({
+    const oldInfo = await this.repository.findOneBy({
       title: data.title,
       is_delete: false,
     });
-    if (isExisted) {
+    if (oldInfo) {
       throw new BadRequestException('{{cname}}已存在');
     }
     return this.repository.save({
@@ -131,23 +122,16 @@ export class {{entityName}}Service {
     });
   }
 
-  async remove(id: number) {
-    const isExisted = await this.repository.findOneBy({
-      id,
-      is_delete: false,
-    });
-    if (!isExisted) {
-      throw new BadRequestException('{{cname}}不存在', '{{name}} not found');
-    }
+  async remove(id: number | number[]) {
     return this.repository.update(id, { is_delete: true });
   }
 
-  async update(data: Partial<{{entityName}}UpdateDto>) {
-    const isExisted = await this.repository.findOneBy({
+  async update(data: Partial<{{entityName}}UpdateDto> & {id: number}) {
+    const oldInfo = await this.repository.findOneBy({
       id: data.id,
       is_delete: false,
     });
-    if (!isExisted) {
+    if (!oldInfo) {
       throw new BadRequestException('{{cname}}不存在', '{{name}} not found');
     }
     return this.repository.update(data.id, {

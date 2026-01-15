@@ -1,6 +1,7 @@
 .vscode
 .DS_Store
 .next/
+.VSCodeCounter
 yarn-error.log
 lerna-debug.log
 
@@ -8,3 +9,4 @@ node_modules
 
 temp/
 .prod.env
+env_prod/*

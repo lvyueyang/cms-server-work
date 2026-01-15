@@ -1,22 +1,30 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { In, LessThan, Like, MoreThan, Repository } from 'typeorm';
+import { SYSTEM_CONFIG_PRESET } from '@/common/system_config';
+import { ContentLang } from '@/constants';
 import { CRUDQuery } from '@/interface';
 import { createOrder, isDefaultI18nLang } from '@/utils';
 import { paginationTransform } from '@/utils/whereTransform';
-import { LessThan, Like, MoreThan, Repository } from 'typeorm';
+import { ContentTranslationService, StringKeys } from '../content_translation/content_translation.service';
 import { UserAdmin } from '../user_admin/user_admin.entity';
-import { SystemConfig } from './system_config.entity';
 import { SystemConfigCreateDto, SystemConfigUpdateDto } from './system_config.dto';
-import { ContentLang } from '@/constants';
-import { ContentTranslationService } from '../content_translation/content_translation.service';
+import { SystemConfig } from './system_config.entity';
 
 @Injectable()
 export class SystemConfigService {
+  static I18N_KEY = 'system_config';
+  static I18N_FIELDS: StringKeys<SystemConfig>[] = ['title', 'content'];
+
   constructor(
     @InjectRepository(SystemConfig)
     private repository: Repository<SystemConfig>,
-    private contentTranslationService: ContentTranslationService,
+    private contentTranslationService: ContentTranslationService
   ) {}
+
+  onApplicationBootstrap() {
+    this.importPreset();
+  }
 
   findAll() {
     return this.repository.find({
@@ -40,14 +48,34 @@ export class SystemConfigService {
     });
 
     return find.getManyAndCount().then(async ([list, total]) => {
-      if (isDefaultI18nLang(lang)) return [list, total] as const;
-      const patched = await this.contentTranslationService.overlayTranslations(list, {
-        entity: 'system_config',
-        fields: ['title', 'content'],
+      if (lang && !isDefaultI18nLang(lang)) {
+        const patched = await this.contentTranslationService.overlayTranslations(list, {
+          entity: SystemConfigService.I18N_KEY,
+          fields: SystemConfigService.I18N_FIELDS,
+          lang,
+        });
+        return [patched, total] as const;
+      }
+      return [list, total] as const;
+    });
+  }
+
+  async findByCodes(codes: string[], lang?: ContentLang) {
+    const list = await this.repository.find({
+      where: {
+        code: In(codes),
+        is_delete: false,
+      },
+    });
+    if (lang && !isDefaultI18nLang(lang)) {
+      const result = await this.contentTranslationService.overlayTranslations(list, {
+        entity: SystemConfigService.I18N_KEY,
+        fields: SystemConfigService.I18N_FIELDS,
         lang,
       });
-      return [patched, total] as const;
-    });
+      return result;
+    }
+    return list;
   }
 
   async findById(id: number, lang?: ContentLang) {
@@ -58,13 +86,15 @@ export class SystemConfigService {
     if (!info) {
       throw new BadRequestException('系统配置不存在', 'system_config not found');
     }
-    if (!isDefaultI18nLang(lang)) return info;
-    const [patched] = await this.contentTranslationService.overlayTranslations([info], {
-      entity: 'system_config',
-      fields: ['title', 'content'],
-      lang,
-    });
-    return patched;
+    if (lang && !isDefaultI18nLang(lang)) {
+      const [patched] = await this.contentTranslationService.overlayTranslations([info], {
+        entity: SystemConfigService.I18N_KEY,
+        fields: SystemConfigService.I18N_FIELDS,
+        lang,
+      });
+      return patched;
+    }
+    return info;
   }
 
   async findNextAndPrev(id: number, lang?: ContentLang) {
@@ -90,24 +120,24 @@ export class SystemConfigService {
       }),
     ]);
 
-    let patchedNext = nextInfo || null;
-    let patchedPrev = prevInfo || null;
-    if (!isDefaultI18nLang(lang)) {
-      const items = [nextInfo, prevInfo].filter(Boolean);
+    let patchedNext = nextInfo;
+    let patchedPrev = prevInfo;
+    if (lang && !isDefaultI18nLang(lang)) {
+      const items = ([nextInfo!, prevInfo!] as const).filter(Boolean);
       if (items.length) {
         const patched = await this.contentTranslationService.overlayTranslations(items, {
-          entity: 'system_config',
-          fields: ['title', 'content'],
+          entity: SystemConfigService.I18N_KEY,
+          fields: SystemConfigService.I18N_FIELDS,
           lang,
         });
         const map = new Map(patched.map((i) => [i.id, i]));
-        if (nextInfo) patchedNext = map.get(nextInfo.id);
-        if (prevInfo) patchedPrev = map.get(prevInfo.id);
+        if (nextInfo) patchedNext = map.get(nextInfo.id)!;
+        if (prevInfo) patchedPrev = map.get(prevInfo.id)!;
       }
     }
     return {
-      next: patchedNext || null,
-      prev: patchedPrev || null,
+      next: patchedNext,
+      prev: patchedPrev,
       current: currentInfo,
     };
   }
@@ -141,7 +171,7 @@ export class SystemConfigService {
     return this.repository.update(id, { is_delete: true });
   }
 
-  async update(data: Partial<SystemConfigUpdateDto>) {
+  async update(data: Partial<SystemConfigUpdateDto> & { id: number }) {
     const isExisted = await this.repository.findOneBy({
       id: data.id,
       is_delete: false,
@@ -155,5 +185,43 @@ export class SystemConfigService {
       content: data.content,
       is_available: data.is_available,
     });
+  }
+
+  async importPreset() {
+    for (const [code, value] of Object.entries(SYSTEM_CONFIG_PRESET)) {
+      const info = await this.repository.findOne({
+        where: {
+          code,
+        },
+      });
+      if (info) {
+        if (info.is_delete) {
+          await this.repository.update(info.id, {
+            is_delete: false,
+          });
+        }
+      } else {
+        try {
+          let content = '';
+          if (value.content) {
+            if (typeof value.content === 'object') {
+              content = JSON.stringify(value.content, null, 2);
+            }
+            if (typeof value.content === 'string') {
+              content = value.content;
+            }
+          }
+          await this.repository.save({
+            code,
+            title: value.title,
+            content_type: value.content_type,
+            content: content,
+          });
+        } catch (e) {
+          console.warn(`Failed to create dict type ${code}:`, e);
+        }
+      }
+    }
+    return true;
   }
 }

@@ -1,11 +1,11 @@
-export const enum LOGIN_TYPE {
-  USER = 'user',
+export enum LOGIN_TYPE {
+  USER_CLIENT = 'user_client',
   USER_ADMIN = 'user_admin',
 }
 
-export class UserAdminJWTPayload {
+export class UserJWTPayload {
   username: string;
-  id: number;
-  type: LOGIN_TYPE.USER_ADMIN;
+  id: number | string;
+  type: LOGIN_TYPE;
   create_date: Date;
 }

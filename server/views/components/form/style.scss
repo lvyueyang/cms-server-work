@@ -1,0 +1,106 @@
+.input,
+.textarea {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  border-radius: 4px;
+  font-size: 16px;
+  outline: none;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
+  color: #333;
+
+  &::placeholder {
+    color: #999;
+  }
+
+  &:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(18, 56, 117, 0.1);
+  }
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 130px;
+  transition: none;
+}
+
+.btn {
+  --btn-bg: var(--color-primary);
+  --btn-bg-hover: #001336;
+  --btn-border-color: var(--color-primary);
+  --btn-border-color-hover: #001336;
+  --btn-color-focus: rgba(0, 19, 54, 0.254);
+  --btn-font-color: #fff;
+  --btn-font-color-hover: #fff;
+  --btn-padding: 12px 24px;
+  --btn-font-size: 16px;
+  --btn-border-radius: 2px;
+
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--btn-padding);
+  border: 1px solid var(--btn-border-color);
+  background: var(--btn-bg);
+  border-radius: var(--btn-border-radius);
+  font-size: var(--btn-font-size);
+  color: var(--btn-font-color);
+  cursor: pointer;
+  font-weight: 400;
+  transition: all 0.3s;
+  outline: none;
+  line-height: 1;
+  text-decoration: none;
+  &:hover {
+    background: var(--btn-bg-hover);
+    border-color: var(--btn-border-color-hover);
+    color: var(--btn-font-color-hover);
+  }
+  &:focus {
+    outline: 4px solid var(--btn-color-focus);
+  }
+  &[disabled] {
+    cursor: not-allowed;
+    background: #e0e0e0;
+    border-color: #e0e0e0;
+    color: #999;
+  }
+  &-block {
+    width: 100%;
+  }
+
+  &-sm {
+    --btn-padding: 8px 16px;
+    --btn-font-size: 12px;
+  }
+  &-link {
+    --btn-bg: transparent;
+    --btn-border-color: transparent;
+    --btn-font-color: var(--color-primary);
+  }
+
+  &-outline {
+    --btn-bg: transparent;
+    --btn-border-color: #fff;
+    --btn-font-color: #fff;
+    --btn-bg-hover: #fff;
+    --btn-font-color-hover: var(--color-primary);
+  }
+
+  &-white {
+    --btn-bg: #fff;
+    --btn-border-color: #fff;
+    --btn-font-color: #000;
+    --btn-bg-hover: #f7f7f7;
+    --btn-font-color-hover: #000;
+  }
+}
+a.btn {
+  &:hover {
+    text-decoration: underline;
+  }
+}

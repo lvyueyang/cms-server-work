@@ -1,13 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
-import { DictValueCreateDto } from './dict_value.dto';
-import { DictValue } from './dict_value.entity';
-import { DictTypeService } from '../dict_type/dict_type.service';
 import { ContentLang } from '@/constants';
 import { isDefaultI18nLang } from '@/utils';
-import { ContentTranslationService } from '../content_translation/content_translation.service';
 import { DICT_PRESET } from '../../common/dict';
+import { ContentTranslationService } from '../content_translation/content_translation.service';
+import { DictTypeService } from '../dict_type/dict_type.service';
+import { DICT_VALUE_I18N_FIELDS, DICT_VALUE_I18N_KEY } from './dict_value.constant';
+import { DictValueCreateDto } from './dict_value.dto';
+import { DictValue } from './dict_value.entity';
 
 type FormValues = DictValueCreateDto;
 
@@ -15,20 +16,33 @@ type FormValues = DictValueCreateDto;
 export class DictValueService {
   constructor(
     @InjectRepository(DictValue)
-    private repository: Repository<DictValue>,
+    private readonly repository: Repository<DictValue>,
     private readonly dictTypeService: DictTypeService,
-    private readonly contentI18n: ContentTranslationService,
-  ) {
+    private readonly contentI18n: ContentTranslationService
+  ) {}
+
+  async i18nTrans(res: DictValue[], lang?: ContentLang) {
+    if (lang && !isDefaultI18nLang(lang)) {
+      return this.contentI18n.overlayTranslations(res, {
+        entity: DICT_VALUE_I18N_KEY,
+        fields: DICT_VALUE_I18N_FIELDS,
+        lang,
+      });
+    }
+    return res;
+  }
+
+  onApplicationBootstrap() {
     // 初始化预置的字典
     this.importPreset();
   }
 
   findAll(lang?: ContentLang | string) {
     return this.repository.find().then((list) => {
-      if (!isDefaultI18nLang(lang)) {
+      if (lang && !isDefaultI18nLang(lang)) {
         return this.contentI18n.overlayTranslations(list, {
-          entity: 'dict_value',
-          fields: ['label', 'desc', 'attr'],
+          entity: DICT_VALUE_I18N_KEY,
+          fields: DICT_VALUE_I18N_FIELDS,
           lang,
         });
       }
@@ -36,15 +50,7 @@ export class DictValueService {
     });
   }
 
-  findList({
-    keyword = '',
-    typeId,
-    is_available,
-  }: {
-    typeId: number;
-    keyword?: string;
-    is_available?: boolean;
-  }) {
+  findList({ keyword = '', typeId, is_available }: { typeId: number; keyword?: string; is_available?: boolean }) {
     const find = this.repository.createQueryBuilder('dict_value').where({
       label: Like(`%${keyword.trim()}%`),
       typeId: typeId,
@@ -68,17 +74,32 @@ export class DictValueService {
     return isExisted;
   }
 
+  async findByValue(value: string, lang?: ContentLang) {
+    const info = await this.repository.findOneBy({
+      value,
+    });
+    if (!info) {
+      throw new BadRequestException('字典值不存在', 'dict_value not found');
+    }
+    if (lang && !isDefaultI18nLang(lang)) {
+      const [t] = await this.contentI18n.overlayTranslations([info], {
+        entity: DICT_VALUE_I18N_KEY,
+        fields: DICT_VALUE_I18N_FIELDS,
+        lang,
+      });
+      return t;
+    }
+    return info;
+  }
+
   async findByType(type: string) {
     const dictType = await this.dictTypeService.findByType(type);
     const list = await this.repository.find({
       where: {
-        type: dictType,
+        typeId: dictType.id,
         is_available: true,
       },
     });
-    if (!list.length) {
-      throw new BadRequestException('字典值不存在', 'dict_value not found');
-    }
     return {
       type,
       list,
@@ -114,13 +135,7 @@ export class DictValueService {
     });
   }
 
-  async remove(id: number) {
-    const isExisted = await this.repository.findOneBy({
-      id,
-    });
-    if (!isExisted) {
-      throw new BadRequestException('字典值不存在', 'dict_value not found');
-    }
+  async remove(id: number | number[]) {
     return this.repository.delete(id);
   }
 
@@ -187,7 +202,7 @@ export class DictValueService {
             attr,
             type: dictType,
             is_available: true,
-            recommend: 0,
+            recommend: val.recommend,
           });
         }
       }

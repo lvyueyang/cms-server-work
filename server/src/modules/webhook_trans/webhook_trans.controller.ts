@@ -1,9 +1,11 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { createPermGroup } from '@/common/common.permission';
 import { ResponseResult } from '@/interface';
-import { User } from '@/modules/user_admin/user-admin.decorator';
+import { UserByAdmin } from '@/modules/user_admin/user_admin.decorator';
 import { AdminRoleGuard } from '@/modules/user_admin_role/user_admin_role.guard';
 import { successResponse } from '@/utils';
+import { UserAdminInfo } from '../user_admin/user_admin.dto';
 import {
   WebhookTransByIdParamDto,
   WebhookTransCreateDto,
@@ -15,7 +17,6 @@ import {
   WebhookTransUpdateDto,
 } from './webhook_trans.dto';
 import { WebhookTransService } from './webhook_trans.service';
-import { createPermGroup } from '@/common/common.permission';
 
 const MOD_NAME = 'Webhook中转';
 const createPerm = createPermGroup(MOD_NAME);
@@ -61,7 +62,7 @@ export class WebhookTransController {
     type: WebhookTransDetailResponseDto,
   })
   @AdminRoleGuard(createPerm('admin:webhook_trans:create', `创建${MOD_NAME}`))
-  async apiCreate(@Body() data: WebhookTransCreateDto, @User() user) {
+  async apiCreate(@Body() data: WebhookTransCreateDto, @UserByAdmin() user: UserAdminInfo) {
     const newData = await this.services.create(data, user);
     return successResponse(newData, '创建成功');
   }

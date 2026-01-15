@@ -1,0 +1,14 @@
+.v-code-input {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  input {
+    flex: 1;
+  }
+  .code-btn {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    margin-left: 10px;
+    white-space: nowrap;
+  }
+}

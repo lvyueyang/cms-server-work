@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from '@/common/base.entity';
 import { UserAdmin } from '@/modules/user_admin/user_admin.entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 /** Webhook中转 */
 @Entity({ orderBy: { create_date: 'DESC' } })

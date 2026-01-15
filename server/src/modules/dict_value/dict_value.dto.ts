@@ -1,8 +1,8 @@
 import { ApiProperty, OmitType, PartialType, PickType } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 import { ResponseResult } from '@/interface';
-import { DictValue } from './dict_value.entity';
 import { DictType } from '../dict_type/dict_type.entity';
+import { DictValue } from './dict_value.entity';
 
 const CreateDto = PickType(DictValue, [
   'label',
@@ -40,6 +40,15 @@ export class DictValueByIdParamDto {
   })
   @IsNotEmpty()
   readonly id: DictValue['id'];
+}
+
+/** 删除 */
+export class DictValueDeleteDto {
+  @ApiProperty({
+    description: '字典值 ID',
+  })
+  @IsNotEmpty()
+  readonly id: number[];
 }
 
 /** 查询列表 */

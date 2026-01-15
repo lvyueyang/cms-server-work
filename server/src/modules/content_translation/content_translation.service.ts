@@ -1,18 +1,19 @@
-import { Get, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
-import { ContentTranslation } from './content_translation.entity';
+import { In, Like, Repository } from 'typeorm';
 import { ContentLang } from '@/constants';
-import { ContentTranslationQueryListDto } from './content_translation.dto';
-import { paginationTransform } from '@/utils/whereTransform';
 import { createOrder } from '@/utils';
+import { paginationTransform } from '@/utils/whereTransform';
+import { LoggerService } from '../logger/logger.service';
+import { ContentTranslationQueryListDto } from './content_translation.dto';
+import { ContentTranslation } from './content_translation.entity';
 
-type StringKeys<T> = {
+export type StringKeys<T> = {
   [P in keyof T]-?: T[P] extends string | null | undefined ? P : never;
 }[keyof T];
 interface UpsertParams {
   entity: string;
-  entityId: number;
+  entityId: number | string;
   field: string;
   lang: ContentLang | string;
   value: string;
@@ -22,35 +23,33 @@ interface UpsertParams {
 export class ContentTranslationService {
   constructor(
     @InjectRepository(ContentTranslation)
-    private repository: Repository<ContentTranslation>,
+    readonly repository: Repository<ContentTranslation>,
+    private logger: LoggerService
   ) {}
 
-  async queryList({
-    entity,
-    field,
-    lang,
-    ...params
-  }: ContentTranslationQueryListDto) {
+  async queryList({ entity, field, lang, value: transVal, ...params }: ContentTranslationQueryListDto) {
     const { skip, take } = paginationTransform(params);
     const { order } = createOrder(params) || {};
-    const find = this.repository
-      .createQueryBuilder('content_translation')
-      .skip(skip)
-      .take(take);
+    const find = this.repository.createQueryBuilder('content_translation').skip(skip).take(take);
     if (entity) {
       find.andWhere({
-        entity: entity,
+        entity: Like(`%${entity}%`),
       });
     }
-    if (lang) {
-      const langChain = this.resolveLangChain(lang);
+    if (lang?.length) {
       find.andWhere({
-        lang: In(langChain),
+        lang: In(lang),
       });
     }
     if (field) {
       find.andWhere({
         field: field,
+      });
+    }
+    if (transVal) {
+      console.log('transVal: ', transVal);
+      find.andWhere({
+        value: Like(`%${transVal}%`),
       });
     }
     Object.entries(order || {}).forEach(([key, value]) => {
@@ -80,7 +79,7 @@ export class ContentTranslationService {
     const existed = await this.repository.findOne({
       where: {
         entity: params.entity,
-        entityId: params.entityId,
+        entityId: transEntityId(params.entityId),
         field: params.field,
         lang: this.toEnumLang(params.lang),
       },
@@ -88,13 +87,14 @@ export class ContentTranslationService {
     if (existed) {
       await this.repository.update(existed.id, {
         ...params,
+        entityId: transEntityId(params.entityId),
         lang: this.toEnumLang(params.lang),
       });
       return existed.id;
     }
     const payload = this.repository.create({
       entity: params.entity,
-      entityId: params.entityId,
+      entityId: transEntityId(params.entityId),
       field: params.field,
       lang: this.toEnumLang(params.lang),
       value: params.value,
@@ -109,7 +109,7 @@ export class ContentTranslationService {
     // 构建复合查询条件
     const conditions = translations.map((t) => ({
       entity: t.entity,
-      entityId: t.entityId,
+      entityId: transEntityId(t.entityId),
       field: t.field,
       lang: this.toEnumLang(t.lang),
     }));
@@ -140,7 +140,7 @@ export class ContentTranslationService {
         // 更新现有记录
         existing.value = translation.value;
         existing.entity = translation.entity;
-        existing.entityId = translation.entityId;
+        existing.entityId = transEntityId(translation.entityId);
         existing.field = translation.field;
         existing.lang = lang;
         toUpdate.push(existing);
@@ -149,7 +149,7 @@ export class ContentTranslationService {
         // 创建新记录
         const newRecord = this.repository.create({
           entity: translation.entity,
-          entityId: translation.entityId,
+          entityId: transEntityId(translation.entityId),
           field: translation.field,
           lang,
           value: translation.value,
@@ -166,58 +166,61 @@ export class ContentTranslationService {
     // 批量创建
     if (toCreate.length) {
       const createdRecords = await this.repository.save(toCreate);
-      createdRecords.forEach((record) => results.push(record.id));
+      createdRecords.forEach((record) => {
+        results.push(record.id);
+      });
     }
 
     return results;
   }
 
   // 批量查询翻译
-  async fetchMap<T extends { id: number }, K extends StringKeys<T>>(options: {
+  async fetchMap<T extends { id: number | string }, K extends StringKeys<T>>(options: {
     entity: string;
-    ids: number[];
+    ids: (number | string)[];
     fields: K[];
     lang?: ContentLang | string;
   }) {
-    const { entity, ids, fields, lang } = options;
+    const { entity, fields, lang } = options;
+    const ids = options.ids.map(transEntityId);
     if (!ids.length || !fields.length) return;
     const chain = this.resolveLangChain(lang);
     const rows = await this.repository.find({
       where: {
         entity,
-        entityId: In(ids),
+        entityId: In(ids.map((id) => transEntityId(id))),
         field: In(fields as string[]),
         lang: In(chain.map((l) => this.toEnumLang(l)) as ContentLang[]),
       },
     });
-    const byId = new Map<number, Partial<Record<K, string>>>();
-    const ranks = new Map<number, Map<K, number>>();
+    const byId = new Map<string, Partial<Record<K, string>>>();
+    const ranks = new Map<number | string, Map<K, number>>();
     ids.forEach((id) => {
       byId.set(id, {} as Partial<Record<K, string>>);
       ranks.set(id, new Map<K, number>());
     });
-    rows.forEach((r) => {
+    for (const r of rows) {
       const current = byId.get(r.entityId);
       const field = r.field as K;
       const rankChain = ranks.get(r.entityId);
-      const prevRank = rankChain.get(field) ?? Infinity;
+      const prevRank = rankChain?.get(field) ?? Infinity;
       const rank = chain.indexOf(String(r.lang));
-      if (rank !== -1 && rank < prevRank) {
+      if (current && rank !== -1 && rank < prevRank) {
         current[field] = r.value;
-        rankChain.set(field, rank);
+        rankChain?.set(field, rank);
       }
-    });
+    }
     return byId;
   }
 
   // 应用翻译
-  applyOverlay<T extends { id: number }, K extends StringKeys<T>>(
+  applyOverlay<T extends { id: number | string }, K extends StringKeys<T>>(
     items: T[],
-    map: Map<number, Partial<Record<K, string>>>,
-    fields: K[],
+    map: Map<number | string, Partial<Record<K, string>>>,
+    fields: K[]
   ) {
     return items.map((item) => {
-      const overlay = map.get(item.id);
+      const overlay = map.get(transEntityId(item.id));
       if (!overlay) return item;
       const patched = { ...item };
       fields.forEach((f) => {
@@ -229,13 +232,13 @@ export class ContentTranslationService {
   }
 
   // 批量应用翻译 (fetchMap + applyOverlay)
-  async overlayTranslations<T extends { id: number }, K extends StringKeys<T>>(
+  async overlayTranslations<T extends { id: number | string }, K extends StringKeys<T>>(
     items: T[],
     options: {
       entity: string;
       fields: K[];
       lang: ContentLang | string;
-    },
+    }
   ) {
     if (!items.length || !options.fields.length) return items;
     const map = await this.fetchMap<T, K>({
@@ -244,19 +247,47 @@ export class ContentTranslationService {
       fields: options.fields,
       lang: options.lang,
     });
-    return this.applyOverlay<T, K>(items, map, options.fields);
+    if (!map) {
+      this.logger.error('批量应用翻译出现错误，fetchMap 失败, overlayTranslations 方法出错');
+    }
+    return this.applyOverlay<T, K>(items, map!, options.fields);
   }
 
-  async query(params: {
-    entity: string;
-    entityId?: number;
-    field?: string;
-    lang?: ContentLang | string;
-  }) {
+  async query(params: { entity: string; entityId?: number | string; field?: string; lang?: ContentLang | string }) {
     const where: Partial<ContentTranslation> = { entity: params.entity };
-    if (params.entityId !== undefined) where.entityId = params.entityId;
+    if (params.entityId !== undefined) where.entityId = transEntityId(params.entityId);
     if (params.field) where.field = params.field;
     if (params.lang) where.lang = this.toEnumLang(params.lang);
     return this.repository.find({ where });
   }
+
+  async findAll() {
+    return this.repository.find();
+  }
+
+  async updateValue(id: number, value: string) {
+    const info = await this.repository.findOneBy({
+      id,
+    });
+    if (!info) {
+      throw new BadRequestException('翻译不存在', 'translation not found');
+    }
+    return this.repository.update(id, {
+      value,
+    });
+  }
+
+  async delete(id: number[] | number) {
+    await this.repository.delete(id);
+  }
+
+  getColumns() {
+    console.log('this.repository.metadata: ', this.repository.metadata);
+    return this.repository.metadata.columns.map((col) => col.propertyName);
+  }
+}
+
+export function transEntityId(id: string | number) {
+  if (typeof id === 'number') return id.toString();
+  return id;
 }

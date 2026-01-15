@@ -14,8 +14,13 @@
     "skipLibCheck": true,
     "jsx": "react-jsx",
     "esModuleInterop": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@/views": ["views/index"],
+      "@/views/hooks": ["views/hooks/index"],
+      "@/views/components/*": ["views/components/*"]
     }
   }
 }

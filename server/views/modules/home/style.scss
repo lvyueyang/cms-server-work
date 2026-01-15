@@ -1,0 +1,208 @@
+@import 'swiper/swiper-bundle.css';
+
+// Banner Section
+.banner {
+  height: 600px;
+  background-color: #000; // Dark background as per image
+  color: #fff;
+  position: relative;
+
+  .swiper-slide {
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .image-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  .banner-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0 20px;
+
+    .text-content {
+      flex: 1;
+      max-width: 500px;
+      z-index: 10;
+
+      .title {
+        font-size: 24px;
+        font-weight: 300;
+        margin-bottom: 20px;
+        line-height: 1.2;
+      }
+
+      .desc {
+        font-size: 16px;
+        margin-bottom: 40px;
+        font-weight: 400;
+      }
+    }
+  }
+
+  .swiper-pagination-bullet {
+    background: #fff;
+    opacity: 0.5;
+    border-radius: 0;
+    transform: scale(0.8);
+    transition: all 0.3s;
+    &.swiper-pagination-bullet-active {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+  }
+  &:hover {
+    .swiper-button-prev,
+    .swiper-button-next {
+      opacity: 1;
+    }
+  }
+
+  .swiper-button-prev,
+  .swiper-button-next {
+    opacity: 0;
+    color: #fff;
+    svg {
+      width: 30px;
+      height: 30px;
+    }
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  @media (max-width: 1200px) {
+    height: 400px;
+    .banner-content {
+      .text-content {
+        max-width: 100%;
+        padding-left: 100px;
+      }
+    }
+  }
+  @media (max-width: 890px) {
+    height: 280px;
+    .swiper-button-prev,
+    .swiper-button-next {
+      opacity: 1;
+    }
+    .banner-content {
+      .text-content {
+        max-width: 100%;
+        padding-left: 38px;
+        .title {
+          margin-top: 15px;
+          margin-bottom: 15px;
+        }
+        .desc {
+          margin-bottom: 20px;
+        }
+      }
+    }
+  }
+}
+
+.img-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #eee;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 14px;
+
+  &::after {
+    content: 'Image Placeholder';
+  }
+}
+
+// New Products Section
+.section-new-products {
+  padding: 50px 0;
+  background: #f5f5f5;
+  @media (max-width: 890px) {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+}
+
+// News Section
+.section-news {
+  padding-top: 60px;
+  padding-bottom: 60px;
+  display: flex;
+  align-items: center;
+  gap: 80px;
+  background-color: #fff;
+
+  .news-content {
+    flex: 0 0 35%;
+    @media (max-width: 768px) {
+      flex: 0 0 100%;
+      width: 100%;
+    }
+    .news-date {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .news-title {
+      font-size: 20px;
+      margin-bottom: 20px;
+      font-weight: 500;
+      color: #333;
+    }
+    .news-divider {
+      width: 105px;
+      height: 1.5px;
+      background-color: #333;
+      margin: 30px 0;
+    }
+  }
+
+  .news-image {
+    flex: 1;
+    height: 300px;
+    overflow: hidden;
+    object-fit: cover;
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    // flex-direction: column;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    gap: 15px;
+    .news-content {
+      flex: 1;
+    }
+    .news-image {
+      flex: 0 0 30%;
+      height: auto;
+    }
+  }
+}

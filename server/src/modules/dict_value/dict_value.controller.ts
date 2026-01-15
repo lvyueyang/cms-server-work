@@ -1,11 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { createPermGroup } from '@/common/common.permission';
 import { ResponseResult } from '@/interface';
 import { AdminRoleGuard } from '../../modules/user_admin_role/user_admin_role.guard';
 import { successResponse } from '../../utils';
 import {
   DictValueByIdParamDto,
   DictValueCreateDto,
+  DictValueDeleteDto,
   DictValueDetailIdResponseDto,
   DictValueDetailResponseDto,
   DictValueListByTypeResponseDto,
@@ -15,7 +17,6 @@ import {
   DictValueUpdateDto,
 } from './dict_value.dto';
 import { DictValueService } from './dict_value.service';
-import { createPermGroup } from '@/common/common.permission';
 
 const MODULE_NAME = '字典值';
 const createPerm = createPermGroup(MODULE_NAME);
@@ -82,8 +83,9 @@ export class DictValueController {
   @ApiOkResponse({
     type: ResponseResult<null>,
   })
+  @ApiBody({ type: DictValueDeleteDto })
   @AdminRoleGuard(createPerm('admin:dict_value:delete', `删除${MODULE_NAME}`))
-  async apiDelete(@Body() { id }: DictValueByIdParamDto) {
+  async apiDelete(@Body() { id }: DictValueDeleteDto) {
     await this.services.remove(id);
     return successResponse(null, '删除成功');
   }

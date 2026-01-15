@@ -20,18 +20,10 @@ export default class SMSClient {
   client: Client;
 
   constructor(public options: SMSClientOptions) {
-    this.client = this.createClient(
-      options.accessKeyId,
-      options.accessKeySecret,
-      options.endpoint,
-    );
+    this.client = this.createClient(options.accessKeyId, options.accessKeySecret, options.endpoint);
   }
 
-  createClient(
-    accessKeyId: string,
-    accessKeySecret: string,
-    endpoint: string,
-  ): Client {
+  createClient(accessKeyId: string, accessKeySecret: string, endpoint: string): Client {
     const config = new $OpenApi.Config({
       accessKeyId,
       accessKeySecret,

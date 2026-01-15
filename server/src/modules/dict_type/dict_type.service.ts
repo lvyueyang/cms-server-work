@@ -1,22 +1,25 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Like, Repository } from 'typeorm';
+import { ContentLang } from '@/constants';
 import { CRUDQuery } from '@/interface';
 import { createOrder, isDefaultI18nLang } from '../../utils';
 import { paginationTransform } from '../../utils/whereTransform';
-import { Like, Repository } from 'typeorm';
+import { ContentTranslationService, StringKeys } from '../content_translation/content_translation.service';
+import { DICT_VALUE_I18N_FIELDS, DICT_VALUE_I18N_KEY } from '../dict_value/dict_value.constant';
 import { DictTypeCreateDto } from './dict_type.dto';
 import { DictType } from './dict_type.entity';
-import { ContentTranslationService } from '../content_translation/content_translation.service';
-import { ContentLang } from '@/constants';
 
 type FormValues = DictTypeCreateDto;
 
 @Injectable()
 export class DictTypeService {
+  static I18N_KEY = 'dict_type';
+  static I18N_FIELDS: StringKeys<DictType>[] = ['name', 'desc'];
   constructor(
     @InjectRepository(DictType)
     private repository: Repository<DictType>,
-    private contentI18n: ContentTranslationService,
+    private contentI18n: ContentTranslationService
   ) {}
 
   findAll(lang?: ContentLang) {
@@ -26,17 +29,17 @@ export class DictTypeService {
         relations: ['values'],
       })
       .then(async (list) => {
-        if (!isDefaultI18nLang(lang)) {
+        if (lang && !isDefaultI18nLang(lang)) {
           for await (const item of list) {
             item.values = await this.contentI18n.overlayTranslations(item.values, {
-              entity: 'dict_value',
-              fields: ['label', 'desc'],
+              entity: DICT_VALUE_I18N_KEY,
+              fields: DICT_VALUE_I18N_FIELDS,
               lang,
             });
           }
           return this.contentI18n.overlayTranslations(list, {
-            entity: 'dict_type',
-            fields: ['name', 'desc'],
+            entity: DictTypeService.I18N_KEY,
+            fields: DictTypeService.I18N_FIELDS,
             lang,
           });
         }

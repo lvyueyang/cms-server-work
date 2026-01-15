@@ -4,13 +4,14 @@ import { ConfigType } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
+import { FindOptionsWhere, Repository } from 'typeorm';
+import { v4 as uuid } from 'uuid';
 import { s3AccountConfig } from '@/config';
 import { Pagination } from '@/interface';
 import { getUploadFileDirPath } from '@/utils';
 import { paginationTransform } from '@/utils/whereTransform';
-import { FindOptionsWhere, Repository } from 'typeorm';
-import { v4 as uuid } from 'uuid';
 import { AdminRole } from '../user_admin_role/user_admin_role.entity';
+import { UserAdminCreateDto, UserAdminCreateRootDto } from './user_admin.dto';
 import { UserAdmin } from './user_admin.entity';
 
 @Injectable()
@@ -20,7 +21,7 @@ export class UserAdminService {
     private repository: Repository<UserAdmin>,
 
     @Inject(s3AccountConfig.KEY)
-    private s3Config: ConfigType<typeof s3AccountConfig>,
+    private s3Config: ConfigType<typeof s3AccountConfig>
   ) {}
 
   findList(pagination: Pagination) {
@@ -29,7 +30,7 @@ export class UserAdminService {
       relations: ['roles'],
     });
   }
-  private async findOne(where: FindOptionsWhere<UserAdmin>) {
+  async findOne(where: FindOptionsWhere<UserAdmin>) {
     const res = await this.repository.find({
       where,
       relations: ['roles'],
@@ -57,7 +58,7 @@ export class UserAdminService {
     });
     return res[0];
   }
-  async create(user: Pick<UserAdmin, 'cname' | 'username' | 'password' | 'email'>) {
+  async create(user: UserAdminCreateDto) {
     const isExisted = await this.repository.findOne({
       where: [{ username: user.username }, { email: user.email }],
     });
@@ -76,13 +77,19 @@ export class UserAdminService {
       password: user.password,
     });
   }
-  async createRootUser(user: Pick<UserAdmin, 'cname' | 'username' | 'password' | 'email'>) {
+  async createRootUser(user: UserAdminCreateRootDto) {
     // 判断是否存在超管用户
     const rootUser = await this.repository.findOneBy({ is_root: true });
     if (rootUser) {
       throw new UnauthorizedException('超管用户已存在禁止重复创建');
     }
-    return this.repository.save({ ...user, is_root: true });
+    return this.repository.save({
+      cname: user.cname,
+      username: user.username,
+      password: user.password,
+      email: user.email,
+      is_root: true,
+    });
   }
   async update(
     id: number,
@@ -90,20 +97,22 @@ export class UserAdminService {
       cname,
       password,
       email,
+      avatar,
       out_login_date,
-    }: Partial<Pick<UserAdmin, 'cname' | 'password' | 'email' | 'out_login_date'>>,
+    }: Partial<Pick<UserAdmin, 'cname' | 'password' | 'email' | 'avatar' | 'out_login_date'>>
   ) {
-    const isExisted = await this.repository.findOneBy({
+    const oldInfo = await this.repository.findOneBy({
       id,
     });
-    if (!isExisted) {
+    if (!oldInfo) {
       throw new BadRequestException('用户不存在', 'user not found');
     }
-    return this.repository.update(isExisted.id, {
+    return this.repository.update(oldInfo.id, {
       cname,
       password,
       email,
       out_login_date,
+      avatar,
     });
   }
   async updateRoles(id: number, roles: AdminRole[]) {
@@ -118,6 +127,9 @@ export class UserAdminService {
   }
 
   createClient() {
+    if (!this.s3Config.key || !this.s3Config.secret || !this.s3Config.address) {
+      throw new Error('s3 配置信息缺失');
+    }
     const client = new S3Client({
       credentials: {
         accessKeyId: this.s3Config.key,

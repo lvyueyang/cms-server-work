@@ -1,0 +1,25 @@
+.container {
+  display: inline-flex;
+  width: 100%;
+  .child {
+    display: block;
+  }
+  .control {
+    width: 100%;
+    display: none;
+    min-width: 0;
+    :global {
+      .ant-input-number {
+        width: 100%;
+      }
+    }
+  }
+  &:hover {
+    .child {
+      display: none;
+    }
+    .control {
+      display: block;
+    }
+  }
+}

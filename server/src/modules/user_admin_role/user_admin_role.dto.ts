@@ -1,7 +1,7 @@
 import { ApiProperty, OmitType, PickType } from '@nestjs/swagger';
+import { CodeItem } from '@/common/common.permission';
 import { Pagination, ResponseResult } from '@/interface';
 import { AdminRole } from './user_admin_role.entity';
-import { CodeItem } from '@/common/common.permission';
 
 export class AdminRoleInfo extends OmitType(AdminRole, ['users']) {}
 class AdminRoleList {

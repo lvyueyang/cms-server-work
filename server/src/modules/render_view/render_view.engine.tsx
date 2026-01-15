@@ -1,15 +1,18 @@
-import { ContentLang } from '@/constants';
 import { renderToString } from 'react-dom/server';
-import { BaseLayout } from './components/BaseLayout';
+import { ContentLang } from '@/constants';
 
 interface PageProps {
   title: string;
   content: string;
   description?: string;
+  keywords?: string;
   styles?: string[];
   scripts?: string[];
   meta?: Record<string, string>;
   lang?: ContentLang;
+  header?: string;
+  globalHeader?: string;
+  globalFooter?: string;
 }
 
 export class ReactTemplateEngine {
@@ -20,29 +23,36 @@ export class ReactTemplateEngine {
   }
 
   renderPageHtml(options: PageProps): string {
-    const metaDescription = this.escapeHtml(options.description || '');
+    const metaDescription = options.description || '';
+    const metaKeywords = options.keywords || '';
     const title = this.escapeHtml(options.title);
     const metaTags =
       Object.entries(options.meta || {})
         .map(([key, value]) => `<meta name="${key}" content="${this.escapeHtml(value)}">`)
         .join('\n') || '';
-    const styles =
-      options.styles?.map((style) => `<link rel="stylesheet" href="${style}">`).join('\n') || '';
-    const scripts =
-      options.scripts?.map((script) => `<script src="${script}"></script>`).join('\n') || '';
+    const styles = options.styles?.map((style) => `<link rel="stylesheet" href="${style}">`).join('\n') || '';
+    const scripts = options.scripts?.map((script) => `<script src="${script}"></script>`).join('\n') || '';
+    const lang = options.lang || ContentLang.ZH_CN;
     return `<!DOCTYPE html>
-<html lang="${options.lang || ContentLang.ZH_CN}">
+<html lang="${lang}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="${metaDescription}">
+    <meta name="keywords" content="${metaKeywords}">
     <title>${title}</title>
+    <link rel="shortcut icon" href="/imgs/favicon.webp" type="image/x-icon">
+    <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large"/>
     ${metaTags}
     ${styles}
+    ${options.globalHeader || ''}
+    ${options.header || ''}
+    <script src="/locals/${lang}.js"></script>
 </head>
 <body>
-    ${options.content}
-    ${scripts}
+${options.content}
+${scripts}
+${options.globalFooter || ''}
 </body>
 </html>`;
   }
@@ -64,17 +74,20 @@ interface ErrorPageProps {
   message?: string;
 }
 // 错误页面组件
-export const ErrorPage: React.FC<ErrorPageProps> = ({ title, message }) => {
+export const ErrorPage: React.FC<ErrorPageProps> = ({ title, message, ...props }) => {
   return (
-    <BaseLayout>
+    <div className="wp">
       <div style={{ textAlign: 'center', padding: '50px' }}>
         <h1 style={{ color: '#dc3545' }}>{title}</h1>
         <p>{message || '抱歉，页面加载时发生错误。'}</p>
-        <a href="/" style={{ color: '#007bff' }}>
+        <a
+          href="/"
+          style={{ color: '#007bff' }}
+        >
           返回首页
         </a>
       </div>
-    </BaseLayout>
+    </div>
   );
 };
 

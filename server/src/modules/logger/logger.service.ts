@@ -1,7 +1,7 @@
 import { ConsoleLogger } from '@nestjs/common';
-import { getLogDirPath } from '@/utils';
 import * as winston from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
+import { getLogDirPath } from '@/utils';
 
 export class LoggerService extends ConsoleLogger {
   logger = winston.createLogger({
@@ -9,7 +9,7 @@ export class LoggerService extends ConsoleLogger {
     format: winston.format.json(),
     transports: [
       new DailyRotateFile({
-        filename: getLogDirPath() + '/%DATE%/error.log',
+        filename: `${getLogDirPath()}/%DATE%/error.log`,
         datePattern: 'YYYY-MM-DD',
         level: 'error',
       }),

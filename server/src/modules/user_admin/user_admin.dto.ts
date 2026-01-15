@@ -1,5 +1,5 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { IsAlphanumeric, IsByteLength, IsEmail, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 import { Pagination, ResponseResult } from '@/interface';
 import { UserAdmin } from './user_admin.entity';
 
@@ -16,91 +16,34 @@ class UserAdminList {
 export class UserAdminQueryListDto extends Pagination {}
 
 /** 新增 */
-export class UserAdminCreateDto {
-  @ApiProperty({
-    description: '用户名',
-  })
-  @IsNotEmpty()
-  @IsAlphanumeric()
-  @IsByteLength(4, 16)
-  readonly username: string;
-
-  @ApiProperty({
-    description: '密码',
-  })
-  @IsNotEmpty()
-  @IsByteLength(6, 50)
-  readonly password: string;
-
-  @ApiProperty({
-    description: '昵称',
-  })
-  @IsNotEmpty()
-  @IsByteLength(2, 30)
-  readonly cname: string;
-
-  @ApiProperty({
-    description: '邮箱',
-  })
-  @IsNotEmpty()
-  @IsEmail()
-  readonly email: string;
-}
+export class UserAdminCreateDto extends PickType(UserAdmin, ['username', 'password', 'cname', 'email']) {}
 
 /** 更新 */
-export class UserAdminUpdateDto extends PickType(UserAdminCreateDto, ['cname']) {}
+export class UserAdminUpdateDto extends PickType(UserAdminInfo, ['cname', 'id', 'avatar']) {}
 
 /** 更新用户密码 */
-export class UserAdminUpdatePasswordDto extends PickType(UserAdminCreateDto, ['password']) {}
+export class UserAdminUpdatePasswordDto extends PickType(UserAdmin, ['password', 'id']) {}
 
-export class UserAdminQueryInfoDto {
-  @ApiProperty({
-    description: '用户 ID',
-  })
-  id: number;
-}
+export class UserAdminQueryInfoDto extends PickType(UserAdminInfo, ['id']) {}
 
-export class UserAdminParamsInfoDto {
-  @ApiProperty({
-    description: '用户 ID',
-  })
-  id: number;
-}
+export class UserAdminParamsInfoDto extends PickType(UserAdminInfo, ['id']) {}
 
 export class UserAdminFileUploadDto {
   @ApiProperty({ type: 'string', format: 'binary' })
   file: any;
 }
 
-export class UserAdminCreateRootDto extends UserAdminCreateDto {
-  @ApiProperty({
-    description: '邮箱',
-  })
-  @IsEmail()
-  readonly email: string;
-}
+export class UserAdminCreateRootDto extends PickType(UserAdmin, ['email', 'cname', 'password', 'username']) {}
 
-export class UserAdminForgetPasswordDto {
-  @ApiProperty({
-    description: '邮箱',
-  })
-  @IsEmail()
-  readonly email: string;
-
+export class UserAdminForgetPasswordDto extends PickType(UserAdmin, ['email', 'password']) {
   @ApiProperty({
     description: '验证码',
   })
   @IsNotEmpty()
   readonly code: string;
-
-  @ApiProperty({
-    description: '密码',
-  })
-  @IsNotEmpty()
-  readonly password: string;
 }
 
-export class UserAdminUpdateRolesDto {
+export class UserAdminUpdateRolesDto extends PickType(UserAdminInfo, ['id']) {
   @ApiProperty({
     description: '角色 ID',
   })
@@ -123,4 +66,25 @@ export class UserAdminInfoResponseDto extends ResponseResult {
 
 export class UserAdminListResponseDto extends ResponseResult {
   readonly data: UserAdminList;
+}
+
+// 邮箱换绑
+export class UserAdminBindEmailDto {
+  @ApiProperty({
+    description: '旧邮箱验证码',
+  })
+  @IsNotEmpty()
+  readonly old_email_code: string;
+
+  @ApiProperty({
+    description: '新邮箱',
+  })
+  @IsNotEmpty()
+  readonly new_email: string;
+
+  @ApiProperty({
+    description: '验证码',
+  })
+  @IsNotEmpty()
+  readonly new_email_code: string;
 }

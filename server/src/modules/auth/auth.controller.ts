@@ -1,18 +1,16 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { successResponse } from '@/utils';
-import { User } from '../user_admin/user-admin.decorator';
+import { UserByAdmin } from '../user_admin/user_admin.decorator';
+import { UserAdminInfo } from '../user_admin/user_admin.dto';
 import { UserAdminService } from '../user_admin/user_admin.service';
+import { UserAdminLoginBody, UserAdminLoginResponse, UserAdminOutLoginResponse } from './auth.dto';
 import { AdminLogin } from './auth.guard';
 import { AuthService } from './auth.service';
-import { UserAdminLoginBody, UserAdminLoginResponse, UserAdminOutLoginResponse } from './auth.dto';
 
 @Controller()
 export class AuthController {
-  constructor(
-    private service: AuthService,
-    private userAdminService: UserAdminService,
-  ) {}
+  constructor(private service: AuthService, private userAdminService: UserAdminService) {}
 
   @ApiTags('管理后台身份认证')
   @ApiOperation({ summary: '登录' })
@@ -28,7 +26,7 @@ export class AuthController {
   @ApiOkResponse({ type: UserAdminOutLoginResponse })
   @Post('/api/admin/outlogin')
   @AdminLogin()
-  async userAdminOutLogin(@User() { id }) {
+  async userAdminOutLogin(@UserByAdmin() { id }: UserAdminInfo) {
     await this.userAdminService.update(id, { out_login_date: new Date() });
     return successResponse(null, '退出登录成功');
   }

@@ -1,4 +1,4 @@
-import { Pagination } from '@/interface';
+import type { Pagination } from '@/interface';
 
 /** 分页查询参数转换 */
 export function paginationTransform(pagination: Pagination) {

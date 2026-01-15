@@ -1,0 +1,41 @@
+import { AIP_FIX } from '@/constants';
+import {
+  TrackMetaPropertiesCreateDto,
+  TrackMetaPropertiesDetailResponseDto,
+  TrackMetaPropertiesListResponseDto,
+  TrackMetaPropertiesQueryListDto,
+  TrackMetaPropertiesUpdateDto,
+} from '@cms/api-interface';
+import { request } from '@/request';
+import { Result } from '@/types';
+
+/** 列表 */
+export const getListApi = (body: TrackMetaPropertiesQueryListDto) => {
+  return request.post<TrackMetaPropertiesListResponseDto>(
+    `${AIP_FIX}/track_meta_properties/list`,
+    body,
+  );
+};
+
+/** 详情 */
+export const getDetailApi = (id: number) => {
+  return request.post<TrackMetaPropertiesDetailResponseDto>(
+    `${AIP_FIX}/track_meta_properties/info`,
+    { id },
+  );
+};
+
+/** 创建 */
+export const createApi = (body: TrackMetaPropertiesCreateDto) => {
+  return request.post<Result<string>>(`${AIP_FIX}/track_meta_properties/create`, body);
+};
+
+/** 修改 */
+export const updateApi = (body: TrackMetaPropertiesUpdateDto) => {
+  return request.post<Result<string>>(`${AIP_FIX}/track_meta_properties/update`, body);
+};
+
+/** 删除 */
+export const removeApi = (id: number) => {
+  return request.post<Result<number>>(`${AIP_FIX}/track_meta_properties/delete`, { id });
+};

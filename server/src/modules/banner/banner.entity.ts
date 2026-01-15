@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-import { BaseEntity } from '../../common/base.entity';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity } from '../../common/base.entity';
 
 /** 广告 */
 @Entity({ orderBy: { create_date: 'DESC' } })
@@ -24,6 +24,18 @@ export class Banner extends BaseEntity {
   })
   @Column()
   cover: string;
+
+  @ApiProperty({
+    description: '广告位置',
+  })
+  @Column()
+  position: string;
+
+  @ApiProperty({
+    description: '广告链接',
+  })
+  @Column({ nullable: true })
+  url: string;
 
   @ApiProperty({
     description: '广告描述',

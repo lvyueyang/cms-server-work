@@ -1,10 +1,11 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { BaseEntity } from '@/common/base.entity';
+import { IsAlphanumeric, IsByteLength, IsEmail, IsNotEmpty } from 'class-validator';
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity } from '@/common/base.entity';
+import { FileManage } from '../file_manage/file_manage.entity';
 import { News } from '../news/news.entity';
 import { AdminRole } from '../user_admin_role/user_admin_role.entity';
 import { WebhookTrans } from '../webhook_trans/webhook_trans.entity';
-import { FileManage } from '../file_manage/file_manage.entity';
 
 /** 管理员账户 */
 @Entity({ orderBy: { is_root: 'DESC', create_date: 'DESC' } })
@@ -16,10 +17,18 @@ export class UserAdmin extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  /** 用户名 */
+  @ApiProperty({
+    description: '用户头像',
+  })
+  @Column({ nullable: true })
+  avatar: string;
+
   @ApiProperty({
     description: '用户名',
   })
+  @IsNotEmpty()
+  @IsAlphanumeric()
+  @IsByteLength(4, 16)
   @Column({
     unique: true,
   })
@@ -27,15 +36,18 @@ export class UserAdmin extends BaseEntity {
 
   /** 用户密码 */
   @ApiProperty({
-    description: '用户密码',
+    description: '密码',
   })
+  @IsNotEmpty()
+  @IsByteLength(6, 50)
   @Column({ select: false })
   password: string;
 
-  /** 用户昵称 */
   @ApiProperty({
     description: '用户昵称',
   })
+  @IsNotEmpty()
+  @IsByteLength(2, 30)
   @Column()
   cname: string;
 
@@ -43,6 +55,8 @@ export class UserAdmin extends BaseEntity {
   @ApiProperty({
     description: '用户邮箱',
   })
+  @IsNotEmpty()
+  @IsEmail()
   @Column({
     unique: true,
   })

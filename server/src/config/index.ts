@@ -10,7 +10,9 @@ export const databaseConfig = registerAs('database', () => ({
 
 export const userConfig = registerAs('user', () => ({
   passwordSalt: process.env.PASSWORD_SALT,
+  passwordClientSalt: process.env.PASSWORD_CLIENT_SALT,
   jwtSecret: process.env.JWT_SECRET_KEY,
+  jwtClientSecret: process.env.JWT_CLIENT_SECRET_KEY,
 }));
 
 export const s3AccountConfig = registerAs('s3Account', () => ({

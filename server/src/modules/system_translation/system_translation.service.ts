@@ -1,21 +1,28 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Like, Repository } from 'typeorm';
+import { ContentLang } from '@/constants';
 import { CRUDQuery } from '@/interface';
 import { createOrder } from '@/utils';
 import { paginationTransform } from '@/utils/whereTransform';
-import { Like, Repository } from 'typeorm';
-import { SystemTranslation } from './system_translation.entity';
 import { SystemTranslationCreateDto, SystemTranslationUpdateDto } from './system_translation.dto';
-import { ContentLang } from '@/constants';
+import { SystemTranslation } from './system_translation.entity';
 
 @Injectable()
 export class SystemTranslationService {
   constructor(
     @InjectRepository(SystemTranslation)
-    private repository: Repository<SystemTranslation>,
+    readonly repository: Repository<SystemTranslation>
   ) {}
 
-  findAll() {
+  findAll(lang?: ContentLang) {
+    if (lang) {
+      return this.repository.find({
+        where: {
+          lang,
+        },
+      });
+    }
     return this.repository.find();
   }
 
@@ -127,7 +134,9 @@ export class SystemTranslationService {
     // 批量创建
     if (toCreate.length) {
       const createdRecords = await this.repository.save(toCreate);
-      createdRecords.forEach((record) => results.push(record.id));
+      createdRecords.forEach((record) => {
+        results.push(record.id);
+      });
     }
 
     return results;
@@ -146,6 +155,7 @@ export class SystemTranslationService {
       lang: data.lang,
       value: data.value,
       desc: data.desc,
+      value_type: data.value_type,
     });
   }
 
@@ -169,6 +179,7 @@ export class SystemTranslationService {
     return this.repository.update(data.id, {
       value: data.value,
       desc: data.desc,
+      value_type: data.value_type,
     });
   }
 }

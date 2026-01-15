@@ -10,18 +10,15 @@ import {
 import { Reflector } from '@nestjs/core';
 import { ApiHeader, ApiOperation } from '@nestjs/swagger';
 import { CodeItem, registerPermissionCode } from '@/common/common.permission';
+import { PERM_CODE_METADATA } from '@/constants';
 import { LoginAuthGuard } from '../auth/auth.guard';
 import { LOGIN_TYPE } from '../auth/auth.interface';
 import { UserAdmin } from '../user_admin/user_admin.entity';
-import { AdminRoleService } from './user_admin_role.service';
-import { PERM_CODE_METADATA } from '@/constants';
 import { ApiMetadata, GuardOpt } from './user_admin_role.dto';
+import { AdminRoleService } from './user_admin_role.service';
 @Injectable()
 export class RoleGuard implements CanActivate {
-  constructor(
-    private reflector: Reflector,
-    private adminRoleService: AdminRoleService,
-  ) {}
+  constructor(private reflector: Reflector, private adminRoleService: AdminRoleService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const codeItem = this.reflector.get<CodeItem>(PERM_CODE_METADATA, context.getHandler());
@@ -69,6 +66,6 @@ export function AdminRoleGuard(codeItem: CodeItem, opt?: GuardOpt) {
       description: '用户 TOKEN',
     }),
     SetMetadata(PERM_CODE_METADATA, codeItem),
-    UseGuards(RoleGuard),
+    UseGuards(RoleGuard)
   );
 }

@@ -1,12 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty } from 'class-validator';
 import { Column, Entity, Index, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { ContentLang } from '@/constants';
-import { IsNotEmpty } from 'class-validator';
 
 @Entity({ name: 'content_translation' })
 @Unique(['entity', 'entityId', 'field', 'lang'])
 export class ContentTranslation {
   @PrimaryGeneratedColumn()
+  @IsNotEmpty()
   id: number;
 
   @ApiProperty({ description: '实体名，如 news、product' })
@@ -19,7 +20,7 @@ export class ContentTranslation {
   @Index()
   @Column()
   @IsNotEmpty()
-  entityId: number;
+  entityId: string;
 
   @ApiProperty({ description: '字段名，如 title、desc、content' })
   @Index()

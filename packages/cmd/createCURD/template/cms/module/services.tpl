@@ -6,7 +6,9 @@ import {
   {{entityName}}UpdateDto,
 } from '@cms/api-interface';
 import { request, AIP_FIX } from '@/request';
+import { downloadResponseFile } from '@/utils';
 import { Result } from '@/types';
+import { ExportFileType } from '@cms/server/const';
 
 /** 列表 */
 export const getListApi = (body: {{entityName}}QueryListDto) => {
@@ -31,4 +33,11 @@ export const updateApi = (body: {{entityName}}UpdateDto) => {
 /** 删除 */
 export const removeApi = (id: number) => {
   return request.post<Result<number>>(`${AIP_FIX}/{{name}}/delete`, { id });
+};
+
+/** 导出 */
+export const exportApi = (export_type?: ExportFileType) => {
+  return request
+    .post<Result<null>>(`${AIP_FIX}/{{name}}/export`, { export_type }, { responseType: 'blob' })
+    .then(downloadResponseFile);
 };

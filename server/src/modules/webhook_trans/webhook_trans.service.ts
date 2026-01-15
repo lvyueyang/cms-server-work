@@ -1,14 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import axios from 'axios';
+import { Like, Repository } from 'typeorm';
+import { CRUDQuery } from '@/interface';
+import { createMaxSafeFunction } from '@/utils/sendBox';
 import { UserAdmin } from '../../modules/user_admin/user_admin.entity';
 import { createOrder } from '../../utils';
 import { paginationTransform } from '../../utils/whereTransform';
-import { Like, Repository } from 'typeorm';
 import { WebhookTransCreateDto } from './webhook_trans.dto';
 import { WebhookTrans } from './webhook_trans.entity';
-import { createMaxSafeFunction } from '@/utils/sendBox';
-import axios from 'axios';
-import { CRUDQuery } from '@/interface';
 
 type FormValues = WebhookTransCreateDto;
 
@@ -16,7 +16,7 @@ type FormValues = WebhookTransCreateDto;
 export class WebhookTransService {
   constructor(
     @InjectRepository(WebhookTrans)
-    private repository: Repository<WebhookTrans>,
+    private repository: Repository<WebhookTrans>
   ) {}
 
   findAll() {
@@ -141,7 +141,7 @@ export class WebhookTransService {
         data: transData,
       });
       return cbData;
-    } catch (e) {
+    } catch (e: any) {
       throw new BadRequestException('Webhook中转发送失败', e);
     }
   }

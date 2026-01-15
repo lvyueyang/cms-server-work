@@ -1,4 +1,4 @@
-import { ApiProperty, PartialType, PickType } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 import { PaginationAndOrder, ResponseResult } from '@/interface';
 import { FileManage } from './file_manage.entity';
@@ -16,7 +16,15 @@ export class FileManageList {
   total: number;
 }
 
-export class FileManageUpdateDto extends PickType(FileManage, ['id', 'desc']) {}
+// 修改文件信息
+export class FileManageUpdateDto extends PickType(FileManage, [
+  'id',
+  'desc',
+  'login_download_auth',
+]) {}
+
+// 文件重命名
+export class FileManageRenameDto extends PickType(FileManage, ['id', 'name']) {}
 
 export class FileUploadDto {
   @ApiProperty({ type: 'string', format: 'binary' })

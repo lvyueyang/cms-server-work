@@ -1,9 +1,11 @@
-import { Body, Controller, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { createPermGroup } from '@/common/common.permission';
 import { ResponseResult } from '@/interface';
-import { User } from '@/modules/user_admin/user-admin.decorator';
+import { UserByAdmin } from '@/modules/user_admin/user_admin.decorator';
 import { AdminRoleGuard } from '@/modules/user_admin_role/user_admin_role.guard';
 import { successResponse } from '@/utils';
+import { UserAdminInfo } from '../user_admin/user_admin.dto';
 import {
   BannerByIdParamDto,
   BannerCreateDto,
@@ -14,7 +16,6 @@ import {
   BannerUpdateDto,
 } from './banner.dto';
 import { BannerService } from './banner.service';
-import { createPermGroup } from '@/common/common.permission';
 
 const MODULE_NAME = '广告';
 const createPerm = createPermGroup(MODULE_NAME);
@@ -50,7 +51,7 @@ export class BannerController {
     type: BannerDetailResponseDto,
   })
   @AdminRoleGuard(createPerm('admin:banner:create', `新增${MODULE_NAME}`))
-  async apiCreate(@Body() data: BannerCreateDto, @User() user) {
+  async apiCreate(@Body() data: BannerCreateDto, @UserByAdmin() user: UserAdminInfo) {
     const newData = await this.services.create(data, user);
     return successResponse(newData, '创建成功');
   }

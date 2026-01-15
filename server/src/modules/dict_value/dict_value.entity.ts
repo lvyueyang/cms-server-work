@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, Min } from 'class-validator';
-import { BaseEntity } from '../../common/base.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity } from '../../common/base.entity';
 import { DictType } from '../dict_type/dict_type.entity';
 
 /** 字典值 */
-@Entity({ orderBy: { create_date: 'DESC' } })
+@Entity({ orderBy: { create_date: 'ASC' } })
 export class DictValue extends BaseEntity {
   @ApiProperty({
     description: '字典值 ID',

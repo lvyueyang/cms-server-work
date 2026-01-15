@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-import { BaseEntity } from '../../common/base.entity';
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 import { ContentLang } from '@/constants';
+import { BaseEntity } from '../../common/base.entity';
 
 /** 国际化 */
 @Entity({ orderBy: { create_date: 'DESC' } })
@@ -26,6 +26,12 @@ export class SystemTranslation extends BaseEntity {
   })
   @Column({ default: '' })
   desc?: string;
+
+  @ApiProperty({
+    description: '国际化Value类型',
+  })
+  @Column({ nullable: true })
+  value_type: string;
 
   @ApiProperty({
     description: '国际化Value',

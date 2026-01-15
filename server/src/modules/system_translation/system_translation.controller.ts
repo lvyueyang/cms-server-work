@@ -1,9 +1,12 @@
-import { Body, Controller, Param, Post, Query } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Header, Param, Post } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { ResponseResult } from '@/interface';
-import { User } from '@/modules/user_admin/user-admin.decorator';
+import { createPermGroup } from '@/common/common.permission';
+import { ContentLang } from '@/constants';
+import { ExportParamsDto, ResponseResult } from '@/interface';
 import { AdminRoleGuard } from '@/modules/user_admin_role/user_admin_role.guard';
 import { successResponse } from '@/utils';
+import { exportData } from '@/utils/exportData';
+import { RenderViewService } from '../render_view/render_view.service';
 import {
   SystemTranslationByIdParamDto,
   SystemTranslationCreateDto,
@@ -15,10 +18,6 @@ import {
   SystemTranslationUpdateDto,
 } from './system_translation.dto';
 import { SystemTranslationService } from './system_translation.service';
-import { createPermGroup } from '@/common/common.permission';
-import Lang from '@/common/lang.decorator';
-import { ContentLang } from '@/constants';
-import { RenderViewService } from '../render_view/render_view.service';
 
 const MODULE_NAME = '国际化';
 const createPerm = createPermGroup(MODULE_NAME);
@@ -26,10 +25,25 @@ const createPerm = createPermGroup(MODULE_NAME);
 @ApiTags(MODULE_NAME)
 @Controller()
 export class SystemTranslationController {
-  constructor(
-    private services: SystemTranslationService,
-    private renderViewService: RenderViewService,
-  ) {}
+  constructor(private services: SystemTranslationService, private renderViewService: RenderViewService) {}
+
+  @Get('/locals/:lang')
+  @Header('Content-Type', 'text/javascript')
+  async langJs(@Param() { lang }: { lang: ContentLang }) {
+    const l = lang.replace(/\.js/gi, '');
+    if (!Object.values(ContentLang).includes(l as ContentLang)) {
+      throw new BadRequestException('语言不存在');
+    }
+    const list = await this.services.findAll(l as ContentLang);
+    const kvs: Record<string, string> = {};
+    list.forEach((i) => {
+      kvs[i.key] = i.value;
+    });
+    return `;(function() {
+      window.locals = {};
+      window.locals['${l}'] = ${JSON.stringify(kvs)};
+    })();`;
+  }
 
   @Post('/api/admin/system_translation/list')
   @ApiOkResponse({
@@ -57,7 +71,7 @@ export class SystemTranslationController {
     type: SystemTranslationDetailResponseDto,
   })
   @AdminRoleGuard(createPerm('admin:system_translation:create', `新增${MODULE_NAME}`))
-  async apiCreate(@Body() data: SystemTranslationCreateDto, @User() user) {
+  async apiCreate(@Body() data: SystemTranslationCreateDto) {
     const newData = await this.services.create(data);
     this.renderViewService.loadI18n();
     return successResponse(newData, '创建成功');
@@ -83,6 +97,20 @@ export class SystemTranslationController {
     await this.services.update(data);
     this.renderViewService.loadI18n();
     return successResponse(data.id, '修改成功');
+  }
+
+  @Post('/api/admin/system_translation/export')
+  @AdminRoleGuard(createPerm('admin:content_translation:export', `导出${MODULE_NAME}`))
+  @ApiOkResponse({ type: ResponseResult<null> })
+  @ApiBody({ type: ExportParamsDto })
+  async export(@Body() body: ExportParamsDto) {
+    const dataList = await this.services.findAll();
+    return exportData({
+      dataList,
+      exportType: body.export_type,
+      repository: this.services.repository,
+      name: MODULE_NAME,
+    });
   }
 
   @Post('/api/admin/system_translation/delete')

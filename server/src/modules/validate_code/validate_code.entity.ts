@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BaseEntity } from '@/common/base.entity';
-import { USER_PONIT_TYPE, VALIDATE_CODE_TYPE } from '@/constants';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity } from '@/common/base.entity';
+import { VALIDATE_CODE_TYPE } from '@/constants';
 
 /** 用户验证码 */
 @Entity()
@@ -12,19 +12,12 @@ export class ValidateCode extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  /** 账号类型 */
+  /** Key */
   @ApiProperty({
-    description: '账号类型',
+    description: 'Key',
   })
   @Column()
-  point_type: USER_PONIT_TYPE;
-
-  /** 用户 ID */
-  @ApiProperty({
-    description: '用户 ID',
-  })
-  @Column()
-  user_id: number;
+  key: string;
 
   /** 验证码 */
   @ApiProperty({
@@ -33,9 +26,9 @@ export class ValidateCode extends BaseEntity {
   @Column()
   code: string;
 
-  /** 验证码类型 */
+  /** 验证码用途 */
   @ApiProperty({
-    description: '验证码类型',
+    description: '验证码用途',
   })
   @Column()
   code_type: VALIDATE_CODE_TYPE;

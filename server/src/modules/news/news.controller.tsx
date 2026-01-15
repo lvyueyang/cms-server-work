@@ -1,10 +1,15 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import dayjs from 'dayjs';
-import { ResponseResult } from '@/interface';
-import { User } from '@/modules/user_admin/user-admin.decorator';
+import { createPermGroup } from '@/common/common.permission';
+import Lang from '@/common/lang.decorator';
+import { ContentLang, FE_PREFIX } from '@/constants';
+import { ExportParamsDto, ResponseResult } from '@/interface';
+import { UserByAdmin } from '@/modules/user_admin/user_admin.decorator';
+import { UserAdminInfo } from '@/modules/user_admin/user_admin.dto';
 import { AdminRoleGuard } from '@/modules/user_admin_role/user_admin_role.guard';
 import { successResponse } from '@/utils';
+import { exportData } from '@/utils/exportData';
+import { NewsDetailPage, NewsPage } from '@/views';
 import { RenderView, RenderViewResult } from '../render_view/render_view.decorator';
 import {
   NewsByIdParamDto,
@@ -16,9 +21,6 @@ import {
   NewsUpdateDto,
 } from './news.dto';
 import { NewsService } from './news.service';
-import { createPermGroup } from '@/common/common.permission';
-import Lang from '@/common/lang.decorator';
-import { ContentLang } from '@/constants';
 
 const MODULE_NAME = '新闻';
 const createPerm = createPermGroup(MODULE_NAME);
@@ -39,39 +41,24 @@ export class NewsController {
         order_key: 'recommend',
         order_type: 'DESC',
       },
-      lang,
+      lang
     );
     const max = total / limit;
     const next = current < max ? current + 1 : 0;
     const prev = current > 1 ? current - 1 : 0;
 
-    const dataList = list.map((item) => ({
-      ...item,
-      create_date: dayjs(item.push_date || item.create_date).format('YYYY / MM / DD'),
-    }));
-
     return new RenderViewResult({
       title: '新闻列表',
       layout: 'base',
+      scripts: [`${FE_PREFIX}/news.js`],
+      styles: [`${FE_PREFIX}/news.css`],
       render() {
         return (
-          <div>
-            <h1>新闻列表</h1>
-            <ul>
-              {dataList.map((item) => {
-                return (
-                  <li key={item.id}>
-                    <a href={`/news/${item.id}`}>{item.title}</a>
-                    <span>{item.create_date}</span>
-                  </li>
-                );
-              })}
-            </ul>
-            <div>
-              {!!prev && <a href={`/news?current=${prev}`}>上一页</a>}
-              {!!next && <a href={`/news?current=${next}`}>下一页</a>}
-            </div>
-          </div>
+          <NewsPage
+            dataList={list}
+            prev={prev}
+            next={next}
+          />
         );
       },
     });
@@ -82,51 +69,27 @@ export class NewsController {
   async detail(@Param() { id }: { id: number }, @Lang() lang: ContentLang) {
     const { current, next, prev } = await this.services.findNextAndPrev(id, lang);
     const pageData = {
-      info: {
-        ...current,
-        create_date: dayjs(current.create_date).format('YYYY-MM-DD HH:mm'),
-      },
+      info: current,
       next: next
         ? {
             title: next.title,
             id: next.id,
           }
-        : null,
+        : void 0,
       prev: prev
         ? {
             title: prev.title,
             id: prev.id,
           }
-        : null,
+        : void 0,
     };
     return new RenderViewResult({
       title: pageData.info.title,
       layout: 'base',
-      render({ t }) {
-        return (
-          <div>
-            <h1>
-              {t('新闻详情')}：{pageData.info.title}
-            </h1>
-            <hr />
-            <div>{pageData.info.desc}</div>
-            <div>{dayjs(pageData.info?.push_date).format('YYYY-MM-DD HH:mm:ss')}</div>
-            <div dangerouslySetInnerHTML={{ __html: pageData.info.content }}></div>
-            <hr />
-            <div>
-              {!!prev && (
-                <div>
-                  <a href={`/news/${pageData.prev?.id}`}>上一篇:{pageData.prev?.title}</a>
-                </div>
-              )}
-              {!!next && (
-                <div>
-                  <a href={`/news/${pageData.next?.id}`}>下一篇:{pageData.next?.title}</a>
-                </div>
-              )}
-            </div>
-          </div>
-        );
+      scripts: [`${FE_PREFIX}/news_detail.js`],
+      styles: [`${FE_PREFIX}/news_detail.css`],
+      render() {
+        return <NewsDetailPage {...pageData} />;
       },
     });
   }
@@ -157,7 +120,7 @@ export class NewsController {
     type: NewsDetailResponseDto,
   })
   @AdminRoleGuard(createPerm('admin:news:create', `新增${MODULE_NAME}`))
-  async apiCreate(@Body() data: NewsCreateDto, @User() user) {
+  async apiCreate(@Body() data: NewsCreateDto, @UserByAdmin() user: UserAdminInfo) {
     const newData = await this.services.create(data, user);
     return successResponse(newData, '创建成功');
   }
@@ -180,5 +143,19 @@ export class NewsController {
   async apiDelete(@Body() { id }: NewsByIdParamDto) {
     await this.services.remove(id);
     return successResponse(null, '删除成功');
+  }
+
+  @Post('/api/admin/news/export')
+  @AdminRoleGuard(createPerm('admin:news:export', `导出${MODULE_NAME}`))
+  @ApiOkResponse({ type: ResponseResult<null> })
+  @ApiBody({ type: ExportParamsDto })
+  async export(@Body() body: ExportParamsDto) {
+    const dataList = await this.services.findAll();
+    return exportData({
+      dataList,
+      exportType: body.export_type,
+      repository: this.services.repository,
+      name: MODULE_NAME,
+    });
   }
 }

@@ -5,11 +5,14 @@ import { message } from '@/utils/notice';
 import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Input, Popconfirm, Space, Form, Modal, Switch } from 'antd';
 import { useRef, useState } from 'react';
-import { createApi, getListApi, removeApi, updateApi } from './module';
+import { createApi, getListApi, removeApi, updateApi, exportApi } from './module';
 import { ModalType, useFormModal } from '@/hooks/useFormModal';
 import UploadImage from '@/components/UploadImage';
 import { RecommendFormItem } from '@/components/RecommendFormItem';
 import PageTable from '@/components/PageTable';
+import { ContentType, ContentTypeMap } from '@/constants';
+import { ExportButton } from '@/components/ExportButton';
+import { TableColumnSort } from '@/components/TableColumnSort';
 
 type TableItem = {{entityName}}Info;
 type CreateFormValues = {{entityName}}CreateDto;
@@ -51,9 +54,22 @@ export default function {{entityName}}Page() {
     }),
     {
       dataIndex: 'recommend',
-      title: '推荐等级',
+      title: '排序',
       sorter: true,
       width: 100,
+      render: (_, row) => {
+        return (
+          <TableColumnSort
+            value={row.recommend}
+            request={(value) =>
+              updateApi({
+                id: row.id,
+                recommend: value,
+              })
+            }
+          />
+        );
+      },
     },
     {
       dataIndex: 'is_available',
@@ -77,15 +93,23 @@ export default function {{entityName}}Page() {
     i18nColumn({
       dataIndex: 'desc',
       title: '描述',
-      width: 200,
+      width: 180,
       ellipsis: true,
     }),
+    {
+      dataIndex: 'content_type',
+      title: '内容类型',
+      width: 70,
+      render: (_, row) => {
+        return ContentTypeMap.get(row.content_type as ContentType)?.label || '-';
+      },
+    },
     i18nColumn({
       dataIndex: 'content',
       title: '内容',
-      width: 120,
+      width: 40,
       ellipsis: true,
-      transType: 'rich',
+      transType: ContentType.Rich,
     }),
     {
       dataIndex: 'create_date',

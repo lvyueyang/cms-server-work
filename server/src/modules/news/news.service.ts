@@ -1,21 +1,21 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { LessThan, Like, MoreThan, Repository } from 'typeorm';
+import { ContentLang } from '@/constants';
 import { CRUDQuery } from '@/interface';
 import { createOrder, isDefaultI18nLang } from '../../utils';
 import { paginationTransform } from '../../utils/whereTransform';
-import { LessThan, Like, MoreThan, Repository } from 'typeorm';
-import { UserAdmin } from '../user_admin/user_admin.entity';
-import { News } from './news.entity';
-import { NewsCreateDto, NewsUpdateDto } from './news.dto';
-import { ContentLang } from '@/constants';
 import { ContentTranslationService } from '../content_translation/content_translation.service';
+import { UserAdmin } from '../user_admin/user_admin.entity';
+import { NewsCreateDto, NewsUpdateDto } from './news.dto';
+import { News } from './news.entity';
 
 @Injectable()
 export class NewsService {
   constructor(
     @InjectRepository(News)
-    private repository: Repository<News>,
-    private contentTranslationService: ContentTranslationService,
+    readonly repository: Repository<News>,
+    private contentTranslationService: ContentTranslationService
   ) {}
 
   findAll() {
@@ -41,13 +41,15 @@ export class NewsService {
     /** 在 push_date 为空时,按创建时间排序 */
     find.addOrderBy('COALESCE(news.push_date, news.create_date)', 'DESC');
     return find.getManyAndCount().then(async ([list, total]) => {
-      if (isDefaultI18nLang(lang)) return [list, total] as const;
-      const patched = await this.contentTranslationService.overlayTranslations(list, {
-        entity: 'news',
-        fields: ['title', 'desc', 'content'],
-        lang,
-      });
-      return [patched, total] as const;
+      if (lang && !isDefaultI18nLang(lang)) {
+        const patched = await this.contentTranslationService.overlayTranslations(list, {
+          entity: 'news',
+          fields: ['title', 'desc', 'content'],
+          lang,
+        });
+        return [patched, total] as const;
+      }
+      return [list, total] as const;
     });
   }
 
@@ -59,13 +61,15 @@ export class NewsService {
     if (!info) {
       throw new BadRequestException('新闻不存在', 'news not found');
     }
-    if (!isDefaultI18nLang(lang)) return info;
-    const [patched] = await this.contentTranslationService.overlayTranslations([info], {
-      entity: 'news',
-      fields: ['title', 'desc', 'content'],
-      lang,
-    });
-    return patched;
+    if (lang && !isDefaultI18nLang(lang)) {
+      const [patched] = await this.contentTranslationService.overlayTranslations([info], {
+        entity: 'news',
+        fields: ['title', 'desc', 'content'],
+        lang,
+      });
+      return patched;
+    }
+    return info;
   }
 
   async findNextAndPrev(id: number, lang?: ContentLang) {
@@ -90,10 +94,10 @@ export class NewsService {
         },
       }),
     ]);
-    let patchedNext = nextInfo || null;
-    let patchedPrev = prevInfo || null;
-    if (!isDefaultI18nLang(lang)) {
-      const items = [nextInfo, prevInfo].filter(Boolean);
+    let patchedNext = nextInfo;
+    let patchedPrev = prevInfo;
+    if (lang && !isDefaultI18nLang(lang)) {
+      const items = ([nextInfo!, prevInfo!] as const).filter(Boolean);
       if (items.length) {
         const patched = await this.contentTranslationService.overlayTranslations(items, {
           entity: 'news',
@@ -101,13 +105,13 @@ export class NewsService {
           lang,
         });
         const map = new Map(patched.map((i) => [i.id, i]));
-        if (nextInfo) patchedNext = map.get(nextInfo.id);
-        if (prevInfo) patchedPrev = map.get(prevInfo.id);
+        if (nextInfo) patchedNext = map.get(nextInfo.id)!;
+        if (prevInfo) patchedPrev = map.get(prevInfo.id)!;
       }
     }
     return {
-      next: patchedNext || null,
-      prev: patchedPrev || null,
+      next: patchedNext,
+      prev: patchedPrev,
       current: currentInfo,
     };
   }
@@ -132,18 +136,11 @@ export class NewsService {
     });
   }
 
-  async remove(id: number) {
-    const isExisted = await this.repository.findOneBy({
-      id,
-      is_delete: false,
-    });
-    if (!isExisted) {
-      throw new BadRequestException('新闻不存在', 'news not found');
-    }
+  async remove(id: number | number[]) {
     return this.repository.update(id, { is_delete: true });
   }
 
-  async update(data: Partial<NewsUpdateDto>) {
+  async update(data: Partial<NewsUpdateDto> & { id: number }) {
     const isExisted = await this.repository.findOneBy({
       id: data.id,
       is_delete: false,

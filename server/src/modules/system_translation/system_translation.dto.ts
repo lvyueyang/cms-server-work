@@ -1,8 +1,8 @@
 import { ApiProperty, PartialType, PickType } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
+import { ContentLang } from '@/constants';
 import { PaginationAndOrder, ResponseResult } from '@/interface';
 import { SystemTranslation } from './system_translation.entity';
-import { ContentLang } from '@/constants';
 
 export class SystemTranslationInfo extends SystemTranslation {}
 
@@ -22,6 +22,7 @@ export class SystemTranslationCreateDto extends PickType(SystemTranslation, [
   'key',
   'desc',
   'value',
+  'value_type',
   'lang',
 ]) {}
 export class SystemTranslationMultiCreateDto {

@@ -1,9 +1,12 @@
-import { Body, Controller, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { createPermGroup } from '@/common/common.permission';
 import { ResponseResult } from '@/interface';
-import { User } from '@/modules/user_admin/user-admin.decorator';
+import { UserByAdmin } from '@/modules/user_admin/user_admin.decorator';
 import { AdminRoleGuard } from '@/modules/user_admin_role/user_admin_role.guard';
 import { successResponse } from '@/utils';
+import { RenderViewService } from '../render_view/render_view.service';
+import { UserAdminInfo } from '../user_admin/user_admin.dto';
 import {
   SystemConfigByIdParamDto,
   SystemConfigCreateDto,
@@ -14,9 +17,6 @@ import {
   SystemConfigUpdateDto,
 } from './system_config.dto';
 import { SystemConfigService } from './system_config.service';
-import { createPermGroup } from '@/common/common.permission';
-import Lang from '@/common/lang.decorator';
-import { ContentLang } from '@/constants';
 
 const MODULE_NAME = '系统配置';
 const createPerm = createPermGroup(MODULE_NAME);
@@ -24,7 +24,7 @@ const createPerm = createPermGroup(MODULE_NAME);
 @ApiTags(MODULE_NAME)
 @Controller()
 export class SystemConfigController {
-  constructor(private services: SystemConfigService) {}
+  constructor(private services: SystemConfigService, private renderViewService: RenderViewService) {}
 
   @Post('/api/admin/system_config/list')
   @ApiOkResponse({
@@ -52,8 +52,9 @@ export class SystemConfigController {
     type: SystemConfigDetailResponseDto,
   })
   @AdminRoleGuard(createPerm('admin:system_config:create', `新增${MODULE_NAME}`))
-  async apiCreate(@Body() data: SystemConfigCreateDto, @User() user) {
+  async apiCreate(@Body() data: SystemConfigCreateDto, @UserByAdmin() user: UserAdminInfo) {
     const newData = await this.services.create(data, user);
+    await this.renderViewService.loadGlobal();
     return successResponse(newData, '创建成功');
   }
 
@@ -64,6 +65,7 @@ export class SystemConfigController {
   @AdminRoleGuard(createPerm('admin:system_config:update', `修改${MODULE_NAME}`))
   async apiUpdate(@Body() data: SystemConfigUpdateDto) {
     await this.services.update(data);
+    await this.renderViewService.loadGlobal();
     return successResponse(data.id, '修改成功');
   }
 
@@ -74,6 +76,7 @@ export class SystemConfigController {
   @AdminRoleGuard(createPerm('admin:system_config:delete', `删除${MODULE_NAME}`))
   async apiDelete(@Body() { id }: SystemConfigByIdParamDto) {
     await this.services.remove(id);
+    await this.renderViewService.loadGlobal();
     return successResponse(null, '删除成功');
   }
 }

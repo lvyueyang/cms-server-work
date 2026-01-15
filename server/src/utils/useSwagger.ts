@@ -1,10 +1,7 @@
-/**
- * 使用 Swagger
- */
-import { NestExpressApplication } from '@nestjs/platform-express';
+import { exec } from 'node:child_process';
+import * as path from 'node:path';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { exec } from 'child_process';
-import * as path from 'path';
 
 function runGapi() {
   const dir = path.join(process.cwd(), '../packages/api-interface');

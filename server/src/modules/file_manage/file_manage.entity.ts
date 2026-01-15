@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from '@/common/base.entity';
 import { UserAdmin } from '@/modules/user_admin/user_admin.entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 /** 文件管理 */
 @Entity({ orderBy: { create_date: 'DESC' } })
@@ -63,7 +63,11 @@ export class FileManage extends BaseEntity {
     description: '文件备注',
   })
   @Column({ default: '' })
-  desc: string;
+  desc?: string;
+
+  @ApiProperty({ description: '登录后可下载' })
+  @Column({ default: false })
+  login_download_auth?: boolean;
 
   @ApiProperty({
     description: '是否已删除',

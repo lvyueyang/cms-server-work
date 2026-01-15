@@ -1,0 +1,17 @@
+.img-code-input {
+  display: flex;
+  align-items: center;
+  input {
+    flex: 0 0 200px;
+  }
+  .code-img {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    svg {
+      width: auto;
+      height: 50px;
+      display: block;
+    }
+  }
+}

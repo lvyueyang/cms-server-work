@@ -1,6 +1,6 @@
 import { Body, Controller, Param, Post, Query } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { ResponseResult } from '@/interface';
+import { ExportParamsDto, ResponseResult } from '@/interface';
 import { User } from '@/modules/user_admin/user-admin.decorator';
 import { AdminRoleGuard } from '@/modules/user_admin_role/user_admin_role.guard';
 import { successResponse } from '@/utils';
@@ -17,6 +17,8 @@ import { {{entityName}}Service } from './{{name}}.service';
 import { createPermGroup } from '@/common/common.permission';
 import Lang from '@/common/lang.decorator';
 import { ContentLang } from '@/constants';
+import { UserAdminInfo } from '@/modules/user_admin/user_admin.dto';
+import { exportData } from '@/utils/exportData';
 
 const MODULE_NAME = '{{cname}}';
 const createPerm = createPermGroup(MODULE_NAME);
@@ -37,6 +39,20 @@ export class {{entityName}}Controller {
     return successResponse({ list, total });
   }
 
+  @Post('/api/admin/{{name}}/export')
+  @AdminRoleGuard(createPerm('admin:{{name}}:export', `导出${MODULE_NAME}`))
+  @ApiOkResponse({ type: ResponseResult<null> })
+  @ApiBody({ type: ExportParamsDto })
+  async export(@Body() body: ExportParamsDto) {
+    const dataList = await this.service.findExportAll();
+    return exportData({
+      dataList,
+      exportType: body.export_type,
+      repository: this.service.repository,
+      name: MODULE_NAME,
+    });
+  }
+
   @Post('/api/admin/{{name}}/info')
   @ApiOkResponse({
     type: {{entityName}}DetailResponseDto,
@@ -52,7 +68,7 @@ export class {{entityName}}Controller {
     type: {{entityName}}DetailResponseDto,
   })
   @AdminRoleGuard(createPerm('admin:{{name}}:create', `新增${MODULE_NAME}`))
-  async apiCreate(@Body() data: {{entityName}}CreateDto, @User() user) {
+  async apiCreate(@Body() data: {{entityName}}CreateDto, @User() user: UserAdminInfo) {
     const newData = await this.services.create(data, user);
     return successResponse(newData, '创建成功');
   }

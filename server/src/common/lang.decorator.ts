@@ -1,6 +1,6 @@
-import { ContentLang } from '@/constants';
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
+import { ContentLang } from '@/constants';
 
 function pickCookieLang(req: any): string | undefined {
   // Prefer cookie-parser result

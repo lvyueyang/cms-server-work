@@ -1,0 +1,32 @@
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 15px;
+  gap: 10px;
+  height: 45px;
+  &.white {
+    a,
+    span {
+      color: #fff;
+      &:hover {
+        color: #fff;
+      }
+    }
+  }
+  .breadcrumb-item {
+    display: flex;
+    align-items: center;
+  }
+  a {
+    color: #333;
+    text-decoration: none;
+    &:hover {
+      color: var(--color-primary);
+      text-decoration: underline;
+    }
+  }
+  span {
+    color: #333;
+  }
+}

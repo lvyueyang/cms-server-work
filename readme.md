@@ -39,4 +39,4 @@ umi 构建 React + antd + antd Pro + typescript
 
 # SSR 服务端渲染
 
-基于 Next.js 构建, Next.js与 NestJS 的完美结合!
+使用 JSX 渲染页面
