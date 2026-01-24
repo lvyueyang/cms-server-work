@@ -1,6 +1,6 @@
-import { ReactNode, useState } from 'react';
-import { Button } from 'antd';
 import { TranslationOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
+import { ReactNode, useState } from 'react';
 import { TranslationDrawer, TranslationDrawerProps } from './TranslationDrawer';
 
 const defaultChildren = (

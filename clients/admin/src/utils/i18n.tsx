@@ -1,9 +1,9 @@
-import { Translation } from '@/components/TranslationDrawer';
-import { ContentType } from '@/constants';
 import { ProColumnType } from '@ant-design/pro-components';
 import { Flex, Image, Tooltip } from 'antd';
 import { TooltipPlacement } from 'antd/es/tooltip';
 import { ReactNode } from 'react';
+import { Translation } from '@/components/TranslationDrawer';
+import { ContentType } from '@/constants';
 
 interface Options {
   transType?: ContentType;
@@ -11,9 +11,7 @@ interface Options {
 }
 
 // 表格添加国际化支持
-export function createI18nColumn<T extends Record<string, any> & { id: number | string }>(
-  entity: string,
-) {
+export function createI18nColumn<T extends Record<string, any> & { id: number | string }>(entity: string) {
   const fn = function i18nColumn(column: ProColumnType<T> & Options) {
     return {
       ...column,
@@ -81,7 +79,10 @@ function createTableI18nRender<T extends Record<string, any> & { id: number | st
         hideValue={column?.hideValue}
       >
         {column.ellipsis && val ? (
-          <Tooltip title={val} placement={(column.align as TooltipPlacement) || 'topLeft'}>
+          <Tooltip
+            title={val}
+            placement={(column.align as TooltipPlacement) || 'topLeft'}
+          >
             <div
               style={{
                 flex: 1,
@@ -94,7 +95,12 @@ function createTableI18nRender<T extends Record<string, any> & { id: number | st
             </div>
           </Tooltip>
         ) : column.transType === 'image' ? (
-          <Image src={val} alt={val} style={{ width: 30, height: 30 }} preview />
+          <Image
+            src={val}
+            alt={val}
+            style={{ width: 30, height: 30 }}
+            preview
+          />
         ) : (
           showValue
         )}
@@ -112,17 +118,13 @@ interface I18nBlockProps {
   children?: ReactNode;
   hideValue?: boolean;
 }
-export function I18nBlock({
-  entity,
-  entityId,
-  field,
-  originValue,
-  type,
-  hideValue,
-  children,
-}: I18nBlockProps) {
+export function I18nBlock({ entity, entityId, field, originValue, type, hideValue, children }: I18nBlockProps) {
   return (
-    <Flex gap={5} align="center" wrap="wrap">
+    <Flex
+      gap={5}
+      align="center"
+      wrap="wrap"
+    >
       <Translation
         entity={entity}
         entityId={entityId}
