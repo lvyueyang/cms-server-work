@@ -1,23 +1,23 @@
-import { enumMapToOptions, enumMapToTableEnum, transformPagination, transformSort } from '@/utils';
 import { ActionType, ProColumns } from '@ant-design/pro-components';
-import { Button, Form, Input, message, Modal, Popconfirm, Select, Space } from 'antd';
-import { useRef } from 'react';
-import {
-  getTranslationListApi,
-  ContentTranslationItem,
-  batchUpsertTranslationsApi,
-  removeApi,
-  updateApi,
-  exportApi,
-} from './module';
-import PageTable from '@/components/PageTable';
-import { openImportJsonModal } from '@/components/ImportData';
-import { ModalType, useFormModal } from '@/hooks/useFormModal';
 import { ContentTranslationUpdateDto } from '@cms/api-interface';
-import { ContentType, ContentTypeMap } from '@/constants';
+import { ContentLang, ContentLangMap } from '@cms/server/const';
+import { Button, Form, Input, Modal, message, Popconfirm, Select, Space } from 'antd';
+import { useRef } from 'react';
 import { AutoContentInput } from '@/components/AutoContentInput';
 import { ExportButton } from '@/components/ExportButton';
-import { ContentLang, ContentLangMap } from '@cms/server/const';
+import { openImportJsonModal } from '@/components/ImportData';
+import PageTable from '@/components/PageTable';
+import { ContentType, ContentTypeMap } from '@/constants';
+import { ModalType, useFormModal } from '@/hooks/useFormModal';
+import { enumMapToOptions, enumMapToTableEnum, transformPagination, transformSort } from '@/utils';
+import {
+  batchUpsertTranslationsApi,
+  ContentTranslationItem,
+  exportApi,
+  getTranslationListApi,
+  removeApi,
+  updateApi,
+} from './module';
 
 type TableItem = ContentTranslationItem;
 type FormValues = ContentTranslationUpdateDto & { valueType: ContentType };
@@ -129,7 +129,7 @@ export default function ContentTranslationPage() {
       if (error instanceof SyntaxError) {
         message.error('JSON格式错误，请检查输入');
       } else {
-        message.error('导入失败：' + (error as Error).message);
+        message.error(`导入失败：${(error as Error).message}`);
       }
       throw error;
     }
@@ -147,7 +147,10 @@ export default function ContentTranslationPage() {
         }}
         search={{}}
         toolBarRender={() => [
-          <ExportButton exportFn={exportApi} key="export" />,
+          <ExportButton
+            exportFn={exportApi}
+            key="export"
+          />,
           <Button
             type="primary"
             key="import"
@@ -205,30 +208,76 @@ export default function ContentTranslationPage() {
         destroyOnHidden
       >
         <br />
-        <Form form={formModal.form} labelCol={{ flex: '70px' }} initialValues={{}}>
-          <Form.Item label="ID" name="id">
-            <Input readOnly style={{ width: '120px' }} />
+        <Form
+          form={formModal.form}
+          labelCol={{ flex: '70px' }}
+          initialValues={{}}
+        >
+          <Form.Item
+            label="ID"
+            name="id"
+          >
+            <Input
+              readOnly
+              style={{ width: '120px' }}
+            />
           </Form.Item>
-          <Form.Item label="实体" name="entity">
-            <Input readOnly style={{ width: '120px' }} />
+          <Form.Item
+            label="实体"
+            name="entity"
+          >
+            <Input
+              readOnly
+              style={{ width: '120px' }}
+            />
           </Form.Item>
-          <Form.Item label="实体ID" name="entityId">
-            <Input readOnly style={{ width: '120px' }} />
+          <Form.Item
+            label="实体ID"
+            name="entityId"
+          >
+            <Input
+              readOnly
+              style={{ width: '120px' }}
+            />
           </Form.Item>
-          <Form.Item label="字段" name="field">
-            <Input readOnly style={{ width: '120px' }} />
+          <Form.Item
+            label="字段"
+            name="field"
+          >
+            <Input
+              readOnly
+              style={{ width: '120px' }}
+            />
           </Form.Item>
-          <Form.Item label="语言" name="lang">
-            <Input readOnly style={{ width: '120px' }} />
+          <Form.Item
+            label="语言"
+            name="lang"
+          >
+            <Input
+              readOnly
+              style={{ width: '120px' }}
+            />
           </Form.Item>
-          <Form.Item label="编辑方式" name="valueType">
-            <Select options={enumMapToOptions(ContentTypeMap)} style={{ width: '120px' }} />
+          <Form.Item
+            label="编辑方式"
+            name="valueType"
+          >
+            <Select
+              options={enumMapToOptions(ContentTypeMap)}
+              style={{ width: '120px' }}
+            />
           </Form.Item>
-          <Form.Item label="内容" dependencies={['valueType']}>
+          <Form.Item
+            label="内容"
+            dependencies={['valueType']}
+          >
             {() => {
               const type = formModal.form.getFieldValue('valueType');
               return (
-                <Form.Item noStyle name="value">
+                <Form.Item
+                  noStyle
+                  name="value"
+                >
                   <AutoContentInput type={type} />
                 </Form.Item>
               );
