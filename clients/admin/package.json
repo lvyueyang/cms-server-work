@@ -10,11 +10,9 @@
     "setup": "umi setup",
     "start": "npm run dev"
   },
-  "dependencies": {
-    "@ant-design/plots": "^2.6.6"
-  },
   "devDependencies": {
     "@ant-design/icons": "^6.1.0",
+    "@ant-design/plots": "^2.6.8",
     "@ant-design/pro-components": "^2.8.10",
     "@aws-sdk/client-s3": "^3.554.0",
     "@cms/api-interface": "workspace:*",
@@ -26,16 +24,16 @@
     "@wangeditor/editor-for-react": "^1.0.6",
     "@wangeditor/plugin-upload-attachment": "^1.1.0",
     "ahooks": "^3.9.6",
-    "antd": "^6.0.0",
+    "antd": "^6.3.1",
     "codemirror": "^6.0.2",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.1.0",
     "grapesjs": "^0.22.14",
     "grapesjs-blocks-basic": "^1.0.2",
     "grapesjs-custom-code": "^1.0.2",
     "grapesjs-preset-webpage": "^1.0.3",
     "grapesjs-tui-image-editor": "^1.0.2",
-    "path-to-regexp": "^6.3.0",
-    "umi": "^4.6.0",
-    "zustand": "^4.5.5"
+    "path-to-regexp": "^8.3.0",
+    "umi": "^4.6.28",
+    "zustand": "^5.0.11"
   }
 }

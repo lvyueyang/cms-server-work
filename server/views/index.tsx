@@ -2,7 +2,6 @@
 export * from './components/layout';
 
 // Pages
-export * from './modules/app_scenario/view';
 export * from './modules/article/view';
 export * from './modules/home/view';
 export * from './modules/login/view';

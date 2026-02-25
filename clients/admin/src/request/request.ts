@@ -40,7 +40,7 @@ request.interceptors.response.use(
     if (data.statusCode !== 200) {
       // 是否忽略错误提示
       if (!config.ignoreNotice) {
-        notification.error({ title: data.message || '请求失败', description: data.error || '' });
+        notification.error({ title: data.message.message || '请求失败', description: data.message.error || '' });
       }
       // 是否忽略身份过期跳转登录页
       if (!config.ignoreLogin && data.statusCode === 401 && !ignoreLoginPaths.includes(history.location.pathname)) {
@@ -48,7 +48,7 @@ request.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 class Request {

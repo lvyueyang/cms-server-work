@@ -15,9 +15,14 @@ export const getListApi = () => {
   return request.get<LoggerListResponseDto>(`${AIP_FIX}/logger`);
 };
 
-/** 详情 */
-export const getDetailApi = async (date: string) => {
-  const res = await request.get<Result<string[]>>(`${AIP_FIX}/logger/${date}`);
+/** 文件列表 */
+export const getFilesApi = (date: string) => {
+  return request.get<Result<string[]>>(`${AIP_FIX}/logger/${date}/files`);
+};
+
+/** 文件详情 */
+export const getFileContentApi = async (date: string, filename: string) => {
+  const res = await request.get<Result<string[]>>(`${AIP_FIX}/logger/${date}/${filename}`);
   return {
     ...res,
     data: {
@@ -25,9 +30,18 @@ export const getDetailApi = async (date: string) => {
       data: res.data.data
         .filter((i) => i.trim())
         .map((item) => {
-          const obj = JSON.parse(item);
-          return obj as LoggerItem;
+          try {
+            const obj = JSON.parse(item);
+            return obj as LoggerItem;
+          } catch (e) {
+            return { message: item } as LoggerItem;
+          }
         }),
     },
   };
+};
+
+/** 下载地址 */
+export const getDownloadUrl = (date: string, filename: string) => {
+  return `${AIP_FIX}/logger/${date}/${filename}/download`;
 };

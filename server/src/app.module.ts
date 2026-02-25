@@ -1,11 +1,13 @@
 import { join } from 'node:path';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { NotFoundFilter } from './common/filters/not-found.filter';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import config from './config';
 import { AuthModule } from './modules/auth/auth.module';
 import { Banner } from './modules/banner/banner.entity';
@@ -130,6 +132,14 @@ const workConfig = getWorkConfig();
       provide: APP_FILTER,
       useClass: NotFoundFilter,
     },
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}

@@ -24,10 +24,18 @@ export class LoggerByDateParamDto {
   })
   @IsNotEmpty()
   readonly date: string;
+}
 
-  // @ApiProperty({
-  //   description: '类型',
-  // })
-  // @IsNotEmpty()
-  // readonly type: 'error';
+export class LoggerFileParamDto {
+  @ApiProperty({
+    description: '日期',
+  })
+  @IsNotEmpty()
+  readonly date: string;
+
+  @ApiProperty({
+    description: '文件名',
+  })
+  @IsNotEmpty()
+  readonly filename: string;
 }

@@ -1,11 +1,10 @@
-import { Controller, Get, Param, Req, Res } from '@nestjs/common';
+import { Controller, Get, Req, Res } from '@nestjs/common';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import Lang from '@/common/lang.decorator';
 import { ContentLang, FE_PREFIX } from '@/constants';
-import { AppScenarioPage, HomePage, NotFoundPage } from '@/views';
+import { HomePage, NotFoundPage } from '@/views';
 import { BannerService } from '../banner/banner.service';
-import { DictValueService } from '../dict_value/dict_value.service';
 import { NewsService } from '../news/news.service';
 import { RenderView, RenderViewResult } from '../render_view/render_view.decorator';
 
@@ -14,7 +13,6 @@ export class HomeController {
   constructor(
     private readonly bannerService: BannerService,
     private readonly newsService: NewsService,
-    private readonly dictValueService: DictValueService
   ) {}
 
   @RenderView()
@@ -30,7 +28,7 @@ export class HomeController {
           order_key: 'recommend',
           order_type: 'DESC',
         },
-        lang
+        lang,
       ),
       this.newsService.findList(
         {
@@ -40,7 +38,7 @@ export class HomeController {
           order_key: 'recommend',
           order_type: 'DESC',
         },
-        lang
+        lang,
       ),
     ]);
     return new RenderViewResult({
@@ -53,28 +51,6 @@ export class HomeController {
           <HomePage
             banners={banners}
             news={news[0]}
-          />
-        );
-      },
-    });
-  }
-
-  @RenderView()
-  @Get('/app-scenario/:type')
-  async appScenario(@Param() { type }: { type: string }, @Lang() lang: ContentLang) {
-    const dictValue = await this.dictValueService.findByType('app_scenario');
-    const dictValueList = await this.dictValueService.i18nTrans(dictValue.list, lang);
-    const info = dictValueList.find((i) => i.value === type);
-    return new RenderViewResult({
-      title: '应用场景',
-      layout: 'base',
-      scripts: [`${FE_PREFIX}/app_scenario.js`],
-      styles: [`${FE_PREFIX}/app_scenario.css`],
-      render() {
-        return (
-          <AppScenarioPage
-            type={type}
-            info={info}
           />
         );
       },

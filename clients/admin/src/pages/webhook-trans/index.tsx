@@ -1,16 +1,16 @@
-import { AvailableSwitch } from '@/components/Available';
-import { WebhookTransInfo } from '@cms/api-interface';
-import { copyText, transformPagination } from '@/utils';
 import { ActionType, ProColumns } from '@ant-design/pro-components';
-import { Button, Input, Popconfirm, Space, Form, Drawer, Flex, Select, Modal, Divider } from 'antd';
-import { useRef, useState } from 'react';
-import { createApi, getListApi, removeApi, updateApi } from './module';
-import { ModalType, useFormModal } from '@/hooks/useFormModal';
-import CodeEditor from '@/components/CodeEditor';
-import { v4 as uuid } from 'uuid';
+import { WebhookTransInfo } from '@cms/api-interface';
+import { Button, Divider, Drawer, Flex, Form, Input, Modal, Popconfirm, Select, Space } from 'antd';
 import axios from 'axios';
-import { message } from '@/utils/notice';
+import { useRef, useState } from 'react';
+import { v4 as uuid } from 'uuid';
+import { AvailableSwitch } from '@/components/Available';
+import CodeEditor from '@/components/CodeEditor';
 import PageTable from '@/components/PageTable';
+import { ModalType, useFormModal } from '@/hooks/useFormModal';
+import { copyText, transformPagination } from '@/utils';
+import { message } from '@/utils/notice';
+import { createApi, getListApi, removeApi, updateApi } from './module';
 
 type TableItem = WebhookTransInfo;
 type FormValues = WebhookTransInfo & { id?: number };
@@ -148,7 +148,10 @@ export default function WebhookTransListPage() {
         bordered
         search={false}
         request={(params) => {
-          return getListApi({ ...transformPagination(params), ...searchForm }).then(({ data }) => {
+          return getListApi({
+            ...transformPagination(params),
+            ...searchForm,
+          }).then(({ data }) => {
             return { data: data.data.list, total: data.data.total || 0 };
           });
         }}
@@ -191,8 +194,14 @@ export default function WebhookTransListPage() {
         onClose={formModal.formModalClose}
         width={700}
         footer={
-          <Flex justify="flex-end" gap={12}>
-            <Button key="cancel" onClick={formModal.formModalClose}>
+          <Flex
+            justify="flex-end"
+            gap={12}
+          >
+            <Button
+              key="cancel"
+              onClick={formModal.formModalClose}
+            >
               取消
             </Button>
             <Button
@@ -225,11 +234,18 @@ export default function WebhookTransListPage() {
           layout="vertical"
         >
           {formModal.formModal.type !== ModalType.CREATE && (
-            <Form.Item name="id" hidden>
+            <Form.Item
+              name="id"
+              hidden
+            >
               <Input disabled={formModal.formModal.type === ModalType.UPDATE} />
             </Form.Item>
           )}
-          <Form.Item label="唯一编码 Key" name="code" rules={[{ required: true }]}>
+          <Form.Item
+            label="唯一编码 Key"
+            name="code"
+            rules={[{ required: true }]}
+          >
             <Input
               readOnly
               // addonAfter={
@@ -243,10 +259,16 @@ export default function WebhookTransListPage() {
               // }
             />
           </Form.Item>
-          <Form.Item label="请求地址" name="url">
+          <Form.Item
+            label="请求地址"
+            name="url"
+          >
             <Input />
           </Form.Item>
-          <Form.Item label="请求方法" name="method">
+          <Form.Item
+            label="请求方法"
+            name="method"
+          >
             <Select
               options={[
                 { label: 'POST', value: 'POST' },
@@ -255,7 +277,10 @@ export default function WebhookTransListPage() {
               ]}
             />
           </Form.Item>
-          <Form.Item label="描述" name="desc">
+          <Form.Item
+            label="描述"
+            name="desc"
+          >
             <Input.TextArea />
           </Form.Item>
           <Form.Item
@@ -265,10 +290,18 @@ export default function WebhookTransListPage() {
           >
             <CodeEditor style={{ height: 260 }} />
           </Form.Item>
-          <Form.Item label="数据转换函数" name="data_trans_func" tooltip="返回转换后的数据">
+          <Form.Item
+            label="数据转换函数"
+            name="data_trans_func"
+            tooltip="返回转换后的数据"
+          >
             <CodeEditor style={{ height: 260 }} />
           </Form.Item>
-          <Form.Item label="回调响应转换函数" name="callback_func" tooltip="返回转换后的数据">
+          <Form.Item
+            label="回调响应转换函数"
+            name="callback_func"
+            tooltip="返回转换后的数据"
+          >
             <CodeEditor style={{ height: 260 }} />
           </Form.Item>
         </Form>

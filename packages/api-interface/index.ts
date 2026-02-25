@@ -523,21 +523,6 @@ export interface LoggerListResponseDto {
   data: string[];
 }
 
-export interface LoggerDetailResponseDto {
-  /**
-   * 状态码
-   * @default 200
-   */
-  code: number;
-  /**
-   * 状态描述
-   * @default "请求成功"
-   */
-  message: string;
-  /** 日志详情 */
-  data: string[];
-}
-
 export interface WebhookTransQueryListDto {
   /**
    * 分页查询-当前页

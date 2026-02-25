@@ -1,11 +1,11 @@
+import { randomUUID } from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { BadRequestException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as fs from 'fs';
-import * as path from 'path';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import { v4 as uuid } from 'uuid';
 import { s3AccountConfig } from '@/config';
 import { Pagination } from '@/interface';
 import { getUploadFileDirPath } from '@/utils';
@@ -21,7 +21,7 @@ export class UserAdminService {
     private repository: Repository<UserAdmin>,
 
     @Inject(s3AccountConfig.KEY)
-    private s3Config: ConfigType<typeof s3AccountConfig>
+    private s3Config: ConfigType<typeof s3AccountConfig>,
   ) {}
 
   findList(pagination: Pagination) {
@@ -99,7 +99,7 @@ export class UserAdminService {
       email,
       avatar,
       out_login_date,
-    }: Partial<Pick<UserAdmin, 'cname' | 'password' | 'email' | 'avatar' | 'out_login_date'>>
+    }: Partial<Pick<UserAdmin, 'cname' | 'password' | 'email' | 'avatar' | 'out_login_date'>>,
   ) {
     const oldInfo = await this.repository.findOneBy({
       id,
@@ -143,7 +143,7 @@ export class UserAdminService {
   }
 
   async uploadToS3(file: Express.Multer.File, dirPath: string, filename?: string) {
-    const Key = dirPath + `/${filename || uuid()}`;
+    const Key = `${dirPath}/${filename || randomUUID()}`;
     const Upload = new PutObjectCommand({
       Bucket: this.s3Config.bucket,
       Body: file.buffer,
@@ -157,7 +157,7 @@ export class UserAdminService {
     try {
       await client.send(Upload);
       client.destroy();
-      return this.s3Config.address + '/' + this.s3Config.bucket + '/' + Key;
+      return `${this.s3Config.address}/${this.s3Config.bucket}/${Key}`;
     } catch (e) {
       client.destroy();
       throw e;
@@ -165,7 +165,7 @@ export class UserAdminService {
   }
 
   async uploadLocal(file: Express.Multer.File, dirPath: string, filename?: string) {
-    const Key = filename || `${uuid()}.${file.originalname.split('.').reverse()[0]}`;
+    const Key = filename || `${randomUUID()}.${file.originalname.split('.').reverse()[0]}`;
     const dir = path.join(getUploadFileDirPath(), dirPath);
     try {
       await fs.promises.access(dir);

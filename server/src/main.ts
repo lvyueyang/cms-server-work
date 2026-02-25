@@ -1,9 +1,9 @@
+import { join } from 'node:path';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import { join } from 'path';
 import { AppModule } from './app.module';
 import { PaginationParseIntPipe } from './common/pipes/parse-int.pipe';
 import { LoggerService } from './modules/logger/logger.service';
@@ -15,7 +15,6 @@ async function bootstrap() {
   if (!PORT) {
     throw new Error('PORT 环境变量未配置');
   }
-
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
   });

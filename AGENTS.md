@@ -87,5 +87,64 @@
 
 ## 6. 代码规范
 
+- **服务端禁用 `uuid` 包**: 统一使用 `import { randomUUID } from 'node:crypto';` 生成 UUID。
 - 项目配置了 `Biome` 用于代码格式化和 Lint 检查。
 - 提交代码前请确保通过 Lint 检查。
+
+## 7. 日志规范
+
+本项目使用增强版 `LoggerService`，集成了 `winston` 和 `AsyncLocalStorage`，实现了日志分级存储、结构化记录及全链路 Trace ID 追踪。
+
+### 核心特性
+
+- **自动追踪 (Trace ID)**: 所有请求会自动生成或继承 `traceId`，无需手动传递。
+- **分级存储**:
+  - `error.log`: 仅存储错误日志。
+  - `warn.log`: 仅存储警告日志。
+  - `access.log`: 专门存储 HTTP 请求访问日志（context='HTTP'）。
+  - `combined.log`: 存储 Info 及以上级别的**业务逻辑日志**（不包含 HTTP 请求）。
+- **优化策略**:
+  - **日志分离**: 将高频的 HTTP 请求日志分离到 `access.log`，大幅减小 `combined.log` 体积。
+  - **自动压缩**: 历史日志文件自动进行 Gzip 压缩 (`.gz`)，节省磁盘空间。
+  - **大小限制**: `combined.log` 单个文件限制为 10MB，其他文件限制为 20MB。
+- **结构化**: 日志以 JSON 格式存储，便于后续分析。
+
+### 使用指南
+
+1. **注入 Logger**:
+   在 Service 或 Controller 中注入 `LoggerService`。
+
+   ```typescript
+   import { LoggerService } from '@/modules/logger/logger.service';
+
+   @Injectable()
+   export class MyService {
+     constructor(private readonly logger: LoggerService) {}
+
+     doSomething() {
+       this.logger.log('Operation started', 'MyService');
+     }
+   }
+   ```
+
+2. **记录日志**:
+   - **Info**: 记录常规业务流程信息。
+     ```typescript
+     this.logger.log({ action: 'create_user', userId: 123 }, 'UserService');
+     ```
+   - **Warn**: 记录非预期但不影响主流程的问题。
+     ```typescript
+     this.logger.warn('User missing profile', 'UserService');
+     ```
+   - **Error**: 记录导致当前操作失败的错误。**必须** 传递错误堆栈（如果存在）。
+     ```typescript
+     try {
+       // ...
+     } catch (error) {
+       this.logger.error('Failed to create user', error.stack, 'UserService');
+     }
+     ```
+
+3. **异常处理**:
+   - 系统配置了全局异常过滤器 `AllExceptionsFilter`，会自动捕获所有未处理的异常并记录日志。
+   - 开发者应优先抛出 NestJS 标准异常（如 `BadRequestException`），无需手动记录 Error 日志，过滤器会自动处理。
