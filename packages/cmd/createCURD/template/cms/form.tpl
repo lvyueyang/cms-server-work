@@ -83,12 +83,12 @@ export default function {{entityName}}FormPage() {
         <Form.Item label="描述" name="desc">
           <Input.TextArea placeholder="可选输入" />
         </Form.Item>
-        Form.Item label="内容类型" name="content_type">
+        <Form.Item label="内容类型" name="content_type">
           <Select
             placeholder="可选"
             options={enumMapToOptions(ContentTypeMap)}
             allowClear
-            style={{ width: 200 }}
+            style={{'{{'}} width: 200 {{'}}'}}
           />
         </Form.Item>
         <Form.Item label="详情" dependencies={['content_type']}>

@@ -225,7 +225,14 @@ export default function {{entityName}}Page() {
         {{'}}'}}
       >
         <br />
-        <Form form={formModal.form} labelCol={{'{{'}} span: 4 {{'}}'}} initialValues={{'{{'}} redundancy_count: 1 {{'}}'}}>
+        <Form
+          form={formModal.form}
+          labelCol={{'{{'}} span: 4 {{'}}'}}
+          initialValues={{'{{'}}
+            is_available: false,
+            recommend: 0,
+          {{'}}'}}
+        >
           {formModal.formModal.type !== ModalType.CREATE && (
             <Form.Item label="ID" name="id" hidden>
               <Input disabled />

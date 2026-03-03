@@ -5,8 +5,7 @@ const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
 
-const loadTpl = (name) =>
-  fs.readFileSync(path.join(__dirname, `./template/cms/${name}`)).toString('utf-8');
+const loadTpl = (name) => fs.readFileSync(path.join(__dirname, `./template/cms/${name}`)).toString('utf-8');
 
 nunjucks.configure({ autoescape: true });
 
@@ -23,7 +22,7 @@ function createCms(name, cname) {
     name: name,
     cname: cname,
   };
-  const output = path.join(__dirname, '../../../clients/cms/src/pages', res.pathName);
+  const output = path.join(__dirname, '../../../clients/admin/src/pages', res.pathName);
   console.log('output: ', output);
 
   fse.ensureDirSync(output);
@@ -43,6 +42,8 @@ function createCms(name, cname) {
     ['module/index'],
     // 接口
     ['module/services'],
+    // Select
+    ['module/Select', 'tsx'],
   ].forEach(([key, ext = 'ts']) => {
     const content = nunjucks.renderString(loadTpl(`${key}.tpl`), res);
     fs.writeFile(path.join(output, `${key}.${ext}`), content, cbFn);

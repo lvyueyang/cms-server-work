@@ -1,9 +1,12 @@
-import { Body, Controller, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { createPermGroup } from '@/common/common.permission';
 import { ExportParamsDto, ResponseResult } from '@/interface';
-import { User } from '@/modules/user_admin/user-admin.decorator';
+import { UserAdminInfo } from '@/modules/user_admin/user_admin.dto';
 import { AdminRoleGuard } from '@/modules/user_admin_role/user_admin_role.guard';
 import { successResponse } from '@/utils';
+import { exportData } from '@/utils/exportData';
+import { UserByAdmin } from '../user_admin/user_admin.decorator';
 import {
   {{entityName}}ByIdParamDto,
   {{entityName}}CreateDto,
@@ -14,11 +17,6 @@ import {
   {{entityName}}UpdateDto,
 } from './{{name}}.dto';
 import { {{entityName}}Service } from './{{name}}.service';
-import { createPermGroup } from '@/common/common.permission';
-import Lang from '@/common/lang.decorator';
-import { ContentLang } from '@/constants';
-import { UserAdminInfo } from '@/modules/user_admin/user_admin.dto';
-import { exportData } from '@/utils/exportData';
 
 const MODULE_NAME = '{{cname}}';
 const createPerm = createPermGroup(MODULE_NAME);
@@ -44,11 +42,11 @@ export class {{entityName}}Controller {
   @ApiOkResponse({ type: ResponseResult<null> })
   @ApiBody({ type: ExportParamsDto })
   async export(@Body() body: ExportParamsDto) {
-    const dataList = await this.service.findExportAll();
+    const dataList = await this.services.findExportAll();
     return exportData({
       dataList,
       exportType: body.export_type,
-      repository: this.service.repository,
+      repository: this.services.repository,
       name: MODULE_NAME,
     });
   }
@@ -68,7 +66,7 @@ export class {{entityName}}Controller {
     type: {{entityName}}DetailResponseDto,
   })
   @AdminRoleGuard(createPerm('admin:{{name}}:create', `新增${MODULE_NAME}`))
-  async apiCreate(@Body() data: {{entityName}}CreateDto, @User() user: UserAdminInfo) {
+  async apiCreate(@Body() data: {{entityName}}CreateDto, @UserByAdmin() user: UserAdminInfo) {
     const newData = await this.services.create(data, user);
     return successResponse(newData, '创建成功');
   }
