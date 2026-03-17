@@ -1,6 +1,6 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Upload, UploadProps } from 'antd';
-import { openSelectFile } from '@/pages/file-manage/module/select';
+import { openSelectFile } from '@/routes/_main/file-manage/module/select';
 import { uploadFile } from '@/services';
 import { fileToUrl } from '@/utils';
 import { message } from '@/utils/notice';

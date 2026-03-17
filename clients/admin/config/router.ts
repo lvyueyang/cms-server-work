@@ -2,7 +2,7 @@ const router = {
   routes: [
     { path: '/login', component: 'login' },
     { path: '/nopassword', component: 'nopassword' },
-    { path: '/_init_root_user', component: 'init-root-user' },
+    { path: '/init-root-user', component: 'init-root-user' },
     { path: '/', redirect: '/user-admin/user-list' },
     { path: '/demos/grapesjs', component: 'demos/grapesjs/index' },
     {

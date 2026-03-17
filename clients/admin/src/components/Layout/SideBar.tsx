@@ -1,21 +1,23 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { useEffect, useState } from 'react';
-import { history, Link, useLocation } from 'umi';
+import { Link, useNavigate, useRouterState } from '@tanstack/react-router';
 import LOGO from '@/assets/logo.png';
 import { cls } from '@/utils';
-import { getDefaultOpenKeys, getNavMenu } from './getNavMenu';
+import { getDefaultOpenKeys, getNavMenu, getSelectedMenuKeys } from './getNavMenu';
 import styles from './index.module.less';
 
 const menuItems = getNavMenu();
 
 function useSelectMenu() {
-  const location = useLocation();
+  const location = useRouterState({
+    select: (state) => state.location,
+  });
   const [selectKeys, setSelectKeys] = useState<string[]>(() => {
-    return [location.pathname];
+    return getSelectedMenuKeys(location.pathname);
   });
   const [openKeys, setOpenKeys] = useState<string[]>(() => {
-    return getDefaultOpenKeys();
+    return getDefaultOpenKeys(location.pathname);
   });
   const [collapsed, setCollapsed] = useState(localStorage.getItem('sidebarCollapsed') === '1');
 
@@ -26,7 +28,7 @@ function useSelectMenu() {
   useEffect(() => {
     const openKeys = getDefaultOpenKeys(location.pathname);
     setOpenKeys(openKeys);
-    setSelectKeys(openKeys);
+    setSelectKeys(getSelectedMenuKeys(location.pathname));
   }, [location]);
 
   return {
@@ -40,7 +42,8 @@ function useSelectMenu() {
 }
 
 export default function SideBar() {
-  const { collapsed, selectKeys, setSelectKeys, setOpenKeys, toggleCollapsed } = useSelectMenu();
+  const { collapsed, openKeys, selectKeys, setSelectKeys, setOpenKeys, toggleCollapsed } = useSelectMenu();
+  const navigate = useNavigate();
   return (
     <div className={cls(styles.sideBarContainer, collapsed && styles.collapsed)}>
       <Link
@@ -61,11 +64,11 @@ export default function SideBar() {
         mode="inline"
         className={styles.menuList}
         items={menuItems as any}
-        // openKeys={openKeys}
+        openKeys={collapsed ? [] : openKeys}
         selectedKeys={selectKeys}
         onClick={(e) => {
           setSelectKeys([e.key]);
-          history.push(e.key);
+          navigate({ to: e.key });
         }}
         onOpenChange={(e) => {
           setOpenKeys(e);

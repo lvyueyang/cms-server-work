@@ -1,8 +1,8 @@
 import { FolderFilled, UploadOutlined } from '@ant-design/icons';
 import { UploadFile as AntUploadFile, Button, Space, Tooltip, Upload, UploadProps } from 'antd';
 import { useEffect, useState } from 'react';
-import { history } from 'umi';
-import { openSelectFile } from '@/pages/file-manage/module/select';
+import { useNavigate } from '@tanstack/react-router';
+import { openSelectFile } from '@/routes/_main/file-manage/module/select';
 import { uploadFile } from '@/services';
 import { fileToUrl } from '@/utils';
 import { message } from '@/utils/notice';
@@ -13,6 +13,7 @@ interface UploadFileProps {
   onSelect?: (files: { url: string; name: string; size: number; type: string }) => void;
 }
 export default function UploadFile({ value, onChange, onSelect }: UploadFileProps) {
+  const navigate = useNavigate();
   const changeHandler: UploadProps<string>['onChange'] = (e) => {
     if (e.file.response) {
       onChange?.(e.file.response);
@@ -114,7 +115,12 @@ export default function UploadFile({ value, onChange, onSelect }: UploadFileProp
               ghost
               onClick={(e) => {
                 e.stopPropagation();
-                history.push(`/file-manage?keyword=${value.split('/').pop()}`);
+                navigate({
+                  to: '/file-manage',
+                  search: {
+                    keyword: value.split('/').pop(),
+                  },
+                });
               }}
             >
               管理文件

@@ -1,6 +1,6 @@
 import { DictTypeInfo } from '@cms/api-interface';
 import { create } from 'zustand';
-import { getListAllApi } from '../pages/dict/module';
+import { getListAllApi } from '@/routes/_main/dict/module';
 
 interface DictStore {
   list: DictTypeInfo[];

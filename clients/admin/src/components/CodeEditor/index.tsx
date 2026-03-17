@@ -15,7 +15,7 @@ interface CodeEditorProps {
 export default function CodeEditor({ value, className, style, onChange }: CodeEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   // editor 实例
-  const editorRef = useRef<EditorView>();
+  const editorRef = useRef<EditorView | null>(null);
   // 保存最新的 onChange 回调
   const onChangeRef = useRef(onChange);
   // 编辑器内容
@@ -66,6 +66,7 @@ export default function CodeEditor({ value, className, style, onChange }: CodeEd
     editorRef.current = editor;
     return () => {
       editor.destroy();
+      editorRef.current = null;
     };
   }, []);
 

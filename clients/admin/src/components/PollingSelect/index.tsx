@@ -1,15 +1,18 @@
 import { Select, Tooltip } from 'antd';
-import { SelectProps } from 'rc-select';
-import { useSearchParams } from 'umi';
+import type { SelectProps } from 'antd';
+import { useNavigate, useRouterState } from '@tanstack/react-router';
 
 const pollingList = [5, 10, 15, 20, 25, 30, 40, 50, 60];
 
 export default function PollingSelect(
   props: Pick<SelectProps, 'className' | 'style' | 'value' | 'onChange'>,
 ) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const search = useRouterState({
+    select: (state) => state.location.search as Record<string, string | undefined>,
+  });
 
-  const polling = searchParams.get('polling');
+  const polling = search?.polling;
 
   return (
     <Tooltip title="设置轮询间隔" placement="left">
@@ -19,8 +22,13 @@ export default function PollingSelect(
         defaultValue={polling ? Number(polling) : 10}
         onChange={(e) => {
           console.log('e: ', e);
-          searchParams.set('polling', e);
-          setSearchParams(searchParams, { replace: true });
+          navigate({
+            search: (prev: any) => ({
+              ...(prev as Record<string, string | undefined>),
+              polling: String(e),
+            }),
+            replace: true,
+          } as any);
           location.reload();
         }}
       >
@@ -37,9 +45,9 @@ export default function PollingSelect(
 }
 
 export function usePollingInterval() {
-  const [searchParams] = useSearchParams();
-
-  const polling = searchParams.get('polling');
+  const polling = useRouterState({
+    select: (state) => (state.location.search as Record<string, string | undefined>)?.polling,
+  });
   if (polling) {
     return Number(polling) * 1000;
   }

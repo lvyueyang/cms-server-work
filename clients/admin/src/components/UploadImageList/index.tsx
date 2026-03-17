@@ -3,7 +3,7 @@ import { Button, Modal, Upload } from 'antd';
 import type { RcFile, UploadProps } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { useEffect, useState } from 'react';
-import { openSelectFile } from '@/pages/file-manage/module/select';
+import { openSelectFile } from '@/routes/_main/file-manage/module/select';
 import { uploadFile } from '@/services';
 import { fileToUrl } from '@/utils';
 import { message } from '@/utils/notice';

@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "umi build",
+    "build": "rsbuild build",
     "check": "tsc --noEmit",
-    "dev": "cross-env PORT=8088 umi dev",
-    "serverBuild": "umi build",
-    "setup": "umi setup",
+    "dev": "rsbuild dev",
+    "preview": "rsbuild preview",
     "start": "npm run dev"
   },
   "devDependencies": {
@@ -15,11 +14,20 @@
     "@ant-design/plots": "^2.6.8",
     "@ant-design/pro-components": "^2.8.10",
     "@aws-sdk/client-s3": "^3.554.0",
+    "@types/node": "^24.5.2",
     "@cms/api-interface": "workspace:*",
     "@cms/server": "workspace:*",
     "@codemirror/lang-html": "^6.4.11",
     "@codemirror/lang-javascript": "^6.2.4",
     "@codemirror/lang-json": "^6.0.2",
+    "@rsbuild/core": "^1.6.2",
+    "@rsbuild/plugin-less": "^1.1.2",
+    "@rsbuild/plugin-react": "^1.1.2",
+    "@rsbuild/plugin-sass": "^1.5.1",
+    "@rsbuild/plugin-type-check": "^1.2.1",
+    "@tanstack/react-router": "1.162.1",
+    "@tanstack/router-devtools": "1.162.1",
+    "@tanstack/router-plugin": "1.162.1",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-react": "^1.0.6",
     "@wangeditor/plugin-upload-attachment": "^1.1.0",
@@ -33,7 +41,8 @@
     "grapesjs-preset-webpage": "^1.0.3",
     "grapesjs-tui-image-editor": "^1.0.2",
     "path-to-regexp": "^8.3.0",
-    "umi": "^4.6.28",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "zustand": "^5.0.11"
   }
 }

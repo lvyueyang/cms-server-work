@@ -1,6 +1,6 @@
 import { FileManageInfo } from '@cms/api-interface';
 import { Editor } from 'grapesjs';
-import { getListApi } from '@/pages/file-manage/module/services';
+import { getListApi } from '@/routes/_main/file-manage/module/services';
 import { uploadFile } from '@/services';
 import { fileToUrl } from '@/utils';
 

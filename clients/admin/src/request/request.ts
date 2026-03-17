@@ -1,7 +1,8 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { history } from 'umi';
 import { TOKEN_KEY } from '@/constants';
+import { clearAuthToken, isPublicPath } from '@/router/auth';
 import { notification } from '@/utils/notice';
+import { router } from '@/router';
 
 export interface CustomConfig extends AxiosRequestConfig {
   // 请求错误时不弹出错误提示
@@ -13,8 +14,6 @@ export interface CustomConfig extends AxiosRequestConfig {
 const request = axios.create({
   baseURL: '/',
 });
-
-const ignoreLoginPaths = ['/login', '/nopassword'].map((p) => `/${p}`);
 
 /** 请求拦截 */
 request.interceptors.request.use((config) => {
@@ -34,8 +33,6 @@ request.interceptors.response.use(
     const response = error.response || {};
     const config = response.config as CustomConfig;
     const data = response.data || {};
-    console.log('data: ', data);
-
     // 忽略身份过期重定向
     if (data.statusCode !== 200) {
       // 是否忽略错误提示
@@ -43,8 +40,13 @@ request.interceptors.response.use(
         notification.error({ title: data.message.message || '请求失败', description: data.message.error || '' });
       }
       // 是否忽略身份过期跳转登录页
-      if (!config.ignoreLogin && data.statusCode === 401 && !ignoreLoginPaths.includes(history.location.pathname)) {
-        history.push('/login');
+      if (
+        !config.ignoreLogin &&
+        data.statusCode === 401 &&
+        !isPublicPath(router.state.location.pathname)
+      ) {
+        clearAuthToken();
+        router.navigate({ to: '/login', search: {}, replace: true } as any);
       }
     }
     return Promise.reject(error);

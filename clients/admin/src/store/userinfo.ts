@@ -18,7 +18,7 @@ export const useUserinfoStore = create<UserinfoStore>()(
       data: null,
       permissions: new Set<string>(),
       clear: () => {
-        set({ data: null, loading: false });
+        set({ data: null, loading: false, permissions: new Set<string>() });
       },
       load: async () => {
         set({ loading: true });
@@ -30,7 +30,9 @@ export const useUserinfoStore = create<UserinfoStore>()(
             data,
             // permissions: new Set<string>(permission_codes),
           });
-        } catch (e) {}
+        } catch (e) {
+          set({ data: null });
+        }
         set({ loading: false });
       },
     }),

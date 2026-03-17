@@ -103,11 +103,11 @@ export function fileToUrl(file: FileManageInfo | string, useName?: boolean) {
 }
 
 export function enumMapToOptions<T extends string>(enumMap: Map<T, { label: string; value?: T }>) {
-  const options = [];
+  const options: Array<{ label: string; value: T }> = [];
   for (const [key, item] of enumMap.entries()) {
     options.push({
       label: item.label,
-      value: key || item.value,
+      value: item.value ?? key,
     });
   }
   return options;

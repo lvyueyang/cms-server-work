@@ -31,7 +31,7 @@ FILE_DATA_DIR_PATH="~/node_server_data/cms_server"
 
 ## 初始化
 
-首次启动需创建超级管理员账户需主动打开 `/_cms_admin/_init_root_user` 页面进行超管初始化
+首次启动需创建超级管理员账户需主动打开 `/_cms_admin/init_root_user` 页面进行超管初始化
 
 # CMS UI 管理后台
 

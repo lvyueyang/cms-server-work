@@ -2,60 +2,23 @@ import { DownOutlined, FullscreenExitOutlined, FullscreenOutlined } from '@ant-d
 import { Setting } from '@icon-park/react';
 import { useFullscreen } from 'ahooks';
 import { Avatar, Breadcrumb, Dropdown } from 'antd';
-import { pathToRegexp } from 'path-to-regexp';
 import { useEffect, useRef } from 'react';
-import { history, useAppData, useLocation } from 'umi';
+import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { outLogin } from '@/services';
 import { useGlobalStore } from '@/store/global';
 import { useUserinfoStore } from '@/store/userinfo';
+import { getBreadcrumbItems } from './getNavMenu';
 import styles from './index.module.less';
 
-interface TreeNode {
-  path?: string;
-  title?: string;
-  children?: TreeNode[];
-}
-function getParentNodesByKey(
-  path?: string,
-  tree: TreeNode[] = [],
-  parentNodes: TreeNode[] = []
-): Omit<TreeNode, 'children'>[] | void {
-  for (const node of tree) {
-    const currentNode = {
-      title: node.title,
-      // onClick: () => {
-      //   if (node.path) {
-      //     history.push(node.path);
-      //   }
-      //   return false;
-      // },
-    };
-
-    if (new RegExp(pathToRegexp(node.path!)).test(path!)) {
-      return [...parentNodes, currentNode];
-    }
-    if (node.children) {
-      const result = getParentNodesByKey(path, node.children, [...parentNodes, currentNode]);
-      if (result) {
-        return result;
-      }
-    }
-  }
-  return void 0;
-}
-
 export function HeaderBreadcrumb() {
-  const { clientRoutes } = useAppData();
-  const location = useLocation();
+  const location = useRouterState({
+    select: (state) => state.location,
+  });
 
   const globalStore = useGlobalStore();
   useEffect(() => {
-    const menuRoutes = clientRoutes[0].children?.find((i: any) => i.meta?.isMenuRoot)?.children;
     const currentPathname = location.pathname;
-    const list = getParentNodesByKey(currentPathname, menuRoutes);
-    if (list) {
-      globalStore.updateHeaderBreadcrumbItems(list);
-    }
+    globalStore.updateHeaderBreadcrumbItems(getBreadcrumbItems(currentPathname));
   }, [location]);
 
   return <Breadcrumb items={globalStore.headerBreadcrumbItems} />;
@@ -77,6 +40,7 @@ function PageFullscreenButton(props: React.HTMLAttributes<HTMLDivElement>) {
 
 export default function HeaderBar() {
   const { data: userInfo } = useUserinfoStore();
+  const navigate = useNavigate();
 
   return (
     <div className={`${styles.headerContainer} header`}>
@@ -86,7 +50,7 @@ export default function HeaderBar() {
       <div className={styles.userContainer}>
         <div
           className={styles.item}
-          onClick={() => history.push('/setting')}
+          onClick={() => navigate({ to: '/setting' })}
         >
           <Setting size={19} />
         </div>
@@ -100,7 +64,7 @@ export default function HeaderBar() {
                 label: '个人资料',
                 key: 'userinfo',
                 onClick: () => {
-                  history.push('/userinfo');
+                  navigate({ to: '/userinfo' });
                 },
               },
               {
@@ -108,7 +72,7 @@ export default function HeaderBar() {
                 key: 'outlogin',
                 onClick: () => {
                   outLogin();
-                  history.push('/login');
+                  navigate({ to: '/login', search: { redirect: undefined } });
                 },
               },
             ],
