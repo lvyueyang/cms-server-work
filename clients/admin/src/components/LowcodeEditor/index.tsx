@@ -2,7 +2,7 @@ import { Modal } from 'antd';
 import { Editor } from 'grapesjs';
 import React, { useRef, useState } from 'react';
 import GrapesjsEditor from '../GrapesjsEditor';
-import styles from './index.module.less';
+import styles from './index.module.scss';
 
 interface LowCodeEditorProps {
   value?: string;

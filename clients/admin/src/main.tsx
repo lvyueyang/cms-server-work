@@ -5,7 +5,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider } from '@tanstack/react-router';
 import { ThemeProvider } from './theme';
-import './global.less';
+import './global.scss';
 import { router } from './router';
 
 dayjs.locale('zh-cn');

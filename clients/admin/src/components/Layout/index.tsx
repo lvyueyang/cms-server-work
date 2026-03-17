@@ -3,7 +3,7 @@ import { useLocation } from '@tanstack/react-router';
 import HeaderBar from './HeaderBar';
 import SideBar from './SideBar';
 import { getMenuViewByPathname, getNavMenu } from './getNavMenu';
-import styles from './index.module.less';
+import styles from './index.module.scss';
 
 interface IProps {
   children: React.ReactNode;

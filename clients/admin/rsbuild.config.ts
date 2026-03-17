@@ -1,6 +1,5 @@
 import path from 'node:path';
 import { defineConfig } from '@rsbuild/core';
-import { pluginLess } from '@rsbuild/plugin-less';
 import { pluginReact } from '@rsbuild/plugin-react';
 import { pluginSass } from '@rsbuild/plugin-sass';
 import { tanstackRouter } from '@tanstack/router-plugin/rspack';
@@ -10,7 +9,7 @@ const adminBase = `/${workConfig.cms_admin_path}`;
 const targetProxy = 'http://127.0.0.1:7001/';
 
 export default defineConfig({
-  plugins: [pluginReact(), pluginLess(), pluginSass()],
+  plugins: [pluginReact(), pluginSass()],
   source: {
     entry: {
       index: './src/main.tsx',

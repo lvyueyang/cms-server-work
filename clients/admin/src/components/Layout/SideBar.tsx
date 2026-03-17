@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import LOGO from '@/assets/logo.png';
 import { cls } from '@/utils';
 import { getDefaultOpenKeys, getMenuState, getMenuViewByPathname, getNavMenu } from './getNavMenu';
-import styles from './index.module.less';
+import styles from './index.module.scss';
 
 function useSelectMenu() {
   const location = useLocation();

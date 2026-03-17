@@ -5,7 +5,7 @@ import { Toolbar, Editor as WangEditor } from '@wangeditor/editor-for-react';
 import '@wangeditor/editor/dist/css/style.css';
 import attachmentModule from '@wangeditor/plugin-upload-attachment';
 import React, { useEffect, useState } from 'react';
-import './index.module.less';
+import './index.module.scss';
 
 interface InsertImageFn {
   (url: string, alt: string, href: string): void;

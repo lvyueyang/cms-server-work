@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import type { Editor as GrapesEditor, EditorConfig } from 'grapesjs';
 import 'grapesjs/dist/css/grapes.min.css';
-import styles from './index.module.less';
+import styles from './index.module.scss';
 import { Editor } from './editor';
 
 export interface GrapesjsEditorProps {

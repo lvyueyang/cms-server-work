@@ -15,7 +15,7 @@ import { useAppData } from "@/router";
 import { useGlobalStore } from "@/store/global";
 import { useUserinfoStore } from "@/store/userinfo";
 import { getMenuEntryPath, getMenuViewByPathname } from "./getNavMenu";
-import styles from "./index.module.less";
+import styles from "./index.module.scss";
 
 interface TreeNode {
 	path?: string;

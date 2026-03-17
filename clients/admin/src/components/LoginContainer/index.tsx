@@ -1,5 +1,5 @@
 import LOGO from '@/assets/logo.png';
-import styles from './index.module.less';
+import styles from './index.module.scss';
 
 export default function LoginContainer({ children }: React.PropsWithChildren) {
   return (

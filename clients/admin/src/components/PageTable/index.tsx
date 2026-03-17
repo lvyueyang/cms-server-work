@@ -1,6 +1,6 @@
 import { ParamsType, ProTable, ProTableProps } from '@ant-design/pro-components';
 import { cls } from '@/utils';
-import styles from './index.module.less';
+import styles from './index.module.scss';
 
 function PageTable<DataType extends Record<string, any>, Params extends ParamsType = ParamsType, ValueType = 'text'>(
   props: ProTableProps<DataType, Params, ValueType>

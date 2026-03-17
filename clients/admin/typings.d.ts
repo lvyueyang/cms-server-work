@@ -10,11 +10,6 @@ declare namespace NodeJS {
 declare module 'grapesjs-preset-newsletter';
 declare module 'grapesjs-preset-webpage';
 
-declare module '*.module.less' {
-  const classes: Record<string, string>;
-  export default classes;
-}
-
 declare module '*.module.scss' {
   const classes: Record<string, string>;
   export default classes;

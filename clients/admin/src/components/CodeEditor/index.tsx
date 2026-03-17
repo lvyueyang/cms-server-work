@@ -3,7 +3,7 @@ import { javascript } from '@codemirror/lang-javascript';
 import { json } from '@codemirror/lang-json';
 import { basicSetup, EditorView } from 'codemirror';
 import React, { useEffect, useRef, useState } from 'react';
-import './index.module.less';
+import './index.module.scss';
 
 interface CodeEditorProps {
   value?: string;

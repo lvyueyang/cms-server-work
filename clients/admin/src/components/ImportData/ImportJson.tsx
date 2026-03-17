@@ -3,7 +3,7 @@ import { Button, Flex, Form, Modal, ModalProps, message, Upload } from 'antd';
 import { ReactNode, useEffect, useState } from 'react';
 import { modal } from '@/utils/notice';
 import CodeEditor from '../CodeEditor';
-import styles from './index.module.less';
+import styles from './index.module.scss';
 
 interface ImportJsonProps {
   value: string;
