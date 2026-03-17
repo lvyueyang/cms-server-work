@@ -4,147 +4,160 @@
 
 ## 1. 项目概览
 
-本项目是一个基于 Monorepo 结构的内容管理系统 (CMS)，包含服务端、管理后台前端、CLI 工具及共享类型库。
+基于 Monorepo 的 CMS 系统，包含服务端、管理后台、CLI 工具和共享类型库。
 
-### 核心目录结构
-
-- **`server/`**: 服务端项目，基于 NestJS。提供 RESTful API，并包含部分前端资源构建（SSR/静态资源）。
-- **`clients/admin/`**: 管理后台前端，基于 React + Umi + Ant Design。
-- **`packages/api-interface/`**: 接口类型定义库。根据服务端接口生成，用于前后端类型共享。
-- **`packages/cmd/`**: 命令行工具集。包含用于快速生成 CRUD 接口代码和前端页面的脚本。
-- **`local_packages/`**: 本地依赖包。
+- **`server/`**: NestJS 服务端，提供 RESTful API
+- **`clients/admin/`**: React + Umi + Ant Design 管理后台
+- **`packages/api-interface/`**: 接口类型定义库
+- **`packages/cmd/`**: CRUD 代码生成工具
 
 ## 2. 技术栈
 
-### 服务端 (Server)
+- **服务端**: NestJS v10, TypeScript, TypeORM (MySQL), Swagger, Rspack, Winston, JWT, S3, Nodemailer
+- **管理后台**: Umi v4, React, Ant Design v6, Zustand, WangEditor, CodeMirror, GrapesJS
 
-- **核心框架**: [NestJS](https://nestjs.com/) (v10)
-- **语言**: TypeScript
-- **数据库 ORM**: TypeORM (MySQL)
-- **API 文档**: Swagger (@nestjs/swagger)
-- **构建工具**: Nest CLI, [Rspack](https://www.rspack.dev/) (用于 `views/` 下前端资源的构建)
-- **关键依赖**:
-  - `winston`: 日志管理
-  - `jsonwebtoken`: 身份验证 (JWT)
-  - `@aws-sdk/client-s3`: 文件存储 (S3 协议)
-  - `nodemailer`: 邮件发送
-  - `@alicloud/dysmsapi20170525`: 阿里云短信服务
+## 3. 常用命令
 
-### 管理后台 (Admin Client)
+### 开发
+- `pnpm dev:server`: 启动服务端 (NestJS)
+- `pnpm dev:admin`: 启动管理后台 (Umi)
+- `pnpm dev:fe`: 启动 Rspack 监听
 
-- **核心框架**: [Umi](https://umijs.org/) (v4)
-- **UI 组件库**: [Ant Design](https://ant.design/) (v6), Ant Design Pro Components
-- **状态管理**: Zustand
-- **富文本/代码编辑器**:
-  - WangEditor (富文本)
-  - CodeMirror (代码编辑)
-  - GrapesJS (低代码/页面构建)
-- **图表库**: @ant-design/plots
+### 构建
+- `pnpm build`: 构建全部 (Admin + Server)
+- `pnpm build:server`: 仅服务端
+- `pnpm build:admin`: 仅管理后台
 
-### CLI 工具 (Cmd)
+### CRUD 生成
+- `pnpm crud`: 交互式创建新模块
 
-- **模板引擎**: Nunjucks (用于生成代码模板)
-- **功能**: 提供 `crud` 命令，自动化生成 Controller, Service, Entity, DTO 以及对应的前端页面代码。
+### Lint 与格式化 (Biome)
+- `pnpm biome check .`: 检查代码
+- `pnpm biome check --write .`: 自动修复
 
-## 3. 常用命令 (Scripts)
+### 测试命令 (在 server/ 目录执行)
+- `pnpm test`: 运行所有测试
+- `pnpm test:watch`: 监听模式
+- `pnpm test:cov`: 覆盖率报告
+- `pnpm test:e2e`: 端到端测试
+- `pnpm test -- user.service.spec`: 运行单个测试文件
+- `pnpm test -- --testNamePattern=<name>`: 运行单个测试用例
 
-在项目根目录下执行以下命令：
+### 数据库迁移
+- `migration:generate -- <name>`: 生成迁移
+- `migration:run`: 运行迁移
+- `migration:revert`: 回滚迁移
 
-- **启动开发环境**:
-  - `pnpm dev:server`: 启动服务端开发模式 (NestJS)。
-  - `pnpm dev:admin`: 启动管理后台开发模式 (Umi)。
-  - `pnpm dev:fe`: 启动服务端内置前端资源的构建监听 (Rspack)。
+## 4. 开发工作流
 
-- **构建生产环境**:
-  - `pnpm build`: 构建所有项目 (Admin + Server)。
-  - `pnpm build:server`: 仅构建服务端。
-  - `pnpm build:admin`: 仅构建管理后台。
-  - `pnpm build:fe`: 构建服务端内置前端资源。
+1. **新增模块**: 使用 `pnpm crud` 命令
+2. **接口类型**: 维护在 `packages/api-interface`
+3. **服务端前端**: `server/views` 目录，React + Rspack
 
-- **代码生成**:
-  - `pnpm crud`: 运行 CRUD 生成器，交互式创建新模块。
+## 5. 代码规范
 
-## 4. 开发工作流指南
+### 格式化与 Lint
+- **工具**: Biome (`biome.json`)
+- **缩进**: Tab (禁止空格)
+- **引号**: 双引号 `"`
+- **导入排序**: Biome 自动处理
 
-1.  **新增业务模块**:
-    - 推荐使用 `pnpm crud` 命令。
-    - 该命令会基于 `packages/cmd/createCURD/template` 下的模板，在 `server/src/modules` 生成后端代码，并在 `clients/admin/src/pages` 生成前端管理页面。
+### TypeScript
+- **严格模式**: `strict: true`
+- **路径别名**: `@/` 指向 `src/`
+- **禁止 `any`**: 使用 `unknown` 或具体类型
+- **类型 vs 接口**: `type` 用于联合/字面量，`interface` 用于对象
 
-2.  **接口类型同步**:
-    - `packages/api-interface` 目录用于维护接口类型。
-    - 当后端 DTO 更新时，应注意同步更新此处的类型定义，以保证前端类型安全。
+### 命名规范
+- **文件**: kebab-case (`user.service.ts`)
+- **类/接口**: PascalCase (`UserService`)
+- **变量/函数**: camelCase (`userList`)
+- **常量**: UPPER_SNAKE_CASE
+- **布尔**: `is`, `has`, `can`, `should` 前缀
 
-3.  **服务端前端资源**:
-    - `server/views` 目录下的代码使用 React 编写，通过 Rspack 构建。
-    - 这部分通常用于需要服务端渲染或与服务端紧密集成的页面（如登录页、错误页等）。
+### 导入顺序
+```typescript
+// 1. Node 内置
+import { randomUUID } from 'node:crypto';
+// 2. 第三方
+import { Injectable } from '@nestjs/common';
+// 3. 项目内部 (使用路径别名)
+import { UserService } from '@/modules/user/user.service';
+// 4. 相对路径
+import { ApiTags } from '@nestjs/swagger';
+```
 
-## 5. 依赖管理
+### 禁用规则
+- **禁止 `uuid` 包**: 使用 `import { randomUUID } from 'node:crypto'`
+- **禁止 `var`**: 使用 `const` 或 `let`
+- **禁止 `any`**: 使用 `unknown`
 
-本项目使用 `pnpm` workspaces 管理依赖。
+### 错误处理
+优先使用 NestJS 内置异常:
+```typescript
+throw new BadRequestException('Invalid input');
+throw new NotFoundException('Not found');
+throw new UnauthorizedException('Unauthorized');
+throw new ForbiddenException('Access denied');
+```
+- 自定义异常: `src/modules/exception/`
+- 异步异常: `catchError` / `throwError` (RxJS)
 
-- 根目录 `package.json` 定义了工作区。
-- `clients/admin` 依赖于 workspace 中的 `@cms/api-interface` 和 `@cms/server`。
+### Controller/Service 规范
+- **Controller**: 请求接收、参数验证、调用 Service、返回响应
+- **Service**: 业务逻辑
+- **Entity**: 数据库表映射
+- **DTO**: `class-validator` 验证
 
-## 6. 代码规范
+### 前端规范 (Admin)
+- **组件目录**: `src/pages/`
+- **状态管理**: Zustand (`src/store/`)
+- **API 调用**: `useRequest` (ahooks) 或 React Query
+- **表单**: ProForm + rules
 
-- **服务端禁用 `uuid` 包**: 统一使用 `import { randomUUID } from 'node:crypto';` 生成 UUID。
-- 项目配置了 `Biome` 用于代码格式化和 Lint 检查。
-- 提交代码前请确保通过 Lint 检查。
+## 6. 日志规范
 
-## 7. 日志规范
+使用 `LoggerService` (Winston + AsyncLocalStorage)，自动 Trace ID 追踪。
 
-本项目使用增强版 `LoggerService`，集成了 `winston` 和 `AsyncLocalStorage`，实现了日志分级存储、结构化记录及全链路 Trace ID 追踪。
+### 分级存储
+- `error.log`: 错误日志
+- `warn.log`: 警告日志
+- `access.log`: HTTP 请求日志
+- `combined.log`: 业务日志
 
-### 核心特性
+### 使用方式
+```typescript
+// 注入
+constructor(private readonly logger: LoggerService) {}
 
-- **自动追踪 (Trace ID)**: 所有请求会自动生成或继承 `traceId`，无需手动传递。
-- **分级存储**:
-  - `error.log`: 仅存储错误日志。
-  - `warn.log`: 仅存储警告日志。
-  - `access.log`: 专门存储 HTTP 请求访问日志（context='HTTP'）。
-  - `combined.log`: 存储 Info 及以上级别的**业务逻辑日志**（不包含 HTTP 请求）。
-- **优化策略**:
-  - **日志分离**: 将高频的 HTTP 请求日志分离到 `access.log`，大幅减小 `combined.log` 体积。
-  - **自动压缩**: 历史日志文件自动进行 Gzip 压缩 (`.gz`)，节省磁盘空间。
-  - **大小限制**: `combined.log` 单个文件限制为 10MB，其他文件限制为 20MB。
-- **结构化**: 日志以 JSON 格式存储，便于后续分析。
+// 记录
+this.logger.log('操作信息', 'ServiceName');
+this.logger.warn('警告信息', 'ServiceName');
+this.logger.error('错误信息', error.stack, 'ServiceName');
+```
 
-### 使用指南
+全局异常过滤器 `AllExceptionsFilter` 会自动捕获未处理异常。
 
-1. **注入 Logger**:
-   在 Service 或 Controller 中注入 `LoggerService`。
+---
 
-   ```typescript
-   import { LoggerService } from '@/modules/logger/logger.service';
+依赖管理: pnpm workspaces。根目录 `package.json` 定义工作区。
 
-   @Injectable()
-   export class MyService {
-     constructor(private readonly logger: LoggerService) {}
+## 7. Git 提交规范
 
-     doSomething() {
-       this.logger.log('Operation started', 'MyService');
-     }
-   }
-   ```
+- **语言**: 必须使用简体中文
+- **格式**: `<类型>: <描述>`
+- **类型说明**:
+  - `feat`: 新功能
+  - `fix`: 修复 bug
+  - `refactor`: 重构
+  - `perf`: 性能优化
+  - `test`: 测试相关
+  - `docs`: 文档更新
+  - `chore`: 构建/工具链更新
 
-2. **记录日志**:
-   - **Info**: 记录常规业务流程信息。
-     ```typescript
-     this.logger.log({ action: 'create_user', userId: 123 }, 'UserService');
-     ```
-   - **Warn**: 记录非预期但不影响主流程的问题。
-     ```typescript
-     this.logger.warn('User missing profile', 'UserService');
-     ```
-   - **Error**: 记录导致当前操作失败的错误。**必须** 传递错误堆栈（如果存在）。
-     ```typescript
-     try {
-       // ...
-     } catch (error) {
-       this.logger.error('Failed to create user', error.stack, 'UserService');
-     }
-     ```
-
-3. **异常处理**:
-   - 系统配置了全局异常过滤器 `AllExceptionsFilter`，会自动捕获所有未处理的异常并记录日志。
-   - 开发者应优先抛出 NestJS 标准异常（如 `BadRequestException`），无需手动记录 Error 日志，过滤器会自动处理。
+### 示例
+```
+feat: 新增用户管理模块
+fix: 修复登录页验证码刷新问题
+refactor: 优化用户查询逻辑
+```
