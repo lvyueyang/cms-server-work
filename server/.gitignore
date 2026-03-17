@@ -402,4 +402,4 @@ admin-ui/*
 logs/*
 uploadfile/
 public/_fe_/
-.server_data
+.app_cache
