@@ -22,6 +22,7 @@ import { Route as MainSettingIndexRouteImport } from './routes/_main/setting/ind
 import { Route as MainLoggerIndexRouteImport } from './routes/_main/logger/index'
 import { Route as MainFileManageIndexRouteImport } from './routes/_main/file-manage/index'
 import { Route as MainDictIndexRouteImport } from './routes/_main/dict/index'
+import { Route as MainBusinessConfigIndexRouteImport } from './routes/_main/business-config/index'
 import { Route as MainUserAdminUserListRouteImport } from './routes/_main/user-admin/user-list'
 import { Route as MainUserAdminRoleListRouteImport } from './routes/_main/user-admin/role-list'
 import { Route as MainUserAdminClientListRouteImport } from './routes/_main/user-admin/client-list'
@@ -35,12 +36,10 @@ import { Route as MainI18nSystemTranslationRouteImport } from './routes/_main/i1
 import { Route as MainI18nContentTranslationRouteImport } from './routes/_main/i18n/content-translation'
 import { Route as MainDictIdRouteImport } from './routes/_main/dict/$id'
 import { Route as MainBannerListRouteImport } from './routes/_main/banner/list'
-import { Route as MainBannerCreateRouteImport } from './routes/_main/banner/create'
 import { Route as MainTrackMetaPropertiesRouteImport } from './routes/_main/track/meta/properties'
 import { Route as MainTrackMetaEventRouteImport } from './routes/_main/track/meta/event'
 import { Route as MainPublicArticleUpdateIdRouteImport } from './routes/_main/public-article/update.$id'
 import { Route as MainNewsUpdateIdRouteImport } from './routes/_main/news/update.$id'
-import { Route as MainBannerUpdateIdRouteImport } from './routes/_main/banner/update.$id'
 
 const MainRoute = MainRouteImport.update({
   id: '/_main',
@@ -104,6 +103,11 @@ const MainFileManageIndexRoute = MainFileManageIndexRouteImport.update({
 const MainDictIndexRoute = MainDictIndexRouteImport.update({
   id: '/dict/',
   path: '/dict/',
+  getParentRoute: () => MainRoute,
+} as any)
+const MainBusinessConfigIndexRoute = MainBusinessConfigIndexRouteImport.update({
+  id: '/business-config/',
+  path: '/business-config/',
   getParentRoute: () => MainRoute,
 } as any)
 const MainUserAdminUserListRoute = MainUserAdminUserListRouteImport.update({
@@ -173,11 +177,6 @@ const MainBannerListRoute = MainBannerListRouteImport.update({
   path: '/banner/list',
   getParentRoute: () => MainRoute,
 } as any)
-const MainBannerCreateRoute = MainBannerCreateRouteImport.update({
-  id: '/banner/create',
-  path: '/banner/create',
-  getParentRoute: () => MainRoute,
-} as any)
 const MainTrackMetaPropertiesRoute = MainTrackMetaPropertiesRouteImport.update({
   id: '/track/meta/properties',
   path: '/track/meta/properties',
@@ -199,18 +198,12 @@ const MainNewsUpdateIdRoute = MainNewsUpdateIdRouteImport.update({
   path: '/news/update/$id',
   getParentRoute: () => MainRoute,
 } as any)
-const MainBannerUpdateIdRoute = MainBannerUpdateIdRouteImport.update({
-  id: '/banner/update/$id',
-  path: '/banner/update/$id',
-  getParentRoute: () => MainRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/init-root-user/': typeof InitRootUserIndexRoute
   '/login/': typeof LoginIndexRoute
   '/nopassword/': typeof NopasswordIndexRoute
-  '/banner/create': typeof MainBannerCreateRoute
   '/banner/list': typeof MainBannerListRoute
   '/dict/$id': typeof MainDictIdRoute
   '/i18n/content-translation': typeof MainI18nContentTranslationRoute
@@ -224,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/user-admin/client-list': typeof MainUserAdminClientListRoute
   '/user-admin/role-list': typeof MainUserAdminRoleListRoute
   '/user-admin/user-list': typeof MainUserAdminUserListRoute
+  '/business-config/': typeof MainBusinessConfigIndexRoute
   '/dict/': typeof MainDictIndexRoute
   '/file-manage/': typeof MainFileManageIndexRoute
   '/logger/': typeof MainLoggerIndexRoute
@@ -232,7 +226,6 @@ export interface FileRoutesByFullPath {
   '/userinfo/': typeof MainUserinfoIndexRoute
   '/webhook-trans/': typeof MainWebhookTransIndexRoute
   '/demos/grapesjs/': typeof DemosGrapesjsIndexRoute
-  '/banner/update/$id': typeof MainBannerUpdateIdRoute
   '/news/update/$id': typeof MainNewsUpdateIdRoute
   '/public-article/update/$id': typeof MainPublicArticleUpdateIdRoute
   '/track/meta/event': typeof MainTrackMetaEventRoute
@@ -243,7 +236,6 @@ export interface FileRoutesByTo {
   '/init-root-user': typeof InitRootUserIndexRoute
   '/login': typeof LoginIndexRoute
   '/nopassword': typeof NopasswordIndexRoute
-  '/banner/create': typeof MainBannerCreateRoute
   '/banner/list': typeof MainBannerListRoute
   '/dict/$id': typeof MainDictIdRoute
   '/i18n/content-translation': typeof MainI18nContentTranslationRoute
@@ -257,6 +249,7 @@ export interface FileRoutesByTo {
   '/user-admin/client-list': typeof MainUserAdminClientListRoute
   '/user-admin/role-list': typeof MainUserAdminRoleListRoute
   '/user-admin/user-list': typeof MainUserAdminUserListRoute
+  '/business-config': typeof MainBusinessConfigIndexRoute
   '/dict': typeof MainDictIndexRoute
   '/file-manage': typeof MainFileManageIndexRoute
   '/logger': typeof MainLoggerIndexRoute
@@ -265,7 +258,6 @@ export interface FileRoutesByTo {
   '/userinfo': typeof MainUserinfoIndexRoute
   '/webhook-trans': typeof MainWebhookTransIndexRoute
   '/demos/grapesjs': typeof DemosGrapesjsIndexRoute
-  '/banner/update/$id': typeof MainBannerUpdateIdRoute
   '/news/update/$id': typeof MainNewsUpdateIdRoute
   '/public-article/update/$id': typeof MainPublicArticleUpdateIdRoute
   '/track/meta/event': typeof MainTrackMetaEventRoute
@@ -278,7 +270,6 @@ export interface FileRoutesById {
   '/init-root-user/': typeof InitRootUserIndexRoute
   '/login/': typeof LoginIndexRoute
   '/nopassword/': typeof NopasswordIndexRoute
-  '/_main/banner/create': typeof MainBannerCreateRoute
   '/_main/banner/list': typeof MainBannerListRoute
   '/_main/dict/$id': typeof MainDictIdRoute
   '/_main/i18n/content-translation': typeof MainI18nContentTranslationRoute
@@ -292,6 +283,7 @@ export interface FileRoutesById {
   '/_main/user-admin/client-list': typeof MainUserAdminClientListRoute
   '/_main/user-admin/role-list': typeof MainUserAdminRoleListRoute
   '/_main/user-admin/user-list': typeof MainUserAdminUserListRoute
+  '/_main/business-config/': typeof MainBusinessConfigIndexRoute
   '/_main/dict/': typeof MainDictIndexRoute
   '/_main/file-manage/': typeof MainFileManageIndexRoute
   '/_main/logger/': typeof MainLoggerIndexRoute
@@ -300,7 +292,6 @@ export interface FileRoutesById {
   '/_main/userinfo/': typeof MainUserinfoIndexRoute
   '/_main/webhook-trans/': typeof MainWebhookTransIndexRoute
   '/demos/grapesjs/': typeof DemosGrapesjsIndexRoute
-  '/_main/banner/update/$id': typeof MainBannerUpdateIdRoute
   '/_main/news/update/$id': typeof MainNewsUpdateIdRoute
   '/_main/public-article/update/$id': typeof MainPublicArticleUpdateIdRoute
   '/_main/track/meta/event': typeof MainTrackMetaEventRoute
@@ -313,7 +304,6 @@ export interface FileRouteTypes {
     | '/init-root-user/'
     | '/login/'
     | '/nopassword/'
-    | '/banner/create'
     | '/banner/list'
     | '/dict/$id'
     | '/i18n/content-translation'
@@ -327,6 +317,7 @@ export interface FileRouteTypes {
     | '/user-admin/client-list'
     | '/user-admin/role-list'
     | '/user-admin/user-list'
+    | '/business-config/'
     | '/dict/'
     | '/file-manage/'
     | '/logger/'
@@ -335,7 +326,6 @@ export interface FileRouteTypes {
     | '/userinfo/'
     | '/webhook-trans/'
     | '/demos/grapesjs/'
-    | '/banner/update/$id'
     | '/news/update/$id'
     | '/public-article/update/$id'
     | '/track/meta/event'
@@ -346,7 +336,6 @@ export interface FileRouteTypes {
     | '/init-root-user'
     | '/login'
     | '/nopassword'
-    | '/banner/create'
     | '/banner/list'
     | '/dict/$id'
     | '/i18n/content-translation'
@@ -360,6 +349,7 @@ export interface FileRouteTypes {
     | '/user-admin/client-list'
     | '/user-admin/role-list'
     | '/user-admin/user-list'
+    | '/business-config'
     | '/dict'
     | '/file-manage'
     | '/logger'
@@ -368,7 +358,6 @@ export interface FileRouteTypes {
     | '/userinfo'
     | '/webhook-trans'
     | '/demos/grapesjs'
-    | '/banner/update/$id'
     | '/news/update/$id'
     | '/public-article/update/$id'
     | '/track/meta/event'
@@ -380,7 +369,6 @@ export interface FileRouteTypes {
     | '/init-root-user/'
     | '/login/'
     | '/nopassword/'
-    | '/_main/banner/create'
     | '/_main/banner/list'
     | '/_main/dict/$id'
     | '/_main/i18n/content-translation'
@@ -394,6 +382,7 @@ export interface FileRouteTypes {
     | '/_main/user-admin/client-list'
     | '/_main/user-admin/role-list'
     | '/_main/user-admin/user-list'
+    | '/_main/business-config/'
     | '/_main/dict/'
     | '/_main/file-manage/'
     | '/_main/logger/'
@@ -402,7 +391,6 @@ export interface FileRouteTypes {
     | '/_main/userinfo/'
     | '/_main/webhook-trans/'
     | '/demos/grapesjs/'
-    | '/_main/banner/update/$id'
     | '/_main/news/update/$id'
     | '/_main/public-article/update/$id'
     | '/_main/track/meta/event'
@@ -511,6 +499,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainDictIndexRouteImport
       parentRoute: typeof MainRoute
     }
+    '/_main/business-config/': {
+      id: '/_main/business-config/'
+      path: '/business-config'
+      fullPath: '/business-config/'
+      preLoaderRoute: typeof MainBusinessConfigIndexRouteImport
+      parentRoute: typeof MainRoute
+    }
     '/_main/user-admin/user-list': {
       id: '/_main/user-admin/user-list'
       path: '/user-admin/user-list'
@@ -602,13 +597,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainBannerListRouteImport
       parentRoute: typeof MainRoute
     }
-    '/_main/banner/create': {
-      id: '/_main/banner/create'
-      path: '/banner/create'
-      fullPath: '/banner/create'
-      preLoaderRoute: typeof MainBannerCreateRouteImport
-      parentRoute: typeof MainRoute
-    }
     '/_main/track/meta/properties': {
       id: '/_main/track/meta/properties'
       path: '/track/meta/properties'
@@ -637,18 +625,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainNewsUpdateIdRouteImport
       parentRoute: typeof MainRoute
     }
-    '/_main/banner/update/$id': {
-      id: '/_main/banner/update/$id'
-      path: '/banner/update/$id'
-      fullPath: '/banner/update/$id'
-      preLoaderRoute: typeof MainBannerUpdateIdRouteImport
-      parentRoute: typeof MainRoute
-    }
   }
 }
 
 interface MainRouteChildren {
-  MainBannerCreateRoute: typeof MainBannerCreateRoute
   MainBannerListRoute: typeof MainBannerListRoute
   MainDictIdRoute: typeof MainDictIdRoute
   MainI18nContentTranslationRoute: typeof MainI18nContentTranslationRoute
@@ -662,6 +642,7 @@ interface MainRouteChildren {
   MainUserAdminClientListRoute: typeof MainUserAdminClientListRoute
   MainUserAdminRoleListRoute: typeof MainUserAdminRoleListRoute
   MainUserAdminUserListRoute: typeof MainUserAdminUserListRoute
+  MainBusinessConfigIndexRoute: typeof MainBusinessConfigIndexRoute
   MainDictIndexRoute: typeof MainDictIndexRoute
   MainFileManageIndexRoute: typeof MainFileManageIndexRoute
   MainLoggerIndexRoute: typeof MainLoggerIndexRoute
@@ -669,7 +650,6 @@ interface MainRouteChildren {
   MainSystemConfigIndexRoute: typeof MainSystemConfigIndexRoute
   MainUserinfoIndexRoute: typeof MainUserinfoIndexRoute
   MainWebhookTransIndexRoute: typeof MainWebhookTransIndexRoute
-  MainBannerUpdateIdRoute: typeof MainBannerUpdateIdRoute
   MainNewsUpdateIdRoute: typeof MainNewsUpdateIdRoute
   MainPublicArticleUpdateIdRoute: typeof MainPublicArticleUpdateIdRoute
   MainTrackMetaEventRoute: typeof MainTrackMetaEventRoute
@@ -677,7 +657,6 @@ interface MainRouteChildren {
 }
 
 const MainRouteChildren: MainRouteChildren = {
-  MainBannerCreateRoute: MainBannerCreateRoute,
   MainBannerListRoute: MainBannerListRoute,
   MainDictIdRoute: MainDictIdRoute,
   MainI18nContentTranslationRoute: MainI18nContentTranslationRoute,
@@ -691,6 +670,7 @@ const MainRouteChildren: MainRouteChildren = {
   MainUserAdminClientListRoute: MainUserAdminClientListRoute,
   MainUserAdminRoleListRoute: MainUserAdminRoleListRoute,
   MainUserAdminUserListRoute: MainUserAdminUserListRoute,
+  MainBusinessConfigIndexRoute: MainBusinessConfigIndexRoute,
   MainDictIndexRoute: MainDictIndexRoute,
   MainFileManageIndexRoute: MainFileManageIndexRoute,
   MainLoggerIndexRoute: MainLoggerIndexRoute,
@@ -698,7 +678,6 @@ const MainRouteChildren: MainRouteChildren = {
   MainSystemConfigIndexRoute: MainSystemConfigIndexRoute,
   MainUserinfoIndexRoute: MainUserinfoIndexRoute,
   MainWebhookTransIndexRoute: MainWebhookTransIndexRoute,
-  MainBannerUpdateIdRoute: MainBannerUpdateIdRoute,
   MainNewsUpdateIdRoute: MainNewsUpdateIdRoute,
   MainPublicArticleUpdateIdRoute: MainPublicArticleUpdateIdRoute,
   MainTrackMetaEventRoute: MainTrackMetaEventRoute,

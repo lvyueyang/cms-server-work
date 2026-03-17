@@ -80,6 +80,14 @@ export const adminMenuConfig: AdminMenuRoute[] = [
       menuGroup: businessMenuGroup,
     },
   },
+  {
+    path: '/business-config',
+    title: '业务配置',
+    meta: {
+      menuGroup: businessMenuGroup,
+    },
+  },
+
   // 管理员后台
   {
     path: '/user-admin',
@@ -183,6 +191,7 @@ export const adminMenuConfig: AdminMenuRoute[] = [
       menuGroup: platformMenuGroup,
     },
   },
+  
   {
     path: '/webhook-trans',
     title: 'Webhook中转',

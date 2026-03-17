@@ -22,6 +22,137 @@ export interface ResponseResult {
   message: string;
 }
 
+export interface BusinessConfigQueryListDto {
+  /**
+   * 分页查询-当前页
+   * @default 1
+   */
+  current?: number;
+  /**
+   * 分页查询-每页数量
+   * @default 10
+   */
+  page_size?: number;
+  /** 被排序的字段 key */
+  order_key?: string;
+  /**
+   * 排序方式 DESC 降序 ASC 倒序
+   * @default 10
+   */
+  order_type?: string;
+  /** 业务配置名称-模糊搜索 */
+  keyword?: string;
+}
+
+export interface BusinessConfigInfo {
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  create_date: string;
+  /**
+   * 更新时间
+   * @format date-time
+   */
+  update_date: string;
+  /** 业务配置 ID */
+  id: number;
+  /** 编码 */
+  code: string;
+  /** 业务配置标题 */
+  title: string;
+  /** 业务配置内容类型 */
+  content_type: string;
+  /** 业务配置详情 */
+  content: string;
+  /** 是否可用 */
+  is_available: boolean;
+  /** 是否已删除 */
+  is_delete: boolean;
+}
+
+export interface BusinessConfigList {
+  /** 列表 */
+  list: BusinessConfigInfo[];
+  /** 总数 */
+  total: number;
+}
+
+export interface BusinessConfigListResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: BusinessConfigList;
+}
+
+export interface BusinessConfigByIdParamDto {
+  /** 业务配置 ID */
+  id: number;
+}
+
+export interface BusinessConfigDetailResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: BusinessConfigInfo;
+}
+
+export interface BusinessConfigCreateDto {
+  /** 编码 */
+  code: string;
+  /** 业务配置标题 */
+  title: string;
+  /** 业务配置内容类型 */
+  content_type: string;
+  /** 业务配置详情 */
+  content: string;
+  /** 是否可用 */
+  is_available: boolean;
+}
+
+export interface BusinessConfigUpdateDto {
+  /** 编码 */
+  code?: string;
+  /** 业务配置标题 */
+  title?: string;
+  /** 业务配置内容类型 */
+  content_type?: string;
+  /** 业务配置详情 */
+  content?: string;
+  /** 是否可用 */
+  is_available?: boolean;
+  /** 业务配置 ID */
+  id: number;
+}
+
+export interface BusinessConfigDetailIdResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  data: number;
+}
+
 export interface UserAdminLoginBody {
   /** 密码 */
   password: string;
