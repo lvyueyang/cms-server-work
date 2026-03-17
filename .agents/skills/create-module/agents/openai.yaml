@@ -1,0 +1,4 @@
+interface:
+  display_name: "创建模块"
+  short_description: "按项目约定创建 server、admin、SSR 完整模块"
+  default_prompt: "Use $create-module to add a new module across server, admin, and SSR views in this project."
