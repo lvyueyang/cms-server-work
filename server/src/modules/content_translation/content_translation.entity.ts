@@ -35,7 +35,7 @@ export class ContentTranslation {
   lang: ContentLang;
 
   @ApiProperty({ description: '翻译值' })
-  @Column({ type: 'longtext' })
+  @Column({ type: 'text' })
   @IsNotEmpty()
   value: string;
 }

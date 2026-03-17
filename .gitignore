@@ -10,3 +10,4 @@ node_modules
 temp/
 .prod.env
 env_prod/*
+.helloagents

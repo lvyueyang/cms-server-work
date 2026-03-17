@@ -46,7 +46,7 @@ export class Banner extends BaseEntity {
   @ApiProperty({
     description: '广告详情',
   })
-  @Column({ type: 'longtext', nullable: true })
+  @Column({ type: 'text', nullable: true })
   content?: string;
 
   @ApiProperty({

@@ -1,11 +1,7 @@
 import { registerAs } from '@nestjs/config';
 
 export const databaseConfig = registerAs('database', () => ({
-  host: process.env.DATABASE_HOST,
-  port: Number(process.env.DATABASE_PORT),
-  username: process.env.DATABASE_USERNAME,
-  password: process.env.DATABASE_PASSWORD,
-  name: process.env.DATABASE_NAME,
+  path: process.env.DATABASE_PATH || 'db.sqlite',
 }));
 
 export const userConfig = registerAs('user', () => ({

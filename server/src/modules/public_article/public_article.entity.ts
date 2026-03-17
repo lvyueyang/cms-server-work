@@ -48,7 +48,7 @@ export class PublicArticle extends BaseEntity {
   @ApiProperty({
     description: '开放文章详情',
   })
-  @Column({ type: 'longtext' })
+  @Column({ type: 'text' })
   content: string;
 
   @ApiProperty({

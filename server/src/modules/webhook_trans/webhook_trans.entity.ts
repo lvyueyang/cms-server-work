@@ -27,19 +27,19 @@ export class WebhookTrans extends BaseEntity {
   @ApiProperty({
     description: '前置钩子函数',
   })
-  @Column({ type: 'longtext' })
+  @Column({ type: 'text' })
   before_hook_func: string;
 
   @ApiProperty({
     description: '数据转换函数',
   })
-  @Column({ type: 'longtext' })
+  @Column({ type: 'text' })
   data_trans_func: string;
 
   @ApiProperty({
     description: '回调函数',
   })
-  @Column({ type: 'longtext' })
+  @Column({ type: 'text' })
   callback_func: string;
 
   @ApiProperty({

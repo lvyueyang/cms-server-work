@@ -36,7 +36,7 @@ export class SystemConfig extends BaseEntity {
   @ApiProperty({
     description: '系统配置详情',
   })
-  @Column({ type: 'longtext', nullable: true })
+  @Column({ type: 'text', nullable: true })
   content: string;
 
   @ApiProperty({

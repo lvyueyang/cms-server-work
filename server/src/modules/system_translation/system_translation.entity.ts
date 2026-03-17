@@ -36,7 +36,7 @@ export class SystemTranslation extends BaseEntity {
   @ApiProperty({
     description: '国际化Value',
   })
-  @Column({ type: 'longtext' })
+  @Column({ type: 'text' })
   value: string;
 
   @ApiProperty({ description: '语言', enum: ContentLang })

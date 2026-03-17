@@ -33,7 +33,7 @@ export class News extends BaseEntity {
   @ApiProperty({
     description: '详情',
   })
-  @Column({ type: 'longtext' })
+  @Column({ type: 'text' })
   content: string;
 
   @ApiProperty({
