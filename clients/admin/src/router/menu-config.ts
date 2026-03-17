@@ -60,76 +60,27 @@ const platformMenuGroup = {
 
 export const adminMenuConfig: AdminMenuRoute[] = [
   {
-    path: '/public-article',
-    title: '公开文章管理',
-    menuHide: true,
+    path: '/public-article/list',
+    title: '公开文章',
     meta: {
       menuGroup: businessMenuGroup,
     },
-    routes: [
-      {
-        path: '/public-article/list',
-        title: '公开文章列表',
-      },
-      {
-        path: '/public-article/create',
-        title: '新增公开文章',
-      },
-      {
-        path: '/public-article/update/$id',
-        title: '修改公开文章',
-        menuHide: true,
-      },
-    ],
   },
   {
-    path: '/news',
+    path: '/news/list',
     title: '新闻管理',
-    menuHide: true,
     meta: {
       menuGroup: businessMenuGroup,
     },
-    routes: [
-      {
-        path: '/news/list',
-        title: '新闻列表',
-      },
-      {
-        path: '/news/create',
-        title: '新增新闻',
-        menuHide: true,
-      },
-      {
-        path: '/news/update/$id',
-        title: '修改新闻',
-        menuHide: true,
-      },
-    ],
   },
   {
-    path: '/banner',
+    path: '/banner/list',
     title: '广告管理',
-    menuHide: true,
     meta: {
       menuGroup: businessMenuGroup,
     },
-    routes: [
-      {
-        path: '/banner/list',
-        title: '广告列表',
-      },
-      {
-        path: '/banner/create',
-        title: '新增广告',
-        menuHide: true,
-      },
-      {
-        path: '/banner/update/$id',
-        title: '修改广告',
-        menuHide: true,
-      },
-    ],
   },
+  // 管理员后台
   {
     path: '/user-admin',
     title: '后台账户管理',

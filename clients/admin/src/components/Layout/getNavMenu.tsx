@@ -1,158 +1,200 @@
-import { BreadcrumbProps, type MenuProps } from 'antd';
-import { pathToRegexp } from 'path-to-regexp';
 import {
   adminMenuConfig,
-  AdminMenuView,
+  adminMenuViewRules,
   BUSINESS_MENU_KEY,
   PLATFORM_MENU_KEY,
+  type AppNavigableRoutePath,
+  type AdminMenuChildRoute,
+  type AdminMenuGroupKey,
+  type AdminRoutePath,
+  type AdminMenuRoute,
+  type AdminMenuView,
 } from '@/router/menu-config';
-import type { ForwardRefExoticComponent } from 'react';
+import { pathToRegexp } from 'path-to-regexp';
 
-interface RouterItem {
-  path: string;
-  icon?: ForwardRefExoticComponent<any>;
-  title?: string;
-  routes?: RouterItem[];
-  menuHide?: boolean;
+interface Item {
+  label: string;
+  icon?: JSX.Element;
+  key: string;
+  children?: Item[];
 }
 
-export function routers2menu(routers: RouterItem[]) {
-  const menuList: NonNullable<MenuProps['items']> = [];
+interface MenuGroupItem extends Item {
+  groupKey?: AdminMenuGroupKey;
+}
 
-  function loop(menus: NonNullable<MenuProps['items']>, children: RouterItem[]) {
+type AdminMenuNode = AdminMenuRoute | AdminMenuChildRoute;
+
+const MENU_VIEW_GROUP_MAP: Record<AdminMenuView, AdminMenuGroupKey> = {
+  business: BUSINESS_MENU_KEY,
+  platform: PLATFORM_MENU_KEY,
+};
+
+function getMenuGroup(route: AdminMenuRoute) {
+  return route.meta.menuGroup;
+}
+
+function matchRoutePath(path: AdminMenuNode['path'], pathname: string) {
+  return pathToRegexp(path.replace(/\$/g, ':')).regexp.test(pathname);
+}
+
+function getGroupKeyByView(view: AdminMenuView) {
+  return MENU_VIEW_GROUP_MAP[view];
+}
+
+function getMatchedRootRoute(pathname: string) {
+  return adminMenuConfig.find((route) => {
+    if (matchRoutePath(route.path, pathname)) {
+      return true;
+    }
+
+    return route.routes?.some((childRoute) => matchRoutePath(childRoute.path, pathname));
+  });
+}
+
+export function getMenuViewByPathname(pathname: string = location.pathname): AdminMenuView {
+  const hiddenRouteRule = adminMenuViewRules.find((rule) => matchRoutePath(rule.path, pathname));
+  if (hiddenRouteRule) {
+    return hiddenRouteRule.view;
+  }
+
+  const groupKey = getMatchedRootRoute(pathname)?.meta?.menuGroup.key;
+  return groupKey === PLATFORM_MENU_KEY ? 'platform' : 'business';
+}
+
+export function routers2menu(routers: AdminMenuNode[]) {
+  const menuList: Item[] = [];
+
+  function loop(menus: Item[], children: AdminMenuNode[]) {
     children.forEach((route) => {
-      if (route.menuHide) {
-        if (route.routes?.length) {
-          loop(menus, route.routes);
-        }
-        return;
-      }
-      const Icon = route.icon;
-      const item: NonNullable<MenuProps['items']>[number] = {
-        label: route.title || '',
-        icon: Icon ? <Icon /> : void 0,
-        key: `${route.path}`,
+      if (route.menuHide) return;
+
+      const item: Item = {
+        label: route.title,
+        key: route.path,
       };
 
       if (route.routes) {
-        (item as any).children = [];
-        loop((item as any).children, route.routes);
+        item.children = [];
+        loop(item.children, route.routes);
       }
-      if ((item as any).children) {
-        if ((item as any).children.length <= 1) {
-          menus.push(...(item as any).children);
-          return;
-        }
+
+      if (item.children && item.children.length <= 1) {
+        menus.push(...item.children);
+        return;
       }
+
       menus.push(item);
     });
   }
+
   loop(menuList, routers);
   return menuList;
 }
 
-export function getNavMenu() {
-  return routers2menu(adminMenuConfig);
-}
+function getFirstVisiblePath(routers: AdminMenuNode[]): AppNavigableRoutePath | undefined {
+  for (const route of routers) {
+    if (route.menuHide) continue;
 
-interface TrailNode {
-  path: string;
-  title?: string;
-  menuHide?: boolean;
-  routes?: TrailNode[];
-}
+    if (route.routes) {
+      const childPath = getFirstVisiblePath(route.routes);
+      if (childPath) {
+        return childPath;
+      }
+    }
 
-function normalizeToRegexpPath(path: string) {
-  // TanStack file route params use `$id` 形式，这里转换成 path-to-regexp 可识别的 `:id`
-  return path.replace(/\$([A-Za-z0-9_]+)/g, ':$1');
-}
-
-function matchPath(pattern: string, pathname: string) {
-  try {
-    const { regexp } = pathToRegexp(normalizeToRegexpPath(pattern));
-    return regexp.test(pathname);
-  } catch {
-    return false;
+    return route.path as AppNavigableRoutePath;
   }
+
+  return undefined;
 }
 
-function findTrailByPath(
+export function getMenuEntryPath(view: AdminMenuView): AppNavigableRoutePath {
+  const entryPath = getFirstVisiblePath(
+    adminMenuConfig.filter((route) => getMenuGroup(route).key === getGroupKeyByView(view)),
+  );
+
+  if (entryPath) {
+    return entryPath;
+  }
+
+  // In practice this can happen when a whole menu view is temporarily hidden
+  // (e.g. feature flag, permissions, or mis-config). Never hard-crash the app.
+  const fallbackView: AdminMenuView = view === 'business' ? 'platform' : 'business';
+  const fallbackPath = getFirstVisiblePath(
+    adminMenuConfig.filter((route) => getMenuGroup(route).key === getGroupKeyByView(fallbackView)),
+  );
+  if (fallbackPath) {
+    console.warn(`[menu] Missing visible menu entry for ${view}, fallback to ${fallbackView}: ${fallbackPath}`);
+    return fallbackPath;
+  }
+
+  throw new Error(`Missing visible menu entry for ${view} and ${fallbackView}`);
+}
+
+export function getNavMenu(view: AdminMenuView) {
+  const currentGroupKey = getGroupKeyByView(view);
+  return adminMenuConfig
+    .filter((route) => getMenuGroup(route).key === currentGroupKey)
+    .flatMap((route) => {
+      const [menuItem] = routers2menu([route]) as MenuGroupItem[];
+      if (!menuItem) {
+        return [];
+      }
+      menuItem.groupKey = currentGroupKey;
+      return [menuItem];
+    });
+}
+
+function findMatchedMenuKeys(
   pathname: string,
-  routes: TrailNode[],
-  parents: TrailNode[] = [],
-): TrailNode[] | null {
-  for (const route of routes) {
-    const nextParents = route.routes?.length ? [...parents, route] : parents;
-    if (matchPath(route.path, pathname)) {
-      return [...parents, route];
+  routers: AdminMenuNode[],
+  parentKeys: string[] = [],
+): string[] | undefined {
+  for (const route of routers) {
+    const visibleKeys = !route.menuHide ? [...parentKeys, route.path] : parentKeys;
+
+    if (route.routes) {
+      const result = findMatchedMenuKeys(pathname, route.routes, visibleKeys);
+      if (result) {
+        return result;
+      }
     }
-    if (route.routes?.length) {
-      const result = findTrailByPath(pathname, route.routes, nextParents);
-      if (result) return result;
-    }
-  }
-  return null;
-}
 
-function pickDefaultVisibleChildPath(route: TrailNode) {
-  const queue: TrailNode[] = [...(route.routes ?? [])];
-  while (queue.length) {
-    const node = queue.shift()!;
-    if (node.routes?.length) {
-      queue.unshift(...node.routes);
-      continue;
-    }
-    if (!node.menuHide) return node.path;
-  }
-  return null;
-}
-
-export function getDefaultOpenKeys(pathname: string) {
-  const trail = findTrailByPath(pathname, adminMenuConfig as any);
-  if (!trail?.length) return [];
-  // openKeys 只保留父级
-  return trail.slice(0, -1).map((n) => n.path);
-}
-
-export function getSelectedMenuKeys(pathname: string) {
-  const trail = findTrailByPath(pathname, adminMenuConfig as any);
-  if (!trail?.length) return [];
-
-  const last = trail[trail.length - 1];
-  if (!last.menuHide && !last.routes?.length) return [last.path];
-
-  // 当前落在隐藏页或父级节点上时，选中其最近的可见叶子（通常是 list 页）
-  for (let i = trail.length - 1; i >= 0; i--) {
-    const node = trail[i];
-    if (node.routes?.length) {
-      const entry = pickDefaultVisibleChildPath(node);
-      if (entry) return [entry];
+    if (matchRoutePath(route.path, pathname)) {
+      return visibleKeys;
     }
   }
-  return [];
+
+  return void 0;
 }
 
-export function getMenuEntryPath(view: AdminMenuView = 'business') {
-  const groupKey = view === 'platform' ? PLATFORM_MENU_KEY : BUSINESS_MENU_KEY;
-  const groupRoutes = adminMenuConfig.filter((item) => item.meta.menuGroup.key === groupKey) as any as TrailNode[];
+export function getMenuState(
+  pathname: string = location.pathname,
+  view: AdminMenuView = getMenuViewByPathname(pathname),
+) {
+  const matchedKeys = findMatchedMenuKeys(pathname, adminMenuConfig) || [];
+  const openKeys = matchedKeys.slice(0, -1);
+  const matchedRootRoute = adminMenuConfig.find((route) => route.path === matchedKeys[0]);
+  const matchedGroupKey = matchedRootRoute?.meta?.menuGroup.key;
+  const currentGroupKey = getGroupKeyByView(view);
 
-  for (const route of groupRoutes) {
-    if (route.routes?.length) {
-      const entry = pickDefaultVisibleChildPath(route);
-      if (entry) return entry;
-    }
-    if (!route.menuHide) return route.path;
+  if (matchedGroupKey && matchedGroupKey !== currentGroupKey) {
+    return {
+      selectedKeys: [],
+      openKeys: [],
+    };
   }
 
-  return '/login';
+  return {
+    selectedKeys: matchedKeys.length > 0 ? [matchedKeys[matchedKeys.length - 1]] : [],
+    openKeys,
+  };
 }
 
-export function getBreadcrumbItems(pathname: string): BreadcrumbProps['items'] {
-  const trail = findTrailByPath(pathname, adminMenuConfig as any);
-  if (!trail?.length) return [];
-  return trail
-    .filter((n) => !!n.title)
-    .map((n) => ({
-      title: n.title,
-    }));
+export function getDefaultOpenKeys(
+  pathname: string = location.pathname,
+  view: AdminMenuView = getMenuViewByPathname(pathname),
+) {
+  return getMenuState(pathname, view).openKeys;
 }

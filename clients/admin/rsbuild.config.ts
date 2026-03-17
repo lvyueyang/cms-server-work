@@ -8,8 +8,6 @@ import workConfig from '../../work.config.json';
 
 const adminBase = `/${workConfig.cms_admin_path}`;
 const targetProxy = 'http://127.0.0.1:7001/';
-const reactPath = path.resolve(__dirname, 'node_modules/react');
-const reactDomPath = path.resolve(__dirname, 'node_modules/react-dom');
 
 export default defineConfig({
   plugins: [pluginReact(), pluginLess(), pluginSass()],
@@ -21,13 +19,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      // Monorepo 场景下强制 React 单实例，避免 hooks dispatcher 错位导致的运行时崩溃
-      react: reactPath,
-      'react/jsx-runtime': path.join(reactPath, 'jsx-runtime'),
-      'react/jsx-dev-runtime': path.join(reactPath, 'jsx-dev-runtime'),
-      'react-dom': reactDomPath,
-      'react-dom/client': path.join(reactDomPath, 'client'),
-      'react-dom/server': path.join(reactDomPath, 'server'),
     },
   },
   html: {

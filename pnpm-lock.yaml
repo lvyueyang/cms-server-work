@@ -162,12 +162,6 @@ importers:
       path-to-regexp:
         specifier: ^8.3.0
         version: 8.3.0
-      react:
-        specifier: 18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: 18.2.0
-        version: 18.2.0(react@18.2.0)
       zustand:
         specifier: ^5.0.11
         version: 5.0.11(@types/react@18.2.79)(immer@9.0.21)(react@18.2.0)(use-sync-external-store@1.6.0(react@18.2.0))

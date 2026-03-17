@@ -41,6 +41,7 @@ function Login() {
 		},
 		clear: () => ({
 			to: "/login",
+			search: { redirect: undefined },
 		}),
 	});
 	return (

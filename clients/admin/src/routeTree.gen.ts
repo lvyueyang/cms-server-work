@@ -14,7 +14,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as NopasswordIndexRouteImport } from './routes/nopassword/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as InitRootUserIndexRouteImport } from './routes/init-root-user/index'
-import { Route as AuditReportTokenRouteImport } from './routes/audit-report.$token'
 import { Route as DemosGrapesjsIndexRouteImport } from './routes/demos/grapesjs/index'
 import { Route as MainWebhookTransIndexRouteImport } from './routes/_main/webhook-trans/index'
 import { Route as MainUserinfoIndexRouteImport } from './routes/_main/userinfo/index'
@@ -65,11 +64,6 @@ const LoginIndexRoute = LoginIndexRouteImport.update({
 const InitRootUserIndexRoute = InitRootUserIndexRouteImport.update({
   id: '/init-root-user/',
   path: '/init-root-user/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuditReportTokenRoute = AuditReportTokenRouteImport.update({
-  id: '/audit-report/$token',
-  path: '/audit-report/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemosGrapesjsIndexRoute = DemosGrapesjsIndexRouteImport.update({
@@ -213,7 +207,6 @@ const MainBannerUpdateIdRoute = MainBannerUpdateIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/audit-report/$token': typeof AuditReportTokenRoute
   '/init-root-user/': typeof InitRootUserIndexRoute
   '/login/': typeof LoginIndexRoute
   '/nopassword/': typeof NopasswordIndexRoute
@@ -247,7 +240,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/audit-report/$token': typeof AuditReportTokenRoute
   '/init-root-user': typeof InitRootUserIndexRoute
   '/login': typeof LoginIndexRoute
   '/nopassword': typeof NopasswordIndexRoute
@@ -283,7 +275,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_main': typeof MainRouteWithChildren
-  '/audit-report/$token': typeof AuditReportTokenRoute
   '/init-root-user/': typeof InitRootUserIndexRoute
   '/login/': typeof LoginIndexRoute
   '/nopassword/': typeof NopasswordIndexRoute
@@ -319,7 +310,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/audit-report/$token'
     | '/init-root-user/'
     | '/login/'
     | '/nopassword/'
@@ -353,7 +343,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/audit-report/$token'
     | '/init-root-user'
     | '/login'
     | '/nopassword'
@@ -388,7 +377,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_main'
-    | '/audit-report/$token'
     | '/init-root-user/'
     | '/login/'
     | '/nopassword/'
@@ -424,7 +412,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   MainRoute: typeof MainRouteWithChildren
-  AuditReportTokenRoute: typeof AuditReportTokenRoute
   InitRootUserIndexRoute: typeof InitRootUserIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   NopasswordIndexRoute: typeof NopasswordIndexRoute
@@ -466,13 +453,6 @@ declare module '@tanstack/react-router' {
       path: '/init-root-user'
       fullPath: '/init-root-user/'
       preLoaderRoute: typeof InitRootUserIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/audit-report/$token': {
-      id: '/audit-report/$token'
-      path: '/audit-report/$token'
-      fullPath: '/audit-report/$token'
-      preLoaderRoute: typeof AuditReportTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demos/grapesjs/': {
@@ -730,7 +710,6 @@ const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MainRoute: MainRouteWithChildren,
-  AuditReportTokenRoute: AuditReportTokenRoute,
   InitRootUserIndexRoute: InitRootUserIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   NopasswordIndexRoute: NopasswordIndexRoute,
