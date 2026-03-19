@@ -1,14 +1,13 @@
-import { Injectable } from "@nestjs/common";
+import { ExecutionContext, Injectable } from "@nestjs/common";
 import i18next from "i18next";
-import { isValidElement } from "react";
+import { isValidElement, ReactNode } from "react";
 import { ContentLang } from "@/constants";
 import { isDefaultI18nLang } from "@/utils";
 import { BusinessConfig } from "../business_config/business_config.entity";
 import { BusinessConfigService } from "../business_config/business_config.service";
 import { LoggerService } from "../logger/logger.service";
 import { SystemTranslationService } from "../system_translation/system_translation.service";
-import { RenderViewResult } from "./render_view.decorator";
-import { ErrorPage, ReactTemplateEngine } from "./render_view.engine";
+
 export interface GlobalData {
 	company_email: string;
 	company_tell: string;
@@ -23,7 +22,6 @@ export interface GlobalData {
 @Injectable()
 export class RenderViewService {
 	static globalDataI18n = {} as Record<ContentLang, GlobalData>;
-	public templateEngine: ReactTemplateEngine;
 
 	constructor(
 		private logger: LoggerService,
@@ -35,63 +33,14 @@ export class RenderViewService {
 			debug: false,
 		});
 		this.loadGlobal();
-		this.templateEngine = new ReactTemplateEngine();
 		this.loadI18n();
 	}
 
 	handler = (
-		renderCtx: RenderViewResult,
-		context: RenderViewResult["context"],
+		components: ReactNode,
+		context: ExecutionContext,
 	) => {
-		renderCtx.useContext(context);
-		const jsxElement = renderCtx?._render();
-		const t = renderCtx.t;
-		try {
-			// 检查是否返回了JSX组件（React元素）
-			let htmlContent = "";
-			if (isValidElement(jsxElement)) {
-				// 直接渲染JSX组件
-				htmlContent = this.templateEngine.renderJSX(jsxElement);
-			} else if (typeof jsxElement === "string") {
-				htmlContent = jsxElement;
-			} else {
-				htmlContent = this.templateEngine.render(
-					<ErrorPage title="渲染错误" message="页面渲染时返回了无效的内容" />,
-				);
-			}
-
-			const lang = renderCtx.getLang();
-			const { custom_header_code, custom_footer_code } =
-				this.getGlobalData(lang);
-
-			// 包装在布局中
-			const html = this.templateEngine.renderPageHtml({
-				title: `${t(renderCtx?.title || "")} - ${t("xxxx")}`,
-				description: renderCtx.description,
-				styles: renderCtx.styles,
-				scripts: renderCtx.scripts,
-				meta: renderCtx.meta,
-				content: htmlContent,
-				lang: renderCtx.getLang(),
-				globalHeader: custom_header_code,
-				globalFooter: custom_footer_code,
-				keywords: this.getGlobalData(lang).keywords,
-				header: `<script>
-          window.lang = "${lang}";
-        </script>`,
-			});
-			return html;
-		} catch (error) {
-			console.error("Page render error:", error);
-			const errorHtml = this.templateEngine.renderPageHtml({
-				title: "错误",
-				description: "",
-				content: this.templateEngine.render(
-					<ErrorPage title="服务器错误" message="抱歉，页面渲染时发生了错误" />,
-				),
-			});
-			return errorHtml;
-		}
+		
 	};
 
 	renderNotFoundPage = () => {
@@ -103,21 +52,6 @@ export class RenderViewService {
 			),
 		});
 	};
-
-	async render(jsxElement: React.ReactNode) {
-		let htmlContent = "";
-		if (isValidElement(jsxElement)) {
-			// 直接渲染JSX组件
-			htmlContent = this.templateEngine.renderJSX(jsxElement);
-		} else if (typeof jsxElement === "string") {
-			htmlContent = jsxElement;
-		} else {
-			htmlContent = this.templateEngine.render(
-				<ErrorPage title="渲染错误" message="页面渲染时返回了无效的内容" />,
-			);
-		}
-		return htmlContent;
-	}
 
 	static getGlobalData = (lang: ContentLang): GlobalData => {
 		if (isDefaultI18nLang(lang)) {
