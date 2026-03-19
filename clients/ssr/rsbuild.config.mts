@@ -79,10 +79,10 @@ function createUseClientPlugin() {
 			api.transform(
 				{
 					test: /\.[jt]sx?$/,
-					targets: ["node", "web"],
+					targets: ["node"],
 				},
-				(args: { code: string; resourcePath: string; target?: string }) => {
-					const { code, resourcePath, target } = args;
+				(args: { code: string; resourcePath: string }) => {
+					const { code, resourcePath } = args;
 					if (!resourcePath.startsWith(srcDir) || !isUseClientModule(code)) {
 						return null;
 					}
@@ -90,27 +90,40 @@ function createUseClientPlugin() {
 					const moduleId = normalizeModuleId(resourcePath);
 					const runtimeImportPath = createRuntimeImportPath(resourcePath);
 					const { exportNames, hasDefaultExport } = parseUseClientExports(code);
+					const statements = [
+						`import { createClientComponentReference } from "${runtimeImportPath}";`,
+					];
+					for (const exportName of exportNames) {
+						statements.push(
+							`export const ${exportName} = createClientComponentReference("${moduleId}", "${exportName}");`,
+						);
+					}
+					if (hasDefaultExport) {
+						statements.push(
+							`const __default_export__ = createClientComponentReference("${moduleId}", "default");`,
+						);
+						statements.push("export default __default_export__;");
+					}
+					return {
+						code: statements.join("\n"),
+					};
+				},
+			);
 
-					if (target !== "web") {
-						const statements = [
-							`import { createClientComponentReference } from "${runtimeImportPath}";`,
-						];
-						for (const exportName of exportNames) {
-							statements.push(
-								`export const ${exportName} = createClientComponentReference("${moduleId}", "${exportName}");`,
-							);
-						}
-						if (hasDefaultExport) {
-							statements.push(
-								`const __default_export__ = createClientComponentReference("${moduleId}", "default");`,
-							);
-							statements.push("export default __default_export__;");
-						}
-						return {
-							code: statements.join("\n"),
-						};
+			api.transform(
+				{
+					test: /\.[jt]sx?$/,
+					targets: ["web"],
+				},
+				(args: { code: string; resourcePath: string }) => {
+					const { code, resourcePath } = args;
+					if (!resourcePath.startsWith(srcDir) || !isUseClientModule(code)) {
+						return null;
 					}
 
+					const moduleId = normalizeModuleId(resourcePath);
+					const runtimeImportPath = createRuntimeImportPath(resourcePath);
+					const { exportNames, hasDefaultExport } = parseUseClientExports(code);
 					const registerLines = [
 						code,
 						`import { registerClientComponent } from "${runtimeImportPath}";`,

@@ -17,6 +17,12 @@ export function HtmlDocument({
 	bootstrap: SsrBootstrapPayload;
 	rootHtml?: string;
 }>) {
+	const clientBootstrap = {
+		lang: bootstrap.lang,
+		translations: bootstrap.translations,
+		currentUser: bootstrap.currentUser,
+	};
+
 	return (
 		<html lang={lang}>
 			<head>
@@ -38,7 +44,7 @@ export function HtmlDocument({
 					id="__CMS_SSR_DATA__"
 					type="application/json"
 					dangerouslySetInnerHTML={{
-						__html: JSON.stringify(bootstrap).replace(/<\//g, "<\\/"),
+						__html: JSON.stringify(clientBootstrap).replace(/<\//g, "<\\/"),
 					}}
 				/>
 				{assets.js.map((src) => (

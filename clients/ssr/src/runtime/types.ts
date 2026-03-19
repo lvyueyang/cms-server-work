@@ -37,7 +37,7 @@ export interface PageComponentProps<TPageData = unknown> {
 export interface SsrBootstrapPayload {
 	lang: string;
 	translations: Record<string, string>;
-	globalData: GlobalData;
+	globalData?: GlobalData;
 	currentUser: CurrentUserInfo | null;
 }
 
