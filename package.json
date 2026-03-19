@@ -15,7 +15,7 @@
     "build:ssr": "npm run build --prefix ./clients/ssr",
     "build:admin": "npm run build --prefix ./clients/admin",
     "build:server": "npm run build --prefix ./server",
-    "dev": "pnpm dlx concurrently -n ssr,server,admin -c blue,green,magenta \"pnpm dev:ssr\" \"pnpm dev:server\" \"pnpm dev:admin\"",
+    "dev": "pnpm dlx concurrently --kill-others-on-fail -n ssr,server,admin -c blue,green,magenta \"pnpm dev:ssr\" \"pnpm dev:server\" \"pnpm dev:admin\"",
     "dev:fe": "npm run dev:ssr",
     "dev:ssr": "npm run dev --prefix ./clients/ssr",
     "dev:admin": "npm run dev --prefix ./clients/admin",

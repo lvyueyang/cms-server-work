@@ -27,6 +27,9 @@
       },
       "suspicious": {
         "noConstEnum": "off"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
       }
     }
   },

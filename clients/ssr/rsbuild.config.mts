@@ -81,7 +81,7 @@ function createUseClientPlugin() {
 					test: /\.[jt]sx?$/,
 					targets: ["node", "web"],
 				},
-				(args: { code: string; resourcePath: string; target: "node" | "web" }) => {
+				(args: { code: string; resourcePath: string; target?: string }) => {
 					const { code, resourcePath, target } = args;
 					if (!resourcePath.startsWith(srcDir) || !isUseClientModule(code)) {
 						return null;
@@ -91,7 +91,7 @@ function createUseClientPlugin() {
 					const runtimeImportPath = createRuntimeImportPath(resourcePath);
 					const { exportNames, hasDefaultExport } = parseUseClientExports(code);
 
-					if (target === "node") {
+					if (target !== "web") {
 						const statements = [
 							`import { createClientComponentReference } from "${runtimeImportPath}";`,
 						];

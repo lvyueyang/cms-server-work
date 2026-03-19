@@ -7,6 +7,7 @@ export function HtmlDocument({
 	lang,
 	assets,
 	bootstrap,
+	rootHtml,
 	children,
 }: PropsWithChildren<{
 	title: string;
@@ -14,6 +15,7 @@ export function HtmlDocument({
 	lang: string;
 	assets: PageAssetManifest;
 	bootstrap: SsrBootstrapPayload;
+	rootHtml?: string;
 }>) {
 	return (
 		<html lang={lang}>
@@ -27,7 +29,11 @@ export function HtmlDocument({
 				))}
 			</head>
 			<body>
-				<div id="root">{children}</div>
+				{rootHtml ? (
+					<div id="root" dangerouslySetInnerHTML={{ __html: rootHtml }} />
+				) : (
+					<div id="root">{children}</div>
+				)}
 				<script
 					id="__CMS_SSR_DATA__"
 					type="application/json"

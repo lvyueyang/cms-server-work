@@ -1,4 +1,3 @@
-import { Count } from "../../components/Count";
 import { MainLayout } from "../../layouts/main";
 import type { PageComponentProps } from "../../runtime/types";
 
@@ -52,7 +51,6 @@ export function HomePage({ pageData }: PageComponentProps<HomePageData>) {
 					</div>
 				</div>
 				<div className="space-y-6">
-					<Count />
 					{pageData.news ? (
 						<a
 							href={`/news/${pageData.news.id}`}

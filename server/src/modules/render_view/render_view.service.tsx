@@ -8,7 +8,7 @@ import type {
 	SsrPageComponent,
 } from "@cms/ssr/server";
 import { AppProvider, HtmlDocument } from "@cms/ssr/server";
-import { renderToPipeableStream } from "react-dom/server";
+import { renderToPipeableStream, renderToStaticMarkup } from "react-dom/server";
 import { getReqLang } from "@/common/lang.decorator";
 import { ContentLang } from "@/constants";
 import { isDefaultI18nLang } from "@/utils";
@@ -20,6 +20,7 @@ import { SystemTranslationService } from "../system_translation/system_translati
 
 const SSR_PACKAGE_DIR = dirname(require.resolve("@cms/ssr/package.json"));
 const SSR_MANIFEST_PATH = join(SSR_PACKAGE_DIR, "dist/web/manifest.json");
+const CLIENT_COMPONENT_ATTRIBUTE = "data-cms-client-component";
 
 interface RenderOptions {
 	statusCode?: number;
@@ -114,7 +115,14 @@ export class RenderViewService {
 				currentUser,
 			},
 		};
-		const assets = this.getPageAssets();
+		const pageHtml = renderToStaticMarkup(
+			<AppProvider bootstrap={bootstrap} requestContext={props.requestContext}>
+				{pageComponent(props)}
+			</AppProvider>,
+		);
+		const shouldInjectClientScripts =
+			pageHtml.includes(CLIENT_COMPONENT_ATTRIBUTE);
+		const assets = this.getPageAssets(shouldInjectClientScripts);
 		const title = options.title || this.pickTitle(pageData);
 		const description =
 			options.description || this.pickDescription(pageData) || globalData.keywords;
@@ -128,14 +136,8 @@ export class RenderViewService {
 					lang={lang}
 					assets={assets}
 					bootstrap={bootstrap}
-				>
-					<AppProvider
-						bootstrap={bootstrap}
-						requestContext={props.requestContext}
-					>
-						{pageComponent(props)}
-					</AppProvider>
-				</HtmlDocument>,
+					rootHtml={pageHtml}
+				/>,
 				{
 					onShellReady: () => {
 						res.status(options.statusCode ?? (didError ? 500 : 200));
@@ -290,7 +292,18 @@ export class RenderViewService {
 		}
 	}
 
-	private getPageAssets(): PageAssetManifest {
+	private getPageAssets(withClientScripts = true): PageAssetManifest {
+		const assets = this.getAllPageAssets();
+		if (withClientScripts) {
+			return assets;
+		}
+		return {
+			css: assets.css,
+			js: [],
+		};
+	}
+
+	private getAllPageAssets(): PageAssetManifest {
 		if (this.cachedAssets) {
 			return this.cachedAssets;
 		}

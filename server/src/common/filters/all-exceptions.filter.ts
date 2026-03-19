@@ -11,6 +11,10 @@ import { CLS_KEYS, clsStore } from "@/common/cls.store";
 import { LoggerService } from "@/modules/logger/logger.service";
 import { RenderViewService } from "@/modules/render_view/render_view.service";
 
+const IGNORED_NOT_FOUND_PATHS = new Set<string>([
+	"/.well-known/appspecific/com.chrome.devtools.json",
+]);
+
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
 	constructor(
@@ -44,11 +48,29 @@ export class AllExceptionsFilter implements ExceptionFilter {
 		const message =
 			exception instanceof Error ? exception.message : "Unknown error";
 		const stack = exception instanceof Error ? exception.stack : undefined;
-		this.logger.error(
-			`Exception caught: ${message}`,
-			stack,
-			"AllExceptionsFilter",
-		);
+		const requestPath = responseBody.path;
+		const requestMethod =
+			typeof request?.method === "string" ? request.method : "UNKNOWN";
+		if (httpStatus >= HttpStatus.INTERNAL_SERVER_ERROR) {
+			this.logger.error(
+				`Exception caught [${requestMethod} ${requestPath}]: ${message}`,
+				stack,
+				"AllExceptionsFilter",
+			);
+		} else if (
+			httpStatus === HttpStatus.NOT_FOUND &&
+			IGNORED_NOT_FOUND_PATHS.has(requestPath)
+		) {
+			this.logger.warn(
+				`Ignored not found probe: ${requestMethod} ${requestPath}`,
+				"AllExceptionsFilter",
+			);
+		} else {
+			this.logger.warn(
+				`Client exception [${httpStatus}] ${requestMethod} ${requestPath}: ${message}`,
+				"AllExceptionsFilter",
+			);
+		}
 
 		if (request.path.startsWith("/api/") || httpStatus < 500) {
 			httpAdapter.reply(response, responseBody, httpStatus);
