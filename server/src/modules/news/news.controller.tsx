@@ -1,16 +1,16 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { createPermGroup } from '@/common/common.permission';
-import Lang from '@/common/lang.decorator';
-import { ContentLang, FE_PREFIX } from '@/constants';
-import { ExportParamsDto, ResponseResult } from '@/interface';
-import { UserByAdmin } from '@/modules/user_admin/user_admin.decorator';
-import { UserAdminInfo } from '@/modules/user_admin/user_admin.dto';
-import { AdminRoleGuard } from '@/modules/user_admin_role/user_admin_role.guard';
-import { successResponse } from '@/utils';
-import { exportData } from '@/utils/exportData';
-import { NewsDetailPage, NewsPage } from '@/views';
-import { RenderView, RenderViewResult } from '../render_view/render_view.decorator';
+import { Body, Controller, Get, Param, Post, Query } from "@nestjs/common";
+import { ApiBody, ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { NewsDetailPage, NewsListPage } from "@cms/ssr/pages";
+import { createPermGroup } from "@/common/common.permission";
+import Lang from "@/common/lang.decorator";
+import { ContentLang } from "@/constants";
+import { ExportParamsDto, ResponseResult } from "@/interface";
+import { UserByAdmin } from "@/modules/user_admin/user_admin.decorator";
+import { UserAdminInfo } from "@/modules/user_admin/user_admin.dto";
+import { AdminRoleGuard } from "@/modules/user_admin_role/user_admin_role.guard";
+import { successResponse } from "@/utils";
+import { exportData } from "@/utils/exportData";
+import { RenderView } from "../render_view/render_view.decorator";
 import {
   NewsByIdParamDto,
   NewsCreateDto,
@@ -31,7 +31,7 @@ export class NewsController {
   constructor(private services: NewsService) {}
 
   @Get('/news')
-  @RenderView()
+  @RenderView(NewsListPage)
   async list(@Query() { current = 1 }: { current: number }, @Lang() lang: ContentLang) {
     const limit = 20;
     const [list, total] = await this.services.findList(
@@ -48,6 +48,7 @@ export class NewsController {
     const prev = current > 1 ? current - 1 : 0;
 
     return {
+      title: '新闻列表',
       dataList:list,
       prev,
       next,
@@ -55,10 +56,11 @@ export class NewsController {
   }
 
   @Get('/news/:id')
-  @RenderView()
+  @RenderView(NewsDetailPage)
   async detail(@Param() { id }: { id: number }, @Lang() lang: ContentLang) {
     const { current, next, prev } = await this.services.findNextAndPrev(id, lang);
     const pageData = {
+      title: current?.title || '新闻详情',
       info: current,
       next: next
         ? {

@@ -1,15 +1,15 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { createPermGroup } from '@/common/common.permission';
-import Lang from '@/common/lang.decorator';
-import { ContentLang, FE_PREFIX } from '@/constants';
-import { ResponseResult } from '@/interface';
-import { UserByAdmin } from '@/modules/user_admin/user_admin.decorator';
-import { UserAdminInfo } from '@/modules/user_admin/user_admin.dto';
-import { AdminRoleGuard } from '@/modules/user_admin_role/user_admin_role.guard';
-import { successResponse } from '@/utils';
-import { PublicArticleDetailPage } from '@/views';
-import { RenderView, RenderViewResult } from '../render_view/render_view.decorator';
+import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { ApiBody, ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { PublicArticleDetailPage } from "@cms/ssr/pages";
+import { createPermGroup } from "@/common/common.permission";
+import Lang from "@/common/lang.decorator";
+import { ContentLang } from "@/constants";
+import { ResponseResult } from "@/interface";
+import { UserByAdmin } from "@/modules/user_admin/user_admin.decorator";
+import { UserAdminInfo } from "@/modules/user_admin/user_admin.dto";
+import { AdminRoleGuard } from "@/modules/user_admin_role/user_admin_role.guard";
+import { successResponse } from "@/utils";
+import { RenderView } from "../render_view/render_view.decorator";
 import {
   PublicArticleByIdParamDto,
   PublicArticleCreateDto,
@@ -30,12 +30,13 @@ export class PublicArticleController {
   constructor(private services: PublicArticleService) {}
 
   @Get('/article/:code')
-  @RenderView()
+  @RenderView(PublicArticleDetailPage)
   async detail(@Param() { code }: { code: string }, @Lang() lang: ContentLang) {
     const zhInfo = await this.services.findByCode(code);
     const [info] = await this.services.i18nTrans([zhInfo], lang);
     return {
       ...info,
+      title: info?.title || code,
       code,
     }
   }

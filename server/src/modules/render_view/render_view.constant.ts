@@ -1,1 +1,1 @@
-export const TEMPLATE_NAME_METADATA = 'renderViewTemplate';
+export const RENDER_VIEW_PAGE_METADATA = "renderViewPage";

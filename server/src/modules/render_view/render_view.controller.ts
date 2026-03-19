@@ -25,7 +25,7 @@ export class RenderViewController {
   })
   @AdminRoleGuard(createPerm('admin:render_view:init_global_data', `初始化模版引擎全局数据`))
   async initRenderViewGlobalData() {
-    await this.service.loadGlobal();
+    await Promise.all([this.service.loadGlobal(), this.service.loadI18n()]);
     return successResponse(null, '');
   }
 }

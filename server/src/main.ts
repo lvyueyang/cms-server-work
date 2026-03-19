@@ -1,14 +1,19 @@
-import { join } from 'node:path';
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import * as bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
-import { AppModule } from './app.module';
-import { PaginationParseIntPipe } from './common/pipes/parse-int.pipe';
-import { LoggerService } from './modules/logger/logger.service';
-import { getLocalIPv4Address, getUploadFileDirPath, getWorkConfig } from './utils';
-import { useSwagger } from './utils/useSwagger';
+import { dirname, join } from "node:path";
+import { ValidationPipe } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import * as bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import { AppModule } from "./app.module";
+import { PaginationParseIntPipe } from "./common/pipes/parse-int.pipe";
+import { FE_PREFIX } from "./constants";
+import { LoggerService } from "./modules/logger/logger.service";
+import {
+	getLocalIPv4Address,
+	getUploadFileDirPath,
+	getWorkConfig,
+} from "./utils";
+import { useSwagger } from "./utils/useSwagger";
 
 async function bootstrap() {
   const PORT = process.env.PORT;
@@ -38,10 +43,11 @@ async function bootstrap() {
   });
   // 静态资源
   app.useStaticAssets(join(process.cwd(), 'public'));
-  // 前端模板资源
-  // app.useStaticAssets(join(process.cwd(), 'public'), {
-  //   prefix: '/_fe/static',
-  // });
+  // SSR 前端资源
+  const ssrPackageDir = dirname(require.resolve("@cms/ssr/package.json"));
+  app.useStaticAssets(join(ssrPackageDir, "dist/web"), {
+    prefix: FE_PREFIX,
+  });
 
   // app.use(csurf());
 

@@ -1,12 +1,16 @@
-import { Controller, Get, Req, Res } from '@nestjs/common';
-import { ApiExcludeEndpoint } from '@nestjs/swagger';
-import { Request, Response } from 'express';
-import Lang from '@/common/lang.decorator';
-import { ContentLang, FE_PREFIX } from '@/constants';
-import { HomePage, NotFoundPage } from '@/views';
-import { BannerService } from '../banner/banner.service';
-import { NewsService } from '../news/news.service';
-import { RenderView, RenderViewResult } from '../render_view/render_view.decorator';
+import { Controller, Get, Req, Res } from "@nestjs/common";
+import { ApiExcludeEndpoint } from "@nestjs/swagger";
+import {
+	HomePage,
+	InternalServerErrorPage,
+	NotFoundPage,
+} from "@cms/ssr/pages";
+import { Request, Response } from "express";
+import Lang from "@/common/lang.decorator";
+import { ContentLang } from "@/constants";
+import { BannerService } from "../banner/banner.service";
+import { NewsService } from "../news/news.service";
+import { RenderView } from "../render_view/render_view.decorator";
 
 @Controller()
 export class HomeController {
@@ -15,7 +19,7 @@ export class HomeController {
     private readonly newsService: NewsService,
   ) {}
 
-  @RenderView()
+  @RenderView(HomePage)
   @Get('/')
   async index(@Lang() lang: ContentLang) {
     const [[banners], [news]] = await Promise.all([
@@ -42,6 +46,7 @@ export class HomeController {
       ),
     ]);
     return {
+      title: '首页',
       banners,
       news,
     }
@@ -77,20 +82,23 @@ export class HomeController {
     return;
   }
 
-  @RenderView()
+  @RenderView(NotFoundPage)
   @ApiExcludeEndpoint()
   @Get('/404')
   pageNotFound() {
-    return new RenderViewResult({
-      title: '404 - 页面未找到',
+    return {
+      title: '404',
       description: '抱歉，您访问的页面不存在。',
-      meta: {
-        keywords: '404, 页面未找到, 错误',
-      },
-      layout: 'base',
-      render() {
-        return <NotFoundPage />;
-      },
-    });
+    };
+  }
+
+  @RenderView(InternalServerErrorPage)
+  @ApiExcludeEndpoint()
+  @Get('/500')
+  pageServerError() {
+    return {
+      title: '500',
+      description: '页面渲染失败，请稍后重试。',
+    };
   }
 }

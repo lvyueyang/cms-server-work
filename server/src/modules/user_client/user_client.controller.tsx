@@ -1,18 +1,23 @@
-import { Body, Controller, Get, Inject, Ip, Post, Query, Res } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
-import { createPermGroup } from '@/common/common.permission';
-import { userConfig } from '@/config';
-import { FE_PREFIX, VALIDATE_CODE_TYPE } from '@/constants';
-import { passwordCrypto, successResponse } from '@/utils';
-import { createResultPageUrl, LoginPage, RegisterPage, ResetPasswordPage } from '@/views';
-import { Token } from '../auth/auth.guard';
-import { AuthService } from '../auth/auth.service';
-import { RenderView, RenderViewResult } from '../render_view/render_view.decorator';
-import { TrackService } from '../track/track.service';
-import { AdminRoleGuard } from '../user_admin_role/user_admin_role.guard';
-import { ValidateCodeBySMSService } from '../validate_code/validate_code.service';
+import { Body, Controller, Get, Inject, Ip, Post, Query, Res } from "@nestjs/common";
+import { ConfigType } from "@nestjs/config";
+import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
+import {
+	createResultPageUrl,
+	LoginPage,
+	RegisterPage,
+	ResetPasswordPage,
+} from "@cms/ssr";
+import { Response } from "express";
+import { createPermGroup } from "@/common/common.permission";
+import { userConfig } from "@/config";
+import { VALIDATE_CODE_TYPE } from "@/constants";
+import { passwordCrypto, successResponse } from "@/utils";
+import { Token } from "../auth/auth.guard";
+import { AuthService } from "../auth/auth.service";
+import { RenderView } from "../render_view/render_view.decorator";
+import { TrackService } from "../track/track.service";
+import { AdminRoleGuard } from "../user_admin_role/user_admin_role.guard";
+import { ValidateCodeBySMSService } from "../validate_code/validate_code.service";
 import {
   UserClientListResponseDto,
   UserClientLoginByCodeDto,
@@ -51,17 +56,11 @@ export class UserClientController {
   }
 
   @Get('/reset-password')
-  @RenderView()
+  @RenderView(ResetPasswordPage)
   resetPasswordPage() {
-    return new RenderViewResult({
+    return {
       title: '重置密码',
-      scripts: [],
-      styles: [`${FE_PREFIX}/login.css`],
-      layout: 'base',
-      render() {
-        return <ResetPasswordPage />;
-      },
-    });
+    };
   }
 
   @Post('/reset-password')
@@ -140,17 +139,11 @@ export class UserClientController {
     }
   }
   @Get('/register')
-  @RenderView()
+  @RenderView(RegisterPage)
   registerPage() {
-    return new RenderViewResult({
+    return {
       title: '注册',
-      scripts: [],
-      styles: [`${FE_PREFIX}/login.css`],
-      layout: 'base',
-      render(ctx) {
-        return <RegisterPage />;
-      },
-    });
+    };
   }
 
   // 客户端用户注册
@@ -226,17 +219,12 @@ export class UserClientController {
   }
 
   @Get('/login')
-  @RenderView()
+  @RenderView(LoginPage)
   loginPage(@Query() { message }: { message?: string }) {
-    return new RenderViewResult({
+    return {
       title: '登录',
-      scripts: [`${FE_PREFIX}/login.js`],
-      styles: [`${FE_PREFIX}/login.css`],
-      layout: 'base',
-      render(ctx) {
-        return <LoginPage message={message} />;
-      },
-    });
+      message,
+    };
   }
 
   @Get('/logout')

@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ApiHeader } from '@nestjs/swagger';
+import { createLoginPageUrl } from '@cms/ssr/helpers';
 import { Request } from 'express';
-import { createLoginPageUrl } from '@/views';
 import { LOGIN_TYPE } from './auth.interface';
 import { AuthService } from './auth.service';
 @Injectable()

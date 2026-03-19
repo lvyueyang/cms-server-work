@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { createLoginPageUrl } from '@cms/ssr/helpers';
 import { Response } from 'express';
 import { createReadStream } from 'fs';
 import { createPermGroup } from '@/common/common.permission';
@@ -20,7 +21,6 @@ import { ResponseResult } from '@/interface';
 import { UserByAdmin } from '@/modules/user_admin/user_admin.decorator';
 import { AdminRoleGuard } from '@/modules/user_admin_role/user_admin_role.guard';
 import { successResponse } from '@/utils';
-import { createLoginPageUrl } from '@/views';
 import { Token } from '../auth/auth.guard';
 import { AuthService } from '../auth/auth.service';
 import { TrackService } from '../track/track.service';

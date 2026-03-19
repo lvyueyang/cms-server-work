@@ -6,6 +6,7 @@ yarn-error.log
 lerna-debug.log
 
 node_modules
+clients/ssr/dist
 
 temp/
 .prod.env

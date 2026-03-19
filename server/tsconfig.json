@@ -18,9 +18,10 @@
     "strictPropertyInitialization": false,
     "paths": {
       "@/*": ["src/*"],
-      "@/views": ["views/index"],
-      "@/views/hooks": ["views/hooks/index"],
-      "@/views/components/*": ["views/components/*"]
+      "@cms/ssr": ["../clients/ssr/src/index.ts"],
+      "@cms/ssr/pages": ["../clients/ssr/src/index.ts"],
+      "@cms/ssr/helpers": ["../clients/ssr/src/index.ts"],
+      "@cms/ssr/server": ["../clients/ssr/src/index.ts"]
     }
   }
 }

@@ -10,11 +10,14 @@
   "scripts": {
     "crud": "npm run crud --prefix ./packages/cmd",
     "start:prod": "npm run start:prod --prefix ./server",
-    "build": "npm run build:admin && npm run build:server",
-    "build:fe": "npm run build:fe --prefix ./server",
+    "build": "npm run build:admin && npm run build:ssr && npm run build:server",
+    "build:fe": "npm run build:ssr",
+    "build:ssr": "npm run build --prefix ./clients/ssr",
     "build:admin": "npm run build --prefix ./clients/admin",
     "build:server": "npm run build --prefix ./server",
-    "dev:fe": "npm run dev:fe --prefix ./server",
+    "dev": "pnpm dlx concurrently -n ssr,server,admin -c blue,green,magenta \"pnpm dev:ssr\" \"pnpm dev:server\" \"pnpm dev:admin\"",
+    "dev:fe": "npm run dev:ssr",
+    "dev:ssr": "npm run dev --prefix ./clients/ssr",
     "dev:admin": "npm run dev --prefix ./clients/admin",
     "dev:server": "npm run dev --prefix ./server"
   },

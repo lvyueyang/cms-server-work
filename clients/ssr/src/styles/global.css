@@ -1,1 +1,34 @@
 @import "tailwindcss";
+
+@theme {
+	--font-sans:
+		"IBM Plex Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+		sans-serif;
+}
+
+:root {
+	color-scheme: light;
+}
+
+html,
+body,
+#root {
+	min-height: 100%;
+}
+
+body {
+	margin: 0;
+	font-family: var(--font-sans);
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+	font: inherit;
+}
