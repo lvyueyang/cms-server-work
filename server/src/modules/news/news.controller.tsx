@@ -47,21 +47,11 @@ export class NewsController {
     const next = current < max ? current + 1 : 0;
     const prev = current > 1 ? current - 1 : 0;
 
-    return new RenderViewResult({
-      title: '新闻列表',
-      layout: 'base',
-      scripts: [`${FE_PREFIX}/news.js`],
-      styles: [`${FE_PREFIX}/news.css`],
-      render() {
-        return (
-          <NewsPage
-            dataList={list}
-            prev={prev}
-            next={next}
-          />
-        );
-      },
-    });
+    return {
+      dataList:list,
+      prev,
+      next,
+    }
   }
 
   @Get('/news/:id')
@@ -83,15 +73,7 @@ export class NewsController {
           }
         : void 0,
     };
-    return new RenderViewResult({
-      title: pageData.info.title,
-      layout: 'base',
-      scripts: [`${FE_PREFIX}/news_detail.js`],
-      styles: [`${FE_PREFIX}/news_detail.css`],
-      render() {
-        return <NewsDetailPage {...pageData} />;
-      },
-    });
+    return pageData;
   }
 
   @Post('/api/admin/news/list')

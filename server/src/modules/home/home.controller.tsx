@@ -41,20 +41,10 @@ export class HomeController {
         lang,
       ),
     ]);
-    return new RenderViewResult({
-      title: '首页',
-      layout: 'base',
-      scripts: [`${FE_PREFIX}/home.js`],
-      styles: [`${FE_PREFIX}/home.css`],
-      render() {
-        return (
-          <HomePage
-            banners={banners}
-            news={news[0]}
-          />
-        );
-      },
-    });
+    return {
+      banners,
+      news,
+    }
   }
 
   @Get(['/en', '/en/*'])

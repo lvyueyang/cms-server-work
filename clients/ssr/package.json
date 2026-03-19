@@ -1,0 +1,14 @@
+{
+  "name": "@cms/ssr",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "",
+    "build": "",
+    "check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cms/server": "workspace:*",
+    "@types/node": "^24.5.2"
+  }
+}

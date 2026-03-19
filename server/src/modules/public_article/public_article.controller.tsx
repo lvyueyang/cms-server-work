@@ -34,15 +34,10 @@ export class PublicArticleController {
   async detail(@Param() { code }: { code: string }, @Lang() lang: ContentLang) {
     const zhInfo = await this.services.findByCode(code);
     const [info] = await this.services.i18nTrans([zhInfo], lang);
-    return new RenderViewResult({
-      title: info.title,
-      layout: 'base',
-      scripts: [],
-      styles: [`${FE_PREFIX}/article.css`],
-      render() {
-        return <PublicArticleDetailPage info={info} />;
-      },
-    });
+    return {
+      ...info,
+      code,
+    }
   }
 
   @Post('/api/admin/public_article/list')
