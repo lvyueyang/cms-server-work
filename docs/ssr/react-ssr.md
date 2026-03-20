@@ -229,6 +229,12 @@ export class NewsController {
 
 如需新增同类示例，优先继续沿用这组页面的结构，而不是把演示逻辑散落到业务页。
 
+## NestJS 集成说明
+
+如果你后续要在其他 NestJS 项目继续接入这套 SSR 能力，优先参考：
+
+- [nestjs-ssr-integration.md](/Users/lyy/code/project/cms-server-work/docs/ssr/nestjs-ssr-integration.md)
+
 ## `'use client'` 使用方式
 
 ### 规则
