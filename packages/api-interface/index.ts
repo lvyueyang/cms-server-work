@@ -531,6 +531,21 @@ export interface UserAdminCreateRootDto {
   email: string;
 }
 
+export interface UserAdminHasRootUserResponseDto {
+  /**
+   * 状态码
+   * @default 200
+   */
+  code: number;
+  /**
+   * 状态描述
+   * @default "请求成功"
+   */
+  message: string;
+  /** 是否已存在超级管理员账号 */
+  data: boolean;
+}
+
 export interface AdminRoleCreateDto {
   /** 角色名称 */
   name: string;
