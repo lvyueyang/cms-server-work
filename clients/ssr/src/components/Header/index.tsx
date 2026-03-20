@@ -10,6 +10,9 @@ export function Header() {
 					CMS SSR
 				</a>
 				<nav className="flex items-center gap-5 text-sm font-semibold text-slate-600">
+					<a href="/ssr-examples" className="transition hover:text-slate-900">
+						SSR 示例
+					</a>
 					<a href="/news" className="transition hover:text-slate-900">
 						新闻
 					</a>

@@ -32,6 +32,20 @@ export function HomePage({ pageData }: PageComponentProps<HomePageData>) {
 						<p className="max-w-2xl text-lg text-slate-600">
 							页面内容由服务端流式输出，带 <code>'use client'</code> 的组件在浏览器端首次挂载。
 						</p>
+						<div className="flex flex-wrap gap-3 text-sm font-semibold">
+							<a
+								href="/ssr-examples"
+								className="rounded-full bg-slate-900 px-5 py-3 text-white transition hover:bg-slate-700"
+							>
+								查看 SSR 示例套件
+							</a>
+							<a
+								href="/ssr-examples/boundaries"
+								className="rounded-full border border-slate-300 px-5 py-3 text-slate-700 transition hover:border-slate-900 hover:text-slate-900"
+							>
+								查看边界能力
+							</a>
+						</div>
 					</div>
 					<div className="grid gap-4 md:grid-cols-2">
 						{(pageData.banners ?? []).slice(0, 4).map((item) => (
@@ -51,6 +65,20 @@ export function HomePage({ pageData }: PageComponentProps<HomePageData>) {
 					</div>
 				</div>
 				<div className="space-y-6">
+					<a
+						href="/ssr-examples"
+						className="block rounded-[28px] border border-emerald-200 bg-emerald-50/80 p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+					>
+						<div className="text-sm font-semibold uppercase tracking-[0.3em] text-emerald-700">
+							SSR Demo Suite
+						</div>
+						<div className="mt-3 text-2xl font-black tracking-tight text-slate-900">
+							多页面验证当前 SSR 的现有能力和边界能力
+						</div>
+						<div className="mt-3 text-sm text-slate-600">
+							包含 i18n、资源引用、client islands、浏览器 API、错误边界和 meta 边界等专题页。
+						</div>
+					</a>
 					{pageData.news ? (
 						<a
 							href={`/news/${pageData.news.id}`}

@@ -163,7 +163,7 @@ export class NewsController {
 
 架构说明见：
 
-- [react-ssr-architecture.md](/Users/lyy/code/project/cms-server-work/docs/react-ssr-architecture.md)
+- [react-ssr-architecture.md](/Users/lyy/code/project/cms-server-work/docs/ssr/react-ssr-architecture.md)
 
 ### 4. 错误页与结果页
 
@@ -196,12 +196,38 @@ export class NewsController {
 - 新闻列表 `NewsListPage`
 - 新闻详情 `NewsDetailPage`
 - 公共文章详情 `PublicArticleDetailPage`
+- 示例页 `SsrExamplesPage`
 - 登录 `LoginPage`
 - 注册 `RegisterPage`
 - 重置密码 `ResetPasswordPage`
 - 结果页 `ResultPage`
 - 404 `NotFoundPage`
 - 500 `InternalServerErrorPage`
+
+## 可运行示例页套件
+
+当前仓库提供了一组专门的 SSR 示例页：
+
+- 总览：`/ssr-examples`
+- 国际化：`/ssr-examples/i18n`
+- 资源引用：`/ssr-examples/assets`
+- client islands：`/ssr-examples/client-islands`
+- 浏览器 API：`/ssr-examples/browser-apis`
+- 边界能力：`/ssr-examples/boundaries`
+
+这些页面都不会进入主导航，主要用于团队参考、联调和回归验证。
+
+覆盖范围：
+
+- 服务端 `t()` 与组件内 `useT()` / `useLang()` 的国际化用法
+- `public/*` 静态文件、`/_fe_/manifest.json` 与 `/uploadfile` 的路径分工
+- 复杂 `'use client'` 组件的本地状态、异步刷新、错误态、`useDeferredValue`、`startTransition`
+- `React.lazy` + `Suspense` 懒加载子区块
+- hydration 后的表单状态、`localStorage` / `navigator` / `clipboard` 等浏览器 API
+- 客户端错误边界与当前 meta 能力边界
+- 不支持项说明：RSC、局部 hydrate、client 组件服务端 HTML 复用
+
+如需新增同类示例，优先继续沿用这组页面的结构，而不是把演示逻辑散落到业务页。
 
 ## `'use client'` 使用方式
 
@@ -246,6 +272,173 @@ export function Count() {
 
 - 服务端将当前语言翻译资源直接注入 `__CMS_SSR_DATA__`。
 - 浏览器端挂载后复用同一份资源创建 `i18next` 实例。
+
+最小示例：
+
+```tsx
+import { useLang, useT } from "@cms/ssr";
+
+export function ExampleBlock() {
+  const t = useT();
+  const lang = useLang();
+
+  return (
+    <div>
+      <h2>{t("ssr_examples.title", lang === "en-US" ? "SSR Examples" : "SSR 示例")}</h2>
+      <p>{lang}</p>
+    </div>
+  );
+}
+```
+
+服务端页面组件也可以直接读取 `t`：
+
+```tsx
+export function ExamplePage({ t }: PageComponentProps<any>) {
+  return <h1>{t("ssr_examples.title", "SSR 示例")}</h1>;
+}
+```
+
+## 文件资源引用
+
+SSR 页面可以直接引用由服务端暴露的静态文件：
+
+```tsx
+export function ExampleAsset() {
+  return <img src="/ssr-examples-cover.svg" alt="cover" />;
+}
+```
+
+资源链路约定：
+
+- `clients/ssr/dist/web/manifest.json` 由 `RenderViewService` 读取并注入 CSS/JS
+- 浏览器构建资源统一挂载在 `/_fe_/`
+- `clients/ssr/src/assets/images/*` 中通过 `import` 引入的图片会参与前端构建并解析成资源 URL
+- 项目 `public/*` 目录下的静态文件直接由 Nest 暴露
+- 业务上传文件继续走 `/uploadfile`
+
+当前实现细节：
+
+- 进入 `web` 构建的 JS/CSS 仍由 `manifest.json` 注入并通过 `/_fe_/` 提供
+- 进入 `node` bundle 的导入图片会被编译成 `/_fe_/static/image/*` 形式的 URL
+- `server/src/main.ts` 会额外挂载 `dist/node/static` 到 `/_fe_/static`
+
+导入图片的最小示例：
+
+```tsx
+import logoImage from "../../assets/images/logo.png";
+import teamImage from "../../assets/images/examples/team.jpg";
+
+export function ExampleAssetImports() {
+  return (
+    <>
+      <img src={logoImage} alt="logo" />
+      <img src={teamImage} alt="team" />
+    </>
+  );
+}
+```
+
+说明：
+
+- 这类写法由 `clients/ssr` 构建链负责打包
+- 为了让 `@cms/server` 在直接消费 `@cms/ssr` 源码时也能通过类型检查，仓库里额外补了图片模块声明
+- `/ssr-examples/assets` 页面现在同时覆盖 `import` 图片资源和 `public/*` 静态资源两类示例
+
+## 复杂 `'use client'` 组件
+
+当前推荐把复杂交互逻辑放进单独的 `'use client'` 文件，并只通过可序列化 props 接收初始数据：
+
+```tsx
+'use client';
+
+import { useEffect, useState } from "react";
+
+export function ClientPanel({ initialItems }: { initialItems: Array<{ id: number; name: string }> }) {
+  const [items, setItems] = useState(initialItems);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setLoading(false);
+    }, 500);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  if (loading) return <div>loading...</div>;
+  return <div>{items.length}</div>;
+}
+```
+
+注意：
+
+- 不要给 `'use client'` 组件传函数
+- 不要传 `Date`、类实例、Map/Set 等非稳定 JSON 结构
+- 浏览器端要确保该模块已经在 `clients/ssr/src/client.tsx` 中被引入，以便注册到 runtime
+- `/ssr-examples` 中的 dashboard 还演示了 `useDeferredValue` 和 `startTransition` 的用法
+
+## 懒加载组件
+
+懒加载应放在 `'use client'` 组件内部：
+
+```tsx
+'use client';
+
+import { lazy, Suspense } from "react";
+
+const LazyPanel = lazy(() => import("./LazyPanel"));
+
+export function ClientShell() {
+  return (
+    <Suspense fallback={<div>loading chunk...</div>}>
+      <LazyPanel />
+    </Suspense>
+  );
+}
+```
+
+约束：
+
+- `React.lazy` 的实际加载发生在浏览器挂载后
+- 当前架构不支持把懒加载 client 组件内容预渲染成服务端 HTML
+- `/ssr-examples` 中的仪表盘区块已经提供完整可运行示例
+
+## 表单与浏览器 API
+
+涉及浏览器能力的示例必须放在 `'use client'` 组件里：
+
+```tsx
+'use client';
+
+import { useEffect, useState } from "react";
+
+export function BrowserOnlyExample() {
+  const [lang, setLang] = useState("");
+
+  useEffect(() => {
+    setLang(window.navigator.language);
+  }, []);
+
+  return <div>{lang}</div>;
+}
+```
+
+推荐模式：
+
+- SSR 页面只负责把初始可序列化数据传给 client 组件
+- `localStorage`、`navigator`、`location`、`clipboard` 等能力统一在 `useEffect` 或事件回调中访问
+- `/ssr-examples/browser-apis` 的 lab 区块已经覆盖表单持久化、复制 URL 和浏览器信息读取
+
+## 错误边界与 Meta
+
+当前示例页套件额外演示了两个边界：
+
+- 客户端错误边界：
+  - 用于隔离 hydration 后局部 client 组件的渲染异常
+  - 不影响外围 SSR 页面结构
+- Meta 能力边界：
+  - 当前运行时默认只注入 `title` 和 `description`
+  - `canonical`、Open Graph、Twitter Card 等 richer meta 仍需扩展 `HtmlDocument` / `RenderViewService`
 
 ## 当前开发命令
 

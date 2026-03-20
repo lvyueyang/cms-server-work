@@ -149,6 +149,10 @@
 
 访问当前语言环境。
 
+可运行参考：
+
+- `/ssr-examples/i18n` 页面同时演示了 SSR 页面里的 `t()` 和共享组件里的 `useT()` / `useLang()`
+
 ## 静态资源注入
 
 ### 产物
@@ -170,6 +174,40 @@
 `server/src/main.ts` 将 `clients/ssr/dist/web` 挂载到：
 
 - `/_fe_/`
+
+可运行参考：
+
+- `/ssr-examples/assets` 会直接引用 `/ssr-examples-cover.svg`
+- 页面数据里也会显式展示 `/_fe_/manifest.json` 和 `/uploadfile` 两类资源入口
+
+## 示例能力映射
+
+当前示例页套件 `/ssr-examples*` 对应的能力分层如下：
+
+- 国际化：
+  - 服务端通过 `RenderViewService` 注入 `lang`、`translations`、`t()`
+  - 页面与共享组件通过 `useT()` / `useLang()` 复用同一份上下文
+  - 对应页面：`/ssr-examples/i18n`
+- 资源引用：
+  - `HtmlDocument` 负责注入 manifest 对应的 CSS/JS
+  - 页面组件可以直接引用 `public/*` 暴露的静态文件，并结合 `/_fe_/` 资源前缀展示运行时资源入口
+  - 对应页面：`/ssr-examples/assets`
+- 复杂 client 组件：
+  - `runtime/client-component.tsx` 负责占位节点扫描与 `createRoot(...).render(...)`
+  - 示例页中的 dashboard 展示了本地状态、异步刷新、错误态、重试，以及 `useDeferredValue` / `startTransition`
+  - 对应页面：`/ssr-examples/client-islands`
+- 懒加载组件：
+  - 懒加载发生在 `'use client'` 组件内部
+  - 通过 `React.lazy` + `Suspense` 在浏览器挂载后拉取二级 chunk
+  - 对应页面：`/ssr-examples/client-islands`
+- 浏览器 API / 表单：
+  - `localStorage`、`navigator`、`location`、`clipboard` 等能力全部放在 `'use client'` 组件内部
+  - 示例页中的 lab 区块展示了 hydration 后的表单持久化与浏览器环境读取
+  - 对应页面：`/ssr-examples/browser-apis`
+- 客户端错误边界：
+  - 只保护浏览器端 client 组件渲染
+  - 不改变 SSR 主页面的服务端输出
+  - 对应页面：`/ssr-examples/boundaries`、`/ssr-examples/browser-apis`
 
 ## Mermaid 架构图
 

@@ -186,6 +186,7 @@ export default defineConfig({
 				distPath: {
 					root: serverDistDir,
 				},
+				assetPrefix: "/_fe_/",
 				cleanDistPath: true,
 				emitCss: false,
 			},

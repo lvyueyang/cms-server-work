@@ -48,6 +48,9 @@ async function bootstrap() {
   app.useStaticAssets(join(ssrPackageDir, "dist/web"), {
     prefix: FE_PREFIX,
   });
+  app.useStaticAssets(join(ssrPackageDir, "dist/node/static"), {
+    prefix: `${FE_PREFIX}/static`,
+  });
 
   // app.use(csurf());
 
