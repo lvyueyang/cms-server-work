@@ -55,26 +55,32 @@ import { ModuleNameService } from "./module-name.service";
 export class ModuleNameModule {}
 ```
 
-## 3. server service
+## 3. server service（默认带内容国际化）
 
 ```ts
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Like, Repository } from "typeorm";
+import { ContentLang } from "@/constants";
 import { CRUDQuery } from "@/interface";
-import { createOrder } from "@/utils";
+import { createOrder, isDefaultI18nLang } from "@/utils";
 import { paginationTransform } from "@/utils/whereTransform";
+import { ContentTranslationService, StringKeys } from "../content_translation/content_translation.service";
 import { ModuleNameCreateDto, ModuleNameUpdateDto } from "./module-name.dto";
 import { ModuleName } from "./module-name.entity";
 
 @Injectable()
 export class ModuleNameService {
+	static I18N_KEY = "module-name";
+	static I18N_FIELDS: StringKeys<ModuleName>[] = ["title", "desc"];
+
 	constructor(
 		@InjectRepository(ModuleName)
 		readonly repository: Repository<ModuleName>,
+		private readonly contentTranslationService: ContentTranslationService,
 	) {}
 
-	findList({ keyword = "", ...params }: CRUDQuery<ModuleName>) {
+	findList({ keyword = "", ...params }: CRUDQuery<ModuleName>, lang?: ContentLang) {
 		const { skip, take } = paginationTransform(params);
 		const { order } = createOrder(params) || {};
 		const find = this.repository
@@ -90,13 +96,32 @@ export class ModuleNameService {
 			find.addOrderBy(`module_name.${key}`, value);
 		});
 
-		return find.getManyAndCount();
+		return find.getManyAndCount().then(([list, total]) => {
+			if (lang && !isDefaultI18nLang(lang)) {
+				return this.contentTranslationService
+					.overlayTranslations(list, {
+						entity: ModuleNameService.I18N_KEY,
+						fields: ModuleNameService.I18N_FIELDS,
+						lang,
+					})
+					.then((patched) => [patched, total] as const);
+			}
+			return [list, total] as const;
+		});
 	}
 
-	async findById(id: number) {
+	async findById(id: number, lang?: ContentLang) {
 		const info = await this.repository.findOneBy({ id, is_delete: false });
 		if (!info) {
 			throw new BadRequestException("数据不存在");
+		}
+		if (lang && !isDefaultI18nLang(lang)) {
+			const [patched] = await this.contentTranslationService.overlayTranslations([info], {
+				entity: ModuleNameService.I18N_KEY,
+				fields: ModuleNameService.I18N_FIELDS,
+				lang,
+			});
+			return patched;
 		}
 		return info;
 	}
@@ -120,11 +145,14 @@ export class ModuleNameService {
 ```tsx
 import { Body, Controller, Get, Post, Query } from "@nestjs/common";
 import { ApiBody, ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { ModuleNamePage } from "@cms/ssr/pages";
 import { createPermGroup } from "@/common/common.permission";
+import Lang from "@/common/lang.decorator";
+import { ContentLang } from "@/constants";
 import { ResponseResult } from "@/interface";
 import { AdminRoleGuard } from "@/modules/user_admin_role/user_admin_role.guard";
 import { successResponse } from "@/utils";
-import { RenderView, RenderViewResult } from "../render_view/render_view.decorator";
+import { RenderView } from "../render_view/render_view.decorator";
 import {
 	ModuleNameCreateDto,
 	ModuleNameDetailResponseDto,
@@ -143,15 +171,20 @@ export class ModuleNameController {
 	constructor(private readonly services: ModuleNameService) {}
 
 	@Get("/module-name")
-	@RenderView()
-	async view(@Query() query: { current?: number }) {
-		return new RenderViewResult({
-			title: "模块页面",
-			layout: "base",
-			render() {
-				return <div>TODO</div>;
+	@RenderView(ModuleNamePage)
+	async view(@Query() query: { current?: number }, @Lang() lang: ContentLang) {
+		const [list, total] = await this.services.findList(
+			{
+				current: query.current || 1,
+				page_size: 20,
 			},
-		});
+			lang,
+		);
+		return {
+			title: "模块页面",
+			dataList: list,
+			total,
+		};
 	}
 
 	@Post("/api/admin/module-name/list")
@@ -181,7 +214,68 @@ export class ModuleNameController {
 }
 ```
 
-## 5. admin module/services.ts
+## 5. SSR page（`clients/ssr/src/pages/module-name/index.tsx`）
+
+```tsx
+import { MainLayout } from "../../layouts/main";
+import type { PageComponentProps } from "../../runtime/types";
+
+interface ModuleNameItem {
+	id: number;
+	title?: string;
+	desc?: string;
+}
+
+interface ModuleNamePageData {
+	title?: string;
+	dataList: ModuleNameItem[];
+	total: number;
+}
+
+export function ModuleNamePage({
+	pageData,
+	t,
+}: PageComponentProps<ModuleNamePageData>) {
+	return (
+		<MainLayout>
+			<section className="mx-auto max-w-6xl space-y-6 px-6 py-10">
+				<div className="space-y-2">
+					<div className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">
+						{t("module_name", "模块")}
+					</div>
+					<h1 className="text-4xl font-black tracking-tight text-slate-900">
+						{pageData.title || "模块页面"}
+					</h1>
+				</div>
+				<div className="grid gap-4">
+					{pageData.dataList.map((item) => (
+						<article
+							key={item.id}
+							className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm"
+						>
+							<div className="text-2xl font-black tracking-tight text-slate-900">
+								{item.title}
+							</div>
+							{item.desc ? (
+								<div className="mt-2 text-sm text-slate-600">{item.desc}</div>
+							) : null}
+						</article>
+					))}
+				</div>
+			</section>
+		</MainLayout>
+	);
+}
+```
+
+别忘了补充：
+
+```ts
+// clients/ssr/src/pages/index.ts
+export * from "./module-name";
+```
+
+## 6. admin module/services.ts
 
 ```ts
 import {
@@ -215,13 +309,13 @@ export const removeApi = (id: number) => {
 };
 ```
 
-## 6. admin module/index.ts
+## 7. admin module/index.ts
 
 ```ts
 export * from "./services";
 ```
 
-## 7. admin list.tsx，模态框 CRUD
+## 8. admin list.tsx，模态框 CRUD
 
 ```tsx
 import type { ModuleNameCreateDto, ModuleNameInfo, ModuleNameUpdateDto } from "@cms/api-interface";
@@ -234,12 +328,13 @@ import PageTable from "@/components/PageTable";
 import { RecommendFormItem } from "@/components/RecommendFormItem";
 import { TableColumnSort } from "@/components/TableColumnSort";
 import { ModalType, useFormModal } from "@/hooks/useFormModal";
-import { transformPagination, transformSort } from "@/utils";
+import { createI18nColumn, transformPagination, transformSort } from "@/utils";
 import { message } from "@/utils/notice";
 import { createApi, getListApi, removeApi, updateApi } from "./module";
 
 type TableItem = ModuleNameInfo;
 type FormValues = ModuleNameCreateDto | ModuleNameUpdateDto;
+const i18nColumn = createI18nColumn<TableItem>("module-name");
 
 export default function ModuleNamePage() {
 	const [searchForm, setSearchForm] = useState({ keyword: "" });
@@ -252,7 +347,8 @@ export default function ModuleNamePage() {
 	});
 
 	const columns: ProColumns<TableItem>[] = [
-		{ dataIndex: "title", title: "名称" },
+		i18nColumn({ dataIndex: "title", title: "名称" }),
+		i18nColumn({ dataIndex: "desc", title: "描述" }),
 		{
 			dataIndex: "recommend",
 			title: "排序",
@@ -354,7 +450,22 @@ export const Route = createFileRoute("/_main/module-name/list")({
 });
 ```
 
-## 8. admin 独立 create/update 页面
+## 8. 模块国际化接入清单
+
+```md
+- 选定稳定的国际化实体 key，推荐直接使用模块目录名
+- 列出需要翻译的字段，仅包含字符串类字段
+- server service 注入 `ContentTranslationService`
+- 在 `findList` / `findById` / `findNextAndPrev` / `findAll` 等读取方法中，对非默认语言调用 `overlayTranslations`
+- SSR 或公开接口读取内容时，controller 使用 `@Lang()` 传入语言
+- admin 列表页创建 `const i18nColumn = createI18nColumn<TableItem>("{module}")`
+- 对标题、描述、正文、图片、链接等可翻译列，替换为 `i18nColumn(...)`
+- 富文本、低代码、图片等字段，补充正确的 `transType`
+- 默认语言内容继续由业务表单维护，翻译内容通过翻译抽屉维护
+- 如需类型更新，修改 server 源码后走既有 Swagger 生成流程，不手改 `packages/api-interface/index.ts`
+```
+
+## 9. admin 独立 create/update 页面
 
 `create.tsx`
 
