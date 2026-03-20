@@ -1,3 +1,4 @@
+import type { SsrPageComponent } from "@cms/ssr/server";
 import {
 	CallHandler,
 	ExecutionContext,
@@ -5,11 +6,18 @@ import {
 	NestInterceptor,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import type { SsrPageComponent } from "@cms/ssr/server";
 import { Observable } from "rxjs";
 import { switchMap } from "rxjs/operators";
-import { RENDER_VIEW_PAGE_METADATA } from "./render_view.constant";
+import {
+	RENDER_VIEW_OPTIONS_METADATA,
+	RENDER_VIEW_PAGE_METADATA,
+	type RenderMode,
+} from "./render_view.constant";
 import { RenderViewService } from "./render_view.service";
+
+interface RenderViewMetadataOptions {
+	renderMode?: RenderMode;
+}
 
 @Injectable()
 export class RenderViewInterceptor implements NestInterceptor {
@@ -23,10 +31,20 @@ export class RenderViewInterceptor implements NestInterceptor {
 			RENDER_VIEW_PAGE_METADATA,
 			context.getHandler(),
 		);
+		const options =
+			this.reflector.get<RenderViewMetadataOptions>(
+				RENDER_VIEW_OPTIONS_METADATA,
+				context.getHandler(),
+			) || {};
 
 		return next.handle().pipe(
 			switchMap(async (pageData) => {
-				return this.renderViewService.renderPage(context, pageComponent, pageData);
+				return this.renderViewService.renderPage(
+					context,
+					pageComponent,
+					pageData,
+					options,
+				);
 			}),
 		);
 	}

@@ -1,5 +1,4 @@
 import { dirname, join } from "node:path";
-import { ExecutionContext, Injectable } from "@nestjs/common";
 import type {
 	GlobalData,
 	PageAssetManifest,
@@ -8,7 +7,12 @@ import type {
 	SsrPageComponent,
 } from "@cms/ssr/server";
 import { AppProvider, HtmlDocument } from "@cms/ssr/server";
-import { renderToPipeableStream, renderToStaticMarkup } from "react-dom/server";
+import { ExecutionContext, Injectable } from "@nestjs/common";
+import {
+	renderToPipeableStream,
+	renderToStaticMarkup,
+	renderToString,
+} from "react-dom/server";
 import { getReqLang } from "@/common/lang.decorator";
 import { ContentLang } from "@/constants";
 import { isDefaultI18nLang } from "@/utils";
@@ -17,6 +21,7 @@ import { BusinessConfig } from "../business_config/business_config.entity";
 import { BusinessConfigService } from "../business_config/business_config.service";
 import { LoggerService } from "../logger/logger.service";
 import { SystemTranslationService } from "../system_translation/system_translation.service";
+import type { RenderMode } from "./render_view.constant";
 
 const SSR_PACKAGE_DIR = dirname(require.resolve("@cms/ssr/package.json"));
 const SSR_MANIFEST_PATH = join(SSR_PACKAGE_DIR, "dist/web/manifest.json");
@@ -26,6 +31,7 @@ interface RenderOptions {
 	statusCode?: number;
 	title?: string;
 	description?: string;
+	renderMode?: RenderMode;
 }
 
 @Injectable()
@@ -120,44 +126,54 @@ export class RenderViewService {
 				{pageComponent(props)}
 			</AppProvider>,
 		);
-		const shouldInjectClientScripts =
-			pageHtml.includes(CLIENT_COMPONENT_ATTRIBUTE);
+		const shouldInjectClientScripts = pageHtml.includes(
+			CLIENT_COMPONENT_ATTRIBUTE,
+		);
 		const assets = this.getPageAssets(shouldInjectClientScripts);
 		const title = options.title || this.pickTitle(pageData);
 		const description =
-			options.description || this.pickDescription(pageData) || globalData.keywords;
+			options.description ||
+			this.pickDescription(pageData) ||
+			globalData.keywords;
+		const document = (
+			<HtmlDocument
+				title={title}
+				description={description}
+				lang={lang}
+				assets={assets}
+				bootstrap={bootstrap}
+				rootHtml={pageHtml}
+			/>
+		);
+
+		if (options.renderMode === "string") {
+			res.status(options.statusCode ?? 200);
+			res.setHeader("Content-Type", "text/html; charset=utf-8");
+			res.send(`<!DOCTYPE html>${renderToString(document)}`);
+			return;
+		}
 
 		return new Promise<void>((resolve, reject) => {
 			let didError = false;
-			const { pipe, abort } = renderToPipeableStream(
-				<HtmlDocument
-					title={title}
-					description={description}
-					lang={lang}
-					assets={assets}
-					bootstrap={bootstrap}
-					rootHtml={pageHtml}
-				/>,
-				{
-					onShellReady: () => {
-						res.status(options.statusCode ?? (didError ? 500 : 200));
-						res.setHeader("Content-Type", "text/html; charset=utf-8");
-						pipe(res);
-						resolve();
-					},
-					onShellError: (error) => {
-						reject(error);
-					},
-					onError: (error) => {
-						didError = true;
-						this.logger.error(
-							"SSR render error",
-							error instanceof Error ? error.stack : String(error),
-							"RenderViewService",
-						);
-					},
+			const { pipe, abort } = renderToPipeableStream(document, {
+				onShellReady: () => {
+					res.status(options.statusCode ?? (didError ? 500 : 200));
+					res.setHeader("Content-Type", "text/html; charset=utf-8");
+					pipe(res);
+					resolve();
 				},
-			);
+				onShellError: (error) => {
+					reject(error);
+				},
+				onError: (error) => {
+					didError = true;
+					this.logger.error(
+						"SSR render error",
+						error instanceof Error ? error.stack : String(error),
+						"RenderViewService",
+					);
+				},
+			});
 
 			setTimeout(() => abort(), 10_000);
 		});
@@ -195,11 +211,7 @@ export class RenderViewService {
 				this.businessConfigService.findByCodes(codes, ContentLang.EN_US),
 			]);
 
-			const getValue = (
-				list: BusinessConfig[],
-				key: string,
-				fallback = "",
-			) => {
+			const getValue = (list: BusinessConfig[], key: string, fallback = "") => {
 				return list.find((item) => item.code === key)?.content || fallback;
 			};
 
@@ -247,11 +259,7 @@ export class RenderViewService {
 						"custom_footer_code",
 						zhGlobalData.custom_footer_code,
 					),
-					keywords: getValue(
-						systemConfigEn,
-						"keywords",
-						zhGlobalData.keywords,
-					),
+					keywords: getValue(systemConfigEn, "keywords", zhGlobalData.keywords),
 					i18n_enabled: getValue(systemConfigEn, "i18n_enabled") === "1",
 				},
 			};
