@@ -1,10 +1,10 @@
+import { NotFoundPage } from "@cms/ssr/pages";
 import {
 	ArgumentsHost,
 	Catch,
 	ExceptionFilter,
 	NotFoundException,
 } from "@nestjs/common";
-import { NotFoundPage } from "@cms/ssr/pages";
 import { Request, Response } from "express";
 import { RenderViewService } from "@/modules/render_view/render_view.service";
 

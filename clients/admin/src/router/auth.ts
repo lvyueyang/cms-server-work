@@ -18,4 +18,3 @@ export function clearAuthToken() {
 export function isPublicPath(pathname: string) {
 	return PUBLIC_PATH_PATTERNS.some((pattern) => pattern.test(pathname));
 }
-

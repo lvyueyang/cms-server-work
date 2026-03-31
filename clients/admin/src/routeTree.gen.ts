@@ -8,692 +8,692 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as MainRouteImport } from './routes/_main'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as NopasswordIndexRouteImport } from './routes/nopassword/index'
-import { Route as LoginIndexRouteImport } from './routes/login/index'
-import { Route as InitRootUserIndexRouteImport } from './routes/init-root-user/index'
-import { Route as DemosGrapesjsIndexRouteImport } from './routes/demos/grapesjs/index'
-import { Route as MainWebhookTransIndexRouteImport } from './routes/_main/webhook-trans/index'
-import { Route as MainUserinfoIndexRouteImport } from './routes/_main/userinfo/index'
-import { Route as MainSystemConfigIndexRouteImport } from './routes/_main/system-config/index'
-import { Route as MainSettingIndexRouteImport } from './routes/_main/setting/index'
-import { Route as MainLoggerIndexRouteImport } from './routes/_main/logger/index'
-import { Route as MainFileManageIndexRouteImport } from './routes/_main/file-manage/index'
-import { Route as MainDictIndexRouteImport } from './routes/_main/dict/index'
-import { Route as MainBusinessConfigIndexRouteImport } from './routes/_main/business-config/index'
-import { Route as MainUserAdminUserListRouteImport } from './routes/_main/user-admin/user-list'
-import { Route as MainUserAdminRoleListRouteImport } from './routes/_main/user-admin/role-list'
-import { Route as MainUserAdminClientListRouteImport } from './routes/_main/user-admin/client-list'
-import { Route as MainTrackEventRouteImport } from './routes/_main/track/event'
-import { Route as MainTrackChartRouteImport } from './routes/_main/track/chart'
-import { Route as MainPublicArticleListRouteImport } from './routes/_main/public-article/list'
-import { Route as MainPublicArticleCreateRouteImport } from './routes/_main/public-article/create'
-import { Route as MainNewsListRouteImport } from './routes/_main/news/list'
-import { Route as MainNewsCreateRouteImport } from './routes/_main/news/create'
-import { Route as MainI18nSystemTranslationRouteImport } from './routes/_main/i18n/system-translation'
-import { Route as MainI18nContentTranslationRouteImport } from './routes/_main/i18n/content-translation'
-import { Route as MainDictIdRouteImport } from './routes/_main/dict/$id'
-import { Route as MainBannerListRouteImport } from './routes/_main/banner/list'
-import { Route as MainTrackMetaPropertiesRouteImport } from './routes/_main/track/meta/properties'
-import { Route as MainTrackMetaEventRouteImport } from './routes/_main/track/meta/event'
-import { Route as MainPublicArticleUpdateIdRouteImport } from './routes/_main/public-article/update.$id'
-import { Route as MainNewsUpdateIdRouteImport } from './routes/_main/news/update.$id'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as MainRouteImport } from "./routes/_main";
+import { Route as MainBannerListRouteImport } from "./routes/_main/banner/list";
+import { Route as MainBusinessConfigIndexRouteImport } from "./routes/_main/business-config/index";
+import { Route as MainDictIdRouteImport } from "./routes/_main/dict/$id";
+import { Route as MainDictIndexRouteImport } from "./routes/_main/dict/index";
+import { Route as MainFileManageIndexRouteImport } from "./routes/_main/file-manage/index";
+import { Route as MainI18nContentTranslationRouteImport } from "./routes/_main/i18n/content-translation";
+import { Route as MainI18nSystemTranslationRouteImport } from "./routes/_main/i18n/system-translation";
+import { Route as MainLoggerIndexRouteImport } from "./routes/_main/logger/index";
+import { Route as MainNewsCreateRouteImport } from "./routes/_main/news/create";
+import { Route as MainNewsListRouteImport } from "./routes/_main/news/list";
+import { Route as MainNewsUpdateIdRouteImport } from "./routes/_main/news/update.$id";
+import { Route as MainPublicArticleCreateRouteImport } from "./routes/_main/public-article/create";
+import { Route as MainPublicArticleListRouteImport } from "./routes/_main/public-article/list";
+import { Route as MainPublicArticleUpdateIdRouteImport } from "./routes/_main/public-article/update.$id";
+import { Route as MainSettingIndexRouteImport } from "./routes/_main/setting/index";
+import { Route as MainSystemConfigIndexRouteImport } from "./routes/_main/system-config/index";
+import { Route as MainTrackChartRouteImport } from "./routes/_main/track/chart";
+import { Route as MainTrackEventRouteImport } from "./routes/_main/track/event";
+import { Route as MainTrackMetaEventRouteImport } from "./routes/_main/track/meta/event";
+import { Route as MainTrackMetaPropertiesRouteImport } from "./routes/_main/track/meta/properties";
+import { Route as MainUserAdminClientListRouteImport } from "./routes/_main/user-admin/client-list";
+import { Route as MainUserAdminRoleListRouteImport } from "./routes/_main/user-admin/role-list";
+import { Route as MainUserAdminUserListRouteImport } from "./routes/_main/user-admin/user-list";
+import { Route as MainUserinfoIndexRouteImport } from "./routes/_main/userinfo/index";
+import { Route as MainWebhookTransIndexRouteImport } from "./routes/_main/webhook-trans/index";
+import { Route as DemosGrapesjsIndexRouteImport } from "./routes/demos/grapesjs/index";
+import { Route as IndexRouteImport } from "./routes/index";
+import { Route as InitRootUserIndexRouteImport } from "./routes/init-root-user/index";
+import { Route as LoginIndexRouteImport } from "./routes/login/index";
+import { Route as NopasswordIndexRouteImport } from "./routes/nopassword/index";
 
 const MainRoute = MainRouteImport.update({
-  id: '/_main',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/_main",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/",
+	path: "/",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const NopasswordIndexRoute = NopasswordIndexRouteImport.update({
-  id: '/nopassword/',
-  path: '/nopassword/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/nopassword/",
+	path: "/nopassword/",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const LoginIndexRoute = LoginIndexRouteImport.update({
-  id: '/login/',
-  path: '/login/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/login/",
+	path: "/login/",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const InitRootUserIndexRoute = InitRootUserIndexRouteImport.update({
-  id: '/init-root-user/',
-  path: '/init-root-user/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/init-root-user/",
+	path: "/init-root-user/",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const DemosGrapesjsIndexRoute = DemosGrapesjsIndexRouteImport.update({
-  id: '/demos/grapesjs/',
-  path: '/demos/grapesjs/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/demos/grapesjs/",
+	path: "/demos/grapesjs/",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const MainWebhookTransIndexRoute = MainWebhookTransIndexRouteImport.update({
-  id: '/webhook-trans/',
-  path: '/webhook-trans/',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/webhook-trans/",
+	path: "/webhook-trans/",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainUserinfoIndexRoute = MainUserinfoIndexRouteImport.update({
-  id: '/userinfo/',
-  path: '/userinfo/',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/userinfo/",
+	path: "/userinfo/",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainSystemConfigIndexRoute = MainSystemConfigIndexRouteImport.update({
-  id: '/system-config/',
-  path: '/system-config/',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/system-config/",
+	path: "/system-config/",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainSettingIndexRoute = MainSettingIndexRouteImport.update({
-  id: '/setting/',
-  path: '/setting/',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/setting/",
+	path: "/setting/",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainLoggerIndexRoute = MainLoggerIndexRouteImport.update({
-  id: '/logger/',
-  path: '/logger/',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/logger/",
+	path: "/logger/",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainFileManageIndexRoute = MainFileManageIndexRouteImport.update({
-  id: '/file-manage/',
-  path: '/file-manage/',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/file-manage/",
+	path: "/file-manage/",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainDictIndexRoute = MainDictIndexRouteImport.update({
-  id: '/dict/',
-  path: '/dict/',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/dict/",
+	path: "/dict/",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainBusinessConfigIndexRoute = MainBusinessConfigIndexRouteImport.update({
-  id: '/business-config/',
-  path: '/business-config/',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/business-config/",
+	path: "/business-config/",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainUserAdminUserListRoute = MainUserAdminUserListRouteImport.update({
-  id: '/user-admin/user-list',
-  path: '/user-admin/user-list',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/user-admin/user-list",
+	path: "/user-admin/user-list",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainUserAdminRoleListRoute = MainUserAdminRoleListRouteImport.update({
-  id: '/user-admin/role-list',
-  path: '/user-admin/role-list',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/user-admin/role-list",
+	path: "/user-admin/role-list",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainUserAdminClientListRoute = MainUserAdminClientListRouteImport.update({
-  id: '/user-admin/client-list',
-  path: '/user-admin/client-list',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/user-admin/client-list",
+	path: "/user-admin/client-list",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainTrackEventRoute = MainTrackEventRouteImport.update({
-  id: '/track/event',
-  path: '/track/event',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/track/event",
+	path: "/track/event",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainTrackChartRoute = MainTrackChartRouteImport.update({
-  id: '/track/chart',
-  path: '/track/chart',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/track/chart",
+	path: "/track/chart",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainPublicArticleListRoute = MainPublicArticleListRouteImport.update({
-  id: '/public-article/list',
-  path: '/public-article/list',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/public-article/list",
+	path: "/public-article/list",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainPublicArticleCreateRoute = MainPublicArticleCreateRouteImport.update({
-  id: '/public-article/create',
-  path: '/public-article/create',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/public-article/create",
+	path: "/public-article/create",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainNewsListRoute = MainNewsListRouteImport.update({
-  id: '/news/list',
-  path: '/news/list',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/news/list",
+	path: "/news/list",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainNewsCreateRoute = MainNewsCreateRouteImport.update({
-  id: '/news/create',
-  path: '/news/create',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/news/create",
+	path: "/news/create",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainI18nSystemTranslationRoute =
-  MainI18nSystemTranslationRouteImport.update({
-    id: '/i18n/system-translation',
-    path: '/i18n/system-translation',
-    getParentRoute: () => MainRoute,
-  } as any)
+	MainI18nSystemTranslationRouteImport.update({
+		id: "/i18n/system-translation",
+		path: "/i18n/system-translation",
+		getParentRoute: () => MainRoute,
+	} as any);
 const MainI18nContentTranslationRoute =
-  MainI18nContentTranslationRouteImport.update({
-    id: '/i18n/content-translation',
-    path: '/i18n/content-translation',
-    getParentRoute: () => MainRoute,
-  } as any)
+	MainI18nContentTranslationRouteImport.update({
+		id: "/i18n/content-translation",
+		path: "/i18n/content-translation",
+		getParentRoute: () => MainRoute,
+	} as any);
 const MainDictIdRoute = MainDictIdRouteImport.update({
-  id: '/dict/$id',
-  path: '/dict/$id',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/dict/$id",
+	path: "/dict/$id",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainBannerListRoute = MainBannerListRouteImport.update({
-  id: '/banner/list',
-  path: '/banner/list',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/banner/list",
+	path: "/banner/list",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainTrackMetaPropertiesRoute = MainTrackMetaPropertiesRouteImport.update({
-  id: '/track/meta/properties',
-  path: '/track/meta/properties',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/track/meta/properties",
+	path: "/track/meta/properties",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainTrackMetaEventRoute = MainTrackMetaEventRouteImport.update({
-  id: '/track/meta/event',
-  path: '/track/meta/event',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/track/meta/event",
+	path: "/track/meta/event",
+	getParentRoute: () => MainRoute,
+} as any);
 const MainPublicArticleUpdateIdRoute =
-  MainPublicArticleUpdateIdRouteImport.update({
-    id: '/public-article/update/$id',
-    path: '/public-article/update/$id',
-    getParentRoute: () => MainRoute,
-  } as any)
+	MainPublicArticleUpdateIdRouteImport.update({
+		id: "/public-article/update/$id",
+		path: "/public-article/update/$id",
+		getParentRoute: () => MainRoute,
+	} as any);
 const MainNewsUpdateIdRoute = MainNewsUpdateIdRouteImport.update({
-  id: '/news/update/$id',
-  path: '/news/update/$id',
-  getParentRoute: () => MainRoute,
-} as any)
+	id: "/news/update/$id",
+	path: "/news/update/$id",
+	getParentRoute: () => MainRoute,
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/init-root-user/': typeof InitRootUserIndexRoute
-  '/login/': typeof LoginIndexRoute
-  '/nopassword/': typeof NopasswordIndexRoute
-  '/banner/list': typeof MainBannerListRoute
-  '/dict/$id': typeof MainDictIdRoute
-  '/i18n/content-translation': typeof MainI18nContentTranslationRoute
-  '/i18n/system-translation': typeof MainI18nSystemTranslationRoute
-  '/news/create': typeof MainNewsCreateRoute
-  '/news/list': typeof MainNewsListRoute
-  '/public-article/create': typeof MainPublicArticleCreateRoute
-  '/public-article/list': typeof MainPublicArticleListRoute
-  '/track/chart': typeof MainTrackChartRoute
-  '/track/event': typeof MainTrackEventRoute
-  '/user-admin/client-list': typeof MainUserAdminClientListRoute
-  '/user-admin/role-list': typeof MainUserAdminRoleListRoute
-  '/user-admin/user-list': typeof MainUserAdminUserListRoute
-  '/business-config/': typeof MainBusinessConfigIndexRoute
-  '/dict/': typeof MainDictIndexRoute
-  '/file-manage/': typeof MainFileManageIndexRoute
-  '/logger/': typeof MainLoggerIndexRoute
-  '/setting/': typeof MainSettingIndexRoute
-  '/system-config/': typeof MainSystemConfigIndexRoute
-  '/userinfo/': typeof MainUserinfoIndexRoute
-  '/webhook-trans/': typeof MainWebhookTransIndexRoute
-  '/demos/grapesjs/': typeof DemosGrapesjsIndexRoute
-  '/news/update/$id': typeof MainNewsUpdateIdRoute
-  '/public-article/update/$id': typeof MainPublicArticleUpdateIdRoute
-  '/track/meta/event': typeof MainTrackMetaEventRoute
-  '/track/meta/properties': typeof MainTrackMetaPropertiesRoute
+	"/": typeof IndexRoute;
+	"/init-root-user/": typeof InitRootUserIndexRoute;
+	"/login/": typeof LoginIndexRoute;
+	"/nopassword/": typeof NopasswordIndexRoute;
+	"/banner/list": typeof MainBannerListRoute;
+	"/dict/$id": typeof MainDictIdRoute;
+	"/i18n/content-translation": typeof MainI18nContentTranslationRoute;
+	"/i18n/system-translation": typeof MainI18nSystemTranslationRoute;
+	"/news/create": typeof MainNewsCreateRoute;
+	"/news/list": typeof MainNewsListRoute;
+	"/public-article/create": typeof MainPublicArticleCreateRoute;
+	"/public-article/list": typeof MainPublicArticleListRoute;
+	"/track/chart": typeof MainTrackChartRoute;
+	"/track/event": typeof MainTrackEventRoute;
+	"/user-admin/client-list": typeof MainUserAdminClientListRoute;
+	"/user-admin/role-list": typeof MainUserAdminRoleListRoute;
+	"/user-admin/user-list": typeof MainUserAdminUserListRoute;
+	"/business-config/": typeof MainBusinessConfigIndexRoute;
+	"/dict/": typeof MainDictIndexRoute;
+	"/file-manage/": typeof MainFileManageIndexRoute;
+	"/logger/": typeof MainLoggerIndexRoute;
+	"/setting/": typeof MainSettingIndexRoute;
+	"/system-config/": typeof MainSystemConfigIndexRoute;
+	"/userinfo/": typeof MainUserinfoIndexRoute;
+	"/webhook-trans/": typeof MainWebhookTransIndexRoute;
+	"/demos/grapesjs/": typeof DemosGrapesjsIndexRoute;
+	"/news/update/$id": typeof MainNewsUpdateIdRoute;
+	"/public-article/update/$id": typeof MainPublicArticleUpdateIdRoute;
+	"/track/meta/event": typeof MainTrackMetaEventRoute;
+	"/track/meta/properties": typeof MainTrackMetaPropertiesRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/init-root-user': typeof InitRootUserIndexRoute
-  '/login': typeof LoginIndexRoute
-  '/nopassword': typeof NopasswordIndexRoute
-  '/banner/list': typeof MainBannerListRoute
-  '/dict/$id': typeof MainDictIdRoute
-  '/i18n/content-translation': typeof MainI18nContentTranslationRoute
-  '/i18n/system-translation': typeof MainI18nSystemTranslationRoute
-  '/news/create': typeof MainNewsCreateRoute
-  '/news/list': typeof MainNewsListRoute
-  '/public-article/create': typeof MainPublicArticleCreateRoute
-  '/public-article/list': typeof MainPublicArticleListRoute
-  '/track/chart': typeof MainTrackChartRoute
-  '/track/event': typeof MainTrackEventRoute
-  '/user-admin/client-list': typeof MainUserAdminClientListRoute
-  '/user-admin/role-list': typeof MainUserAdminRoleListRoute
-  '/user-admin/user-list': typeof MainUserAdminUserListRoute
-  '/business-config': typeof MainBusinessConfigIndexRoute
-  '/dict': typeof MainDictIndexRoute
-  '/file-manage': typeof MainFileManageIndexRoute
-  '/logger': typeof MainLoggerIndexRoute
-  '/setting': typeof MainSettingIndexRoute
-  '/system-config': typeof MainSystemConfigIndexRoute
-  '/userinfo': typeof MainUserinfoIndexRoute
-  '/webhook-trans': typeof MainWebhookTransIndexRoute
-  '/demos/grapesjs': typeof DemosGrapesjsIndexRoute
-  '/news/update/$id': typeof MainNewsUpdateIdRoute
-  '/public-article/update/$id': typeof MainPublicArticleUpdateIdRoute
-  '/track/meta/event': typeof MainTrackMetaEventRoute
-  '/track/meta/properties': typeof MainTrackMetaPropertiesRoute
+	"/": typeof IndexRoute;
+	"/init-root-user": typeof InitRootUserIndexRoute;
+	"/login": typeof LoginIndexRoute;
+	"/nopassword": typeof NopasswordIndexRoute;
+	"/banner/list": typeof MainBannerListRoute;
+	"/dict/$id": typeof MainDictIdRoute;
+	"/i18n/content-translation": typeof MainI18nContentTranslationRoute;
+	"/i18n/system-translation": typeof MainI18nSystemTranslationRoute;
+	"/news/create": typeof MainNewsCreateRoute;
+	"/news/list": typeof MainNewsListRoute;
+	"/public-article/create": typeof MainPublicArticleCreateRoute;
+	"/public-article/list": typeof MainPublicArticleListRoute;
+	"/track/chart": typeof MainTrackChartRoute;
+	"/track/event": typeof MainTrackEventRoute;
+	"/user-admin/client-list": typeof MainUserAdminClientListRoute;
+	"/user-admin/role-list": typeof MainUserAdminRoleListRoute;
+	"/user-admin/user-list": typeof MainUserAdminUserListRoute;
+	"/business-config": typeof MainBusinessConfigIndexRoute;
+	"/dict": typeof MainDictIndexRoute;
+	"/file-manage": typeof MainFileManageIndexRoute;
+	"/logger": typeof MainLoggerIndexRoute;
+	"/setting": typeof MainSettingIndexRoute;
+	"/system-config": typeof MainSystemConfigIndexRoute;
+	"/userinfo": typeof MainUserinfoIndexRoute;
+	"/webhook-trans": typeof MainWebhookTransIndexRoute;
+	"/demos/grapesjs": typeof DemosGrapesjsIndexRoute;
+	"/news/update/$id": typeof MainNewsUpdateIdRoute;
+	"/public-article/update/$id": typeof MainPublicArticleUpdateIdRoute;
+	"/track/meta/event": typeof MainTrackMetaEventRoute;
+	"/track/meta/properties": typeof MainTrackMetaPropertiesRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/_main': typeof MainRouteWithChildren
-  '/init-root-user/': typeof InitRootUserIndexRoute
-  '/login/': typeof LoginIndexRoute
-  '/nopassword/': typeof NopasswordIndexRoute
-  '/_main/banner/list': typeof MainBannerListRoute
-  '/_main/dict/$id': typeof MainDictIdRoute
-  '/_main/i18n/content-translation': typeof MainI18nContentTranslationRoute
-  '/_main/i18n/system-translation': typeof MainI18nSystemTranslationRoute
-  '/_main/news/create': typeof MainNewsCreateRoute
-  '/_main/news/list': typeof MainNewsListRoute
-  '/_main/public-article/create': typeof MainPublicArticleCreateRoute
-  '/_main/public-article/list': typeof MainPublicArticleListRoute
-  '/_main/track/chart': typeof MainTrackChartRoute
-  '/_main/track/event': typeof MainTrackEventRoute
-  '/_main/user-admin/client-list': typeof MainUserAdminClientListRoute
-  '/_main/user-admin/role-list': typeof MainUserAdminRoleListRoute
-  '/_main/user-admin/user-list': typeof MainUserAdminUserListRoute
-  '/_main/business-config/': typeof MainBusinessConfigIndexRoute
-  '/_main/dict/': typeof MainDictIndexRoute
-  '/_main/file-manage/': typeof MainFileManageIndexRoute
-  '/_main/logger/': typeof MainLoggerIndexRoute
-  '/_main/setting/': typeof MainSettingIndexRoute
-  '/_main/system-config/': typeof MainSystemConfigIndexRoute
-  '/_main/userinfo/': typeof MainUserinfoIndexRoute
-  '/_main/webhook-trans/': typeof MainWebhookTransIndexRoute
-  '/demos/grapesjs/': typeof DemosGrapesjsIndexRoute
-  '/_main/news/update/$id': typeof MainNewsUpdateIdRoute
-  '/_main/public-article/update/$id': typeof MainPublicArticleUpdateIdRoute
-  '/_main/track/meta/event': typeof MainTrackMetaEventRoute
-  '/_main/track/meta/properties': typeof MainTrackMetaPropertiesRoute
+	__root__: typeof rootRouteImport;
+	"/": typeof IndexRoute;
+	"/_main": typeof MainRouteWithChildren;
+	"/init-root-user/": typeof InitRootUserIndexRoute;
+	"/login/": typeof LoginIndexRoute;
+	"/nopassword/": typeof NopasswordIndexRoute;
+	"/_main/banner/list": typeof MainBannerListRoute;
+	"/_main/dict/$id": typeof MainDictIdRoute;
+	"/_main/i18n/content-translation": typeof MainI18nContentTranslationRoute;
+	"/_main/i18n/system-translation": typeof MainI18nSystemTranslationRoute;
+	"/_main/news/create": typeof MainNewsCreateRoute;
+	"/_main/news/list": typeof MainNewsListRoute;
+	"/_main/public-article/create": typeof MainPublicArticleCreateRoute;
+	"/_main/public-article/list": typeof MainPublicArticleListRoute;
+	"/_main/track/chart": typeof MainTrackChartRoute;
+	"/_main/track/event": typeof MainTrackEventRoute;
+	"/_main/user-admin/client-list": typeof MainUserAdminClientListRoute;
+	"/_main/user-admin/role-list": typeof MainUserAdminRoleListRoute;
+	"/_main/user-admin/user-list": typeof MainUserAdminUserListRoute;
+	"/_main/business-config/": typeof MainBusinessConfigIndexRoute;
+	"/_main/dict/": typeof MainDictIndexRoute;
+	"/_main/file-manage/": typeof MainFileManageIndexRoute;
+	"/_main/logger/": typeof MainLoggerIndexRoute;
+	"/_main/setting/": typeof MainSettingIndexRoute;
+	"/_main/system-config/": typeof MainSystemConfigIndexRoute;
+	"/_main/userinfo/": typeof MainUserinfoIndexRoute;
+	"/_main/webhook-trans/": typeof MainWebhookTransIndexRoute;
+	"/demos/grapesjs/": typeof DemosGrapesjsIndexRoute;
+	"/_main/news/update/$id": typeof MainNewsUpdateIdRoute;
+	"/_main/public-article/update/$id": typeof MainPublicArticleUpdateIdRoute;
+	"/_main/track/meta/event": typeof MainTrackMetaEventRoute;
+	"/_main/track/meta/properties": typeof MainTrackMetaPropertiesRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/init-root-user/'
-    | '/login/'
-    | '/nopassword/'
-    | '/banner/list'
-    | '/dict/$id'
-    | '/i18n/content-translation'
-    | '/i18n/system-translation'
-    | '/news/create'
-    | '/news/list'
-    | '/public-article/create'
-    | '/public-article/list'
-    | '/track/chart'
-    | '/track/event'
-    | '/user-admin/client-list'
-    | '/user-admin/role-list'
-    | '/user-admin/user-list'
-    | '/business-config/'
-    | '/dict/'
-    | '/file-manage/'
-    | '/logger/'
-    | '/setting/'
-    | '/system-config/'
-    | '/userinfo/'
-    | '/webhook-trans/'
-    | '/demos/grapesjs/'
-    | '/news/update/$id'
-    | '/public-article/update/$id'
-    | '/track/meta/event'
-    | '/track/meta/properties'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/init-root-user'
-    | '/login'
-    | '/nopassword'
-    | '/banner/list'
-    | '/dict/$id'
-    | '/i18n/content-translation'
-    | '/i18n/system-translation'
-    | '/news/create'
-    | '/news/list'
-    | '/public-article/create'
-    | '/public-article/list'
-    | '/track/chart'
-    | '/track/event'
-    | '/user-admin/client-list'
-    | '/user-admin/role-list'
-    | '/user-admin/user-list'
-    | '/business-config'
-    | '/dict'
-    | '/file-manage'
-    | '/logger'
-    | '/setting'
-    | '/system-config'
-    | '/userinfo'
-    | '/webhook-trans'
-    | '/demos/grapesjs'
-    | '/news/update/$id'
-    | '/public-article/update/$id'
-    | '/track/meta/event'
-    | '/track/meta/properties'
-  id:
-    | '__root__'
-    | '/'
-    | '/_main'
-    | '/init-root-user/'
-    | '/login/'
-    | '/nopassword/'
-    | '/_main/banner/list'
-    | '/_main/dict/$id'
-    | '/_main/i18n/content-translation'
-    | '/_main/i18n/system-translation'
-    | '/_main/news/create'
-    | '/_main/news/list'
-    | '/_main/public-article/create'
-    | '/_main/public-article/list'
-    | '/_main/track/chart'
-    | '/_main/track/event'
-    | '/_main/user-admin/client-list'
-    | '/_main/user-admin/role-list'
-    | '/_main/user-admin/user-list'
-    | '/_main/business-config/'
-    | '/_main/dict/'
-    | '/_main/file-manage/'
-    | '/_main/logger/'
-    | '/_main/setting/'
-    | '/_main/system-config/'
-    | '/_main/userinfo/'
-    | '/_main/webhook-trans/'
-    | '/demos/grapesjs/'
-    | '/_main/news/update/$id'
-    | '/_main/public-article/update/$id'
-    | '/_main/track/meta/event'
-    | '/_main/track/meta/properties'
-  fileRoutesById: FileRoutesById
+	fileRoutesByFullPath: FileRoutesByFullPath;
+	fullPaths:
+		| "/"
+		| "/init-root-user/"
+		| "/login/"
+		| "/nopassword/"
+		| "/banner/list"
+		| "/dict/$id"
+		| "/i18n/content-translation"
+		| "/i18n/system-translation"
+		| "/news/create"
+		| "/news/list"
+		| "/public-article/create"
+		| "/public-article/list"
+		| "/track/chart"
+		| "/track/event"
+		| "/user-admin/client-list"
+		| "/user-admin/role-list"
+		| "/user-admin/user-list"
+		| "/business-config/"
+		| "/dict/"
+		| "/file-manage/"
+		| "/logger/"
+		| "/setting/"
+		| "/system-config/"
+		| "/userinfo/"
+		| "/webhook-trans/"
+		| "/demos/grapesjs/"
+		| "/news/update/$id"
+		| "/public-article/update/$id"
+		| "/track/meta/event"
+		| "/track/meta/properties";
+	fileRoutesByTo: FileRoutesByTo;
+	to:
+		| "/"
+		| "/init-root-user"
+		| "/login"
+		| "/nopassword"
+		| "/banner/list"
+		| "/dict/$id"
+		| "/i18n/content-translation"
+		| "/i18n/system-translation"
+		| "/news/create"
+		| "/news/list"
+		| "/public-article/create"
+		| "/public-article/list"
+		| "/track/chart"
+		| "/track/event"
+		| "/user-admin/client-list"
+		| "/user-admin/role-list"
+		| "/user-admin/user-list"
+		| "/business-config"
+		| "/dict"
+		| "/file-manage"
+		| "/logger"
+		| "/setting"
+		| "/system-config"
+		| "/userinfo"
+		| "/webhook-trans"
+		| "/demos/grapesjs"
+		| "/news/update/$id"
+		| "/public-article/update/$id"
+		| "/track/meta/event"
+		| "/track/meta/properties";
+	id:
+		| "__root__"
+		| "/"
+		| "/_main"
+		| "/init-root-user/"
+		| "/login/"
+		| "/nopassword/"
+		| "/_main/banner/list"
+		| "/_main/dict/$id"
+		| "/_main/i18n/content-translation"
+		| "/_main/i18n/system-translation"
+		| "/_main/news/create"
+		| "/_main/news/list"
+		| "/_main/public-article/create"
+		| "/_main/public-article/list"
+		| "/_main/track/chart"
+		| "/_main/track/event"
+		| "/_main/user-admin/client-list"
+		| "/_main/user-admin/role-list"
+		| "/_main/user-admin/user-list"
+		| "/_main/business-config/"
+		| "/_main/dict/"
+		| "/_main/file-manage/"
+		| "/_main/logger/"
+		| "/_main/setting/"
+		| "/_main/system-config/"
+		| "/_main/userinfo/"
+		| "/_main/webhook-trans/"
+		| "/demos/grapesjs/"
+		| "/_main/news/update/$id"
+		| "/_main/public-article/update/$id"
+		| "/_main/track/meta/event"
+		| "/_main/track/meta/properties";
+	fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  MainRoute: typeof MainRouteWithChildren
-  InitRootUserIndexRoute: typeof InitRootUserIndexRoute
-  LoginIndexRoute: typeof LoginIndexRoute
-  NopasswordIndexRoute: typeof NopasswordIndexRoute
-  DemosGrapesjsIndexRoute: typeof DemosGrapesjsIndexRoute
+	IndexRoute: typeof IndexRoute;
+	MainRoute: typeof MainRouteWithChildren;
+	InitRootUserIndexRoute: typeof InitRootUserIndexRoute;
+	LoginIndexRoute: typeof LoginIndexRoute;
+	NopasswordIndexRoute: typeof NopasswordIndexRoute;
+	DemosGrapesjsIndexRoute: typeof DemosGrapesjsIndexRoute;
 }
 
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/_main': {
-      id: '/_main'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof MainRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/nopassword/': {
-      id: '/nopassword/'
-      path: '/nopassword'
-      fullPath: '/nopassword/'
-      preLoaderRoute: typeof NopasswordIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login/': {
-      id: '/login/'
-      path: '/login'
-      fullPath: '/login/'
-      preLoaderRoute: typeof LoginIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/init-root-user/': {
-      id: '/init-root-user/'
-      path: '/init-root-user'
-      fullPath: '/init-root-user/'
-      preLoaderRoute: typeof InitRootUserIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demos/grapesjs/': {
-      id: '/demos/grapesjs/'
-      path: '/demos/grapesjs'
-      fullPath: '/demos/grapesjs/'
-      preLoaderRoute: typeof DemosGrapesjsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_main/webhook-trans/': {
-      id: '/_main/webhook-trans/'
-      path: '/webhook-trans'
-      fullPath: '/webhook-trans/'
-      preLoaderRoute: typeof MainWebhookTransIndexRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/userinfo/': {
-      id: '/_main/userinfo/'
-      path: '/userinfo'
-      fullPath: '/userinfo/'
-      preLoaderRoute: typeof MainUserinfoIndexRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/system-config/': {
-      id: '/_main/system-config/'
-      path: '/system-config'
-      fullPath: '/system-config/'
-      preLoaderRoute: typeof MainSystemConfigIndexRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/setting/': {
-      id: '/_main/setting/'
-      path: '/setting'
-      fullPath: '/setting/'
-      preLoaderRoute: typeof MainSettingIndexRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/logger/': {
-      id: '/_main/logger/'
-      path: '/logger'
-      fullPath: '/logger/'
-      preLoaderRoute: typeof MainLoggerIndexRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/file-manage/': {
-      id: '/_main/file-manage/'
-      path: '/file-manage'
-      fullPath: '/file-manage/'
-      preLoaderRoute: typeof MainFileManageIndexRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/dict/': {
-      id: '/_main/dict/'
-      path: '/dict'
-      fullPath: '/dict/'
-      preLoaderRoute: typeof MainDictIndexRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/business-config/': {
-      id: '/_main/business-config/'
-      path: '/business-config'
-      fullPath: '/business-config/'
-      preLoaderRoute: typeof MainBusinessConfigIndexRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/user-admin/user-list': {
-      id: '/_main/user-admin/user-list'
-      path: '/user-admin/user-list'
-      fullPath: '/user-admin/user-list'
-      preLoaderRoute: typeof MainUserAdminUserListRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/user-admin/role-list': {
-      id: '/_main/user-admin/role-list'
-      path: '/user-admin/role-list'
-      fullPath: '/user-admin/role-list'
-      preLoaderRoute: typeof MainUserAdminRoleListRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/user-admin/client-list': {
-      id: '/_main/user-admin/client-list'
-      path: '/user-admin/client-list'
-      fullPath: '/user-admin/client-list'
-      preLoaderRoute: typeof MainUserAdminClientListRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/track/event': {
-      id: '/_main/track/event'
-      path: '/track/event'
-      fullPath: '/track/event'
-      preLoaderRoute: typeof MainTrackEventRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/track/chart': {
-      id: '/_main/track/chart'
-      path: '/track/chart'
-      fullPath: '/track/chart'
-      preLoaderRoute: typeof MainTrackChartRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/public-article/list': {
-      id: '/_main/public-article/list'
-      path: '/public-article/list'
-      fullPath: '/public-article/list'
-      preLoaderRoute: typeof MainPublicArticleListRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/public-article/create': {
-      id: '/_main/public-article/create'
-      path: '/public-article/create'
-      fullPath: '/public-article/create'
-      preLoaderRoute: typeof MainPublicArticleCreateRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/news/list': {
-      id: '/_main/news/list'
-      path: '/news/list'
-      fullPath: '/news/list'
-      preLoaderRoute: typeof MainNewsListRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/news/create': {
-      id: '/_main/news/create'
-      path: '/news/create'
-      fullPath: '/news/create'
-      preLoaderRoute: typeof MainNewsCreateRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/i18n/system-translation': {
-      id: '/_main/i18n/system-translation'
-      path: '/i18n/system-translation'
-      fullPath: '/i18n/system-translation'
-      preLoaderRoute: typeof MainI18nSystemTranslationRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/i18n/content-translation': {
-      id: '/_main/i18n/content-translation'
-      path: '/i18n/content-translation'
-      fullPath: '/i18n/content-translation'
-      preLoaderRoute: typeof MainI18nContentTranslationRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/dict/$id': {
-      id: '/_main/dict/$id'
-      path: '/dict/$id'
-      fullPath: '/dict/$id'
-      preLoaderRoute: typeof MainDictIdRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/banner/list': {
-      id: '/_main/banner/list'
-      path: '/banner/list'
-      fullPath: '/banner/list'
-      preLoaderRoute: typeof MainBannerListRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/track/meta/properties': {
-      id: '/_main/track/meta/properties'
-      path: '/track/meta/properties'
-      fullPath: '/track/meta/properties'
-      preLoaderRoute: typeof MainTrackMetaPropertiesRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/track/meta/event': {
-      id: '/_main/track/meta/event'
-      path: '/track/meta/event'
-      fullPath: '/track/meta/event'
-      preLoaderRoute: typeof MainTrackMetaEventRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/public-article/update/$id': {
-      id: '/_main/public-article/update/$id'
-      path: '/public-article/update/$id'
-      fullPath: '/public-article/update/$id'
-      preLoaderRoute: typeof MainPublicArticleUpdateIdRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/news/update/$id': {
-      id: '/_main/news/update/$id'
-      path: '/news/update/$id'
-      fullPath: '/news/update/$id'
-      preLoaderRoute: typeof MainNewsUpdateIdRouteImport
-      parentRoute: typeof MainRoute
-    }
-  }
+declare module "@tanstack/react-router" {
+	interface FileRoutesByPath {
+		"/_main": {
+			id: "/_main";
+			path: "";
+			fullPath: "/";
+			preLoaderRoute: typeof MainRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/": {
+			id: "/";
+			path: "/";
+			fullPath: "/";
+			preLoaderRoute: typeof IndexRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/nopassword/": {
+			id: "/nopassword/";
+			path: "/nopassword";
+			fullPath: "/nopassword/";
+			preLoaderRoute: typeof NopasswordIndexRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/login/": {
+			id: "/login/";
+			path: "/login";
+			fullPath: "/login/";
+			preLoaderRoute: typeof LoginIndexRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/init-root-user/": {
+			id: "/init-root-user/";
+			path: "/init-root-user";
+			fullPath: "/init-root-user/";
+			preLoaderRoute: typeof InitRootUserIndexRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/demos/grapesjs/": {
+			id: "/demos/grapesjs/";
+			path: "/demos/grapesjs";
+			fullPath: "/demos/grapesjs/";
+			preLoaderRoute: typeof DemosGrapesjsIndexRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/_main/webhook-trans/": {
+			id: "/_main/webhook-trans/";
+			path: "/webhook-trans";
+			fullPath: "/webhook-trans/";
+			preLoaderRoute: typeof MainWebhookTransIndexRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/userinfo/": {
+			id: "/_main/userinfo/";
+			path: "/userinfo";
+			fullPath: "/userinfo/";
+			preLoaderRoute: typeof MainUserinfoIndexRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/system-config/": {
+			id: "/_main/system-config/";
+			path: "/system-config";
+			fullPath: "/system-config/";
+			preLoaderRoute: typeof MainSystemConfigIndexRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/setting/": {
+			id: "/_main/setting/";
+			path: "/setting";
+			fullPath: "/setting/";
+			preLoaderRoute: typeof MainSettingIndexRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/logger/": {
+			id: "/_main/logger/";
+			path: "/logger";
+			fullPath: "/logger/";
+			preLoaderRoute: typeof MainLoggerIndexRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/file-manage/": {
+			id: "/_main/file-manage/";
+			path: "/file-manage";
+			fullPath: "/file-manage/";
+			preLoaderRoute: typeof MainFileManageIndexRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/dict/": {
+			id: "/_main/dict/";
+			path: "/dict";
+			fullPath: "/dict/";
+			preLoaderRoute: typeof MainDictIndexRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/business-config/": {
+			id: "/_main/business-config/";
+			path: "/business-config";
+			fullPath: "/business-config/";
+			preLoaderRoute: typeof MainBusinessConfigIndexRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/user-admin/user-list": {
+			id: "/_main/user-admin/user-list";
+			path: "/user-admin/user-list";
+			fullPath: "/user-admin/user-list";
+			preLoaderRoute: typeof MainUserAdminUserListRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/user-admin/role-list": {
+			id: "/_main/user-admin/role-list";
+			path: "/user-admin/role-list";
+			fullPath: "/user-admin/role-list";
+			preLoaderRoute: typeof MainUserAdminRoleListRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/user-admin/client-list": {
+			id: "/_main/user-admin/client-list";
+			path: "/user-admin/client-list";
+			fullPath: "/user-admin/client-list";
+			preLoaderRoute: typeof MainUserAdminClientListRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/track/event": {
+			id: "/_main/track/event";
+			path: "/track/event";
+			fullPath: "/track/event";
+			preLoaderRoute: typeof MainTrackEventRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/track/chart": {
+			id: "/_main/track/chart";
+			path: "/track/chart";
+			fullPath: "/track/chart";
+			preLoaderRoute: typeof MainTrackChartRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/public-article/list": {
+			id: "/_main/public-article/list";
+			path: "/public-article/list";
+			fullPath: "/public-article/list";
+			preLoaderRoute: typeof MainPublicArticleListRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/public-article/create": {
+			id: "/_main/public-article/create";
+			path: "/public-article/create";
+			fullPath: "/public-article/create";
+			preLoaderRoute: typeof MainPublicArticleCreateRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/news/list": {
+			id: "/_main/news/list";
+			path: "/news/list";
+			fullPath: "/news/list";
+			preLoaderRoute: typeof MainNewsListRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/news/create": {
+			id: "/_main/news/create";
+			path: "/news/create";
+			fullPath: "/news/create";
+			preLoaderRoute: typeof MainNewsCreateRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/i18n/system-translation": {
+			id: "/_main/i18n/system-translation";
+			path: "/i18n/system-translation";
+			fullPath: "/i18n/system-translation";
+			preLoaderRoute: typeof MainI18nSystemTranslationRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/i18n/content-translation": {
+			id: "/_main/i18n/content-translation";
+			path: "/i18n/content-translation";
+			fullPath: "/i18n/content-translation";
+			preLoaderRoute: typeof MainI18nContentTranslationRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/dict/$id": {
+			id: "/_main/dict/$id";
+			path: "/dict/$id";
+			fullPath: "/dict/$id";
+			preLoaderRoute: typeof MainDictIdRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/banner/list": {
+			id: "/_main/banner/list";
+			path: "/banner/list";
+			fullPath: "/banner/list";
+			preLoaderRoute: typeof MainBannerListRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/track/meta/properties": {
+			id: "/_main/track/meta/properties";
+			path: "/track/meta/properties";
+			fullPath: "/track/meta/properties";
+			preLoaderRoute: typeof MainTrackMetaPropertiesRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/track/meta/event": {
+			id: "/_main/track/meta/event";
+			path: "/track/meta/event";
+			fullPath: "/track/meta/event";
+			preLoaderRoute: typeof MainTrackMetaEventRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/public-article/update/$id": {
+			id: "/_main/public-article/update/$id";
+			path: "/public-article/update/$id";
+			fullPath: "/public-article/update/$id";
+			preLoaderRoute: typeof MainPublicArticleUpdateIdRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+		"/_main/news/update/$id": {
+			id: "/_main/news/update/$id";
+			path: "/news/update/$id";
+			fullPath: "/news/update/$id";
+			preLoaderRoute: typeof MainNewsUpdateIdRouteImport;
+			parentRoute: typeof MainRoute;
+		};
+	}
 }
 
 interface MainRouteChildren {
-  MainBannerListRoute: typeof MainBannerListRoute
-  MainDictIdRoute: typeof MainDictIdRoute
-  MainI18nContentTranslationRoute: typeof MainI18nContentTranslationRoute
-  MainI18nSystemTranslationRoute: typeof MainI18nSystemTranslationRoute
-  MainNewsCreateRoute: typeof MainNewsCreateRoute
-  MainNewsListRoute: typeof MainNewsListRoute
-  MainPublicArticleCreateRoute: typeof MainPublicArticleCreateRoute
-  MainPublicArticleListRoute: typeof MainPublicArticleListRoute
-  MainTrackChartRoute: typeof MainTrackChartRoute
-  MainTrackEventRoute: typeof MainTrackEventRoute
-  MainUserAdminClientListRoute: typeof MainUserAdminClientListRoute
-  MainUserAdminRoleListRoute: typeof MainUserAdminRoleListRoute
-  MainUserAdminUserListRoute: typeof MainUserAdminUserListRoute
-  MainBusinessConfigIndexRoute: typeof MainBusinessConfigIndexRoute
-  MainDictIndexRoute: typeof MainDictIndexRoute
-  MainFileManageIndexRoute: typeof MainFileManageIndexRoute
-  MainLoggerIndexRoute: typeof MainLoggerIndexRoute
-  MainSettingIndexRoute: typeof MainSettingIndexRoute
-  MainSystemConfigIndexRoute: typeof MainSystemConfigIndexRoute
-  MainUserinfoIndexRoute: typeof MainUserinfoIndexRoute
-  MainWebhookTransIndexRoute: typeof MainWebhookTransIndexRoute
-  MainNewsUpdateIdRoute: typeof MainNewsUpdateIdRoute
-  MainPublicArticleUpdateIdRoute: typeof MainPublicArticleUpdateIdRoute
-  MainTrackMetaEventRoute: typeof MainTrackMetaEventRoute
-  MainTrackMetaPropertiesRoute: typeof MainTrackMetaPropertiesRoute
+	MainBannerListRoute: typeof MainBannerListRoute;
+	MainDictIdRoute: typeof MainDictIdRoute;
+	MainI18nContentTranslationRoute: typeof MainI18nContentTranslationRoute;
+	MainI18nSystemTranslationRoute: typeof MainI18nSystemTranslationRoute;
+	MainNewsCreateRoute: typeof MainNewsCreateRoute;
+	MainNewsListRoute: typeof MainNewsListRoute;
+	MainPublicArticleCreateRoute: typeof MainPublicArticleCreateRoute;
+	MainPublicArticleListRoute: typeof MainPublicArticleListRoute;
+	MainTrackChartRoute: typeof MainTrackChartRoute;
+	MainTrackEventRoute: typeof MainTrackEventRoute;
+	MainUserAdminClientListRoute: typeof MainUserAdminClientListRoute;
+	MainUserAdminRoleListRoute: typeof MainUserAdminRoleListRoute;
+	MainUserAdminUserListRoute: typeof MainUserAdminUserListRoute;
+	MainBusinessConfigIndexRoute: typeof MainBusinessConfigIndexRoute;
+	MainDictIndexRoute: typeof MainDictIndexRoute;
+	MainFileManageIndexRoute: typeof MainFileManageIndexRoute;
+	MainLoggerIndexRoute: typeof MainLoggerIndexRoute;
+	MainSettingIndexRoute: typeof MainSettingIndexRoute;
+	MainSystemConfigIndexRoute: typeof MainSystemConfigIndexRoute;
+	MainUserinfoIndexRoute: typeof MainUserinfoIndexRoute;
+	MainWebhookTransIndexRoute: typeof MainWebhookTransIndexRoute;
+	MainNewsUpdateIdRoute: typeof MainNewsUpdateIdRoute;
+	MainPublicArticleUpdateIdRoute: typeof MainPublicArticleUpdateIdRoute;
+	MainTrackMetaEventRoute: typeof MainTrackMetaEventRoute;
+	MainTrackMetaPropertiesRoute: typeof MainTrackMetaPropertiesRoute;
 }
 
 const MainRouteChildren: MainRouteChildren = {
-  MainBannerListRoute: MainBannerListRoute,
-  MainDictIdRoute: MainDictIdRoute,
-  MainI18nContentTranslationRoute: MainI18nContentTranslationRoute,
-  MainI18nSystemTranslationRoute: MainI18nSystemTranslationRoute,
-  MainNewsCreateRoute: MainNewsCreateRoute,
-  MainNewsListRoute: MainNewsListRoute,
-  MainPublicArticleCreateRoute: MainPublicArticleCreateRoute,
-  MainPublicArticleListRoute: MainPublicArticleListRoute,
-  MainTrackChartRoute: MainTrackChartRoute,
-  MainTrackEventRoute: MainTrackEventRoute,
-  MainUserAdminClientListRoute: MainUserAdminClientListRoute,
-  MainUserAdminRoleListRoute: MainUserAdminRoleListRoute,
-  MainUserAdminUserListRoute: MainUserAdminUserListRoute,
-  MainBusinessConfigIndexRoute: MainBusinessConfigIndexRoute,
-  MainDictIndexRoute: MainDictIndexRoute,
-  MainFileManageIndexRoute: MainFileManageIndexRoute,
-  MainLoggerIndexRoute: MainLoggerIndexRoute,
-  MainSettingIndexRoute: MainSettingIndexRoute,
-  MainSystemConfigIndexRoute: MainSystemConfigIndexRoute,
-  MainUserinfoIndexRoute: MainUserinfoIndexRoute,
-  MainWebhookTransIndexRoute: MainWebhookTransIndexRoute,
-  MainNewsUpdateIdRoute: MainNewsUpdateIdRoute,
-  MainPublicArticleUpdateIdRoute: MainPublicArticleUpdateIdRoute,
-  MainTrackMetaEventRoute: MainTrackMetaEventRoute,
-  MainTrackMetaPropertiesRoute: MainTrackMetaPropertiesRoute,
-}
+	MainBannerListRoute: MainBannerListRoute,
+	MainDictIdRoute: MainDictIdRoute,
+	MainI18nContentTranslationRoute: MainI18nContentTranslationRoute,
+	MainI18nSystemTranslationRoute: MainI18nSystemTranslationRoute,
+	MainNewsCreateRoute: MainNewsCreateRoute,
+	MainNewsListRoute: MainNewsListRoute,
+	MainPublicArticleCreateRoute: MainPublicArticleCreateRoute,
+	MainPublicArticleListRoute: MainPublicArticleListRoute,
+	MainTrackChartRoute: MainTrackChartRoute,
+	MainTrackEventRoute: MainTrackEventRoute,
+	MainUserAdminClientListRoute: MainUserAdminClientListRoute,
+	MainUserAdminRoleListRoute: MainUserAdminRoleListRoute,
+	MainUserAdminUserListRoute: MainUserAdminUserListRoute,
+	MainBusinessConfigIndexRoute: MainBusinessConfigIndexRoute,
+	MainDictIndexRoute: MainDictIndexRoute,
+	MainFileManageIndexRoute: MainFileManageIndexRoute,
+	MainLoggerIndexRoute: MainLoggerIndexRoute,
+	MainSettingIndexRoute: MainSettingIndexRoute,
+	MainSystemConfigIndexRoute: MainSystemConfigIndexRoute,
+	MainUserinfoIndexRoute: MainUserinfoIndexRoute,
+	MainWebhookTransIndexRoute: MainWebhookTransIndexRoute,
+	MainNewsUpdateIdRoute: MainNewsUpdateIdRoute,
+	MainPublicArticleUpdateIdRoute: MainPublicArticleUpdateIdRoute,
+	MainTrackMetaEventRoute: MainTrackMetaEventRoute,
+	MainTrackMetaPropertiesRoute: MainTrackMetaPropertiesRoute,
+};
 
-const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)
+const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren);
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  MainRoute: MainRouteWithChildren,
-  InitRootUserIndexRoute: InitRootUserIndexRoute,
-  LoginIndexRoute: LoginIndexRoute,
-  NopasswordIndexRoute: NopasswordIndexRoute,
-  DemosGrapesjsIndexRoute: DemosGrapesjsIndexRoute,
-}
+	IndexRoute: IndexRoute,
+	MainRoute: MainRouteWithChildren,
+	InitRootUserIndexRoute: InitRootUserIndexRoute,
+	LoginIndexRoute: LoginIndexRoute,
+	NopasswordIndexRoute: NopasswordIndexRoute,
+	DemosGrapesjsIndexRoute: DemosGrapesjsIndexRoute,
+};
 export const routeTree = rootRouteImport
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+	._addFileChildren(rootRouteChildren)
+	._addFileTypes<FileRouteTypes>();

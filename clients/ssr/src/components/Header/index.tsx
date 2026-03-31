@@ -6,7 +6,10 @@ export function Header() {
 	return (
 		<header className="border-b border-slate-200 bg-white/80 backdrop-blur">
 			<div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-				<a href="/" className="text-xl font-black tracking-tight text-slate-900">
+				<a
+					href="/"
+					className="text-xl font-black tracking-tight text-slate-900"
+				>
 					CMS SSR
 				</a>
 				<nav className="flex items-center gap-5 text-sm font-semibold text-slate-600">

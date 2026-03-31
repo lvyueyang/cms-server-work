@@ -1,27 +1,27 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "es2017",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true,
-    "skipLibCheck": true,
-    "jsx": "react-jsx",
-    "esModuleInterop": true,
-    "strict": true,
-    "strictPropertyInitialization": false,
-    "paths": {
-      "@/*": ["src/*"],
-      "@cms/ssr": ["../clients/ssr/src/index.ts"],
-      "@cms/ssr/pages": ["../clients/ssr/src/index.ts"],
-      "@cms/ssr/helpers": ["../clients/ssr/src/index.ts"],
-      "@cms/ssr/server": ["../clients/ssr/src/index.ts"]
-    }
-  }
+	"compilerOptions": {
+		"module": "commonjs",
+		"declaration": true,
+		"removeComments": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"allowSyntheticDefaultImports": true,
+		"target": "es2017",
+		"sourceMap": true,
+		"outDir": "./dist",
+		"baseUrl": "./",
+		"incremental": true,
+		"skipLibCheck": true,
+		"jsx": "react-jsx",
+		"esModuleInterop": true,
+		"strict": true,
+		"strictPropertyInitialization": false,
+		"paths": {
+			"@/*": ["src/*"],
+			"@cms/ssr": ["../clients/ssr/src/index.ts"],
+			"@cms/ssr/pages": ["../clients/ssr/src/index.ts"],
+			"@cms/ssr/helpers": ["../clients/ssr/src/index.ts"],
+			"@cms/ssr/server": ["../clients/ssr/src/index.ts"]
+		}
+	}
 }

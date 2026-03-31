@@ -7,9 +7,11 @@ import { request } from "@/request";
  * 若后端接口路径不同，请按真实 API 调整此处 URL。
  */
 export function getPublicScanTaskAuditReport(token: string) {
-	return request.get<any>(`/api/public/audit-report/${encodeURIComponent(token)}`, {
-		ignoreNotice: true,
-		ignoreLogin: true,
-	} as any);
+	return request.get<any>(
+		`/api/public/audit-report/${encodeURIComponent(token)}`,
+		{
+			ignoreNotice: true,
+			ignoreLogin: true,
+		} as any,
+	);
 }
-

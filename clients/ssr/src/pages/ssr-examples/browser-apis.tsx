@@ -50,8 +50,12 @@ export function SsrExamplesBrowserApisPage({
 							key={item.title}
 							className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm"
 						>
-							<div className="text-lg font-bold text-slate-900">{item.title}</div>
-							<div className="mt-2 text-sm text-slate-600">{item.description}</div>
+							<div className="text-lg font-bold text-slate-900">
+								{item.title}
+							</div>
+							<div className="mt-2 text-sm text-slate-600">
+								{item.description}
+							</div>
 						</div>
 					))}
 				</div>

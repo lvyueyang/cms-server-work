@@ -1,7 +1,8 @@
 import React from "react";
 import { cls } from "@/utils";
 
-export interface MarkdownPreviewProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface MarkdownPreviewProps
+	extends React.HTMLAttributes<HTMLDivElement> {
 	value: string;
 }
 
@@ -15,11 +16,7 @@ export default function MarkdownPreview(props: MarkdownPreviewProps) {
 	const { value, className, style, ...rest } = props;
 
 	return (
-		<div
-			{...rest}
-			className={cls("markdown-preview", className)}
-			style={style}
-		>
+		<div {...rest} className={cls("markdown-preview", className)} style={style}>
 			<pre
 				style={{
 					margin: 0,
@@ -36,4 +33,3 @@ export default function MarkdownPreview(props: MarkdownPreviewProps) {
 		</div>
 	);
 }
-

@@ -10,8 +10,8 @@ import { useFullscreen } from "ahooks";
 import { Avatar, Breadcrumb, Dropdown } from "antd";
 import { pathToRegexp } from "path-to-regexp";
 import { useEffect, useMemo, useRef } from "react";
-import { outLogin } from "@/services";
 import { useAppData } from "@/router";
+import { outLogin } from "@/services";
 import { useGlobalStore } from "@/store/global";
 import { useUserinfoStore } from "@/store/userinfo";
 import { getMenuEntryPath, getMenuViewByPathname } from "./getNavMenu";
@@ -57,7 +57,9 @@ function getParentNodesByKey(
 export function HeaderBreadcrumb() {
 	const { clientRoutes } = useAppData();
 	const location = useLocation();
-	const headerBreadcrumbItems = useGlobalStore((state) => state.headerBreadcrumbItems);
+	const headerBreadcrumbItems = useGlobalStore(
+		(state) => state.headerBreadcrumbItems,
+	);
 	const updateHeaderBreadcrumbItems = useGlobalStore(
 		(state) => state.updateHeaderBreadcrumbItems,
 	);
@@ -90,8 +92,7 @@ export default function HeaderBar() {
 	const sidebarMenuView = getMenuViewByPathname(location.pathname);
 
 	const toggleSidebarMenuView = () => {
-		const nextView =
-			sidebarMenuView === "platform" ? "business" : "platform";
+		const nextView = sidebarMenuView === "platform" ? "business" : "platform";
 		navigate({ to: getMenuEntryPath(nextView) });
 	};
 
@@ -106,11 +107,16 @@ export default function HeaderBar() {
 						sidebarMenuView === "platform" ? styles.itemActive : ""
 					}`}
 					onClick={toggleSidebarMenuView}
-					title={sidebarMenuView === "platform" ? "切换到业务区" : "切换到平台区"}
+					title={
+						sidebarMenuView === "platform" ? "切换到业务区" : "切换到平台区"
+					}
 				>
 					<AppstoreOutlined />
 				</div>
-				<div className={styles.item} onClick={() => navigate({ to: "/setting" })}>
+				<div
+					className={styles.item}
+					onClick={() => navigate({ to: "/setting" })}
+				>
 					<Setting size={19} />
 				</div>
 				<div className={styles.item}>

@@ -47,7 +47,8 @@ export function NewsListPage({
 						新闻列表
 					</h1>
 					<p className="text-base text-slate-600">
-						这个页面由服务端直接输出，右侧计数器来自 <code>'use client'</code> 组件。
+						这个页面由服务端直接输出，右侧计数器来自 <code>'use client'</code>{" "}
+						组件。
 					</p>
 					<Count />
 				</div>
@@ -107,8 +108,16 @@ export function NewsDetailPage({
 					dangerouslySetInnerHTML={{ __html: pageData.info?.content ?? "" }}
 				/>
 				<div className="flex gap-4 text-sm font-semibold">
-					{pageData.prev ? <a href={`/news/${pageData.prev.id}`}>上一篇：{pageData.prev.title}</a> : null}
-					{pageData.next ? <a href={`/news/${pageData.next.id}`}>下一篇：{pageData.next.title}</a> : null}
+					{pageData.prev ? (
+						<a href={`/news/${pageData.prev.id}`}>
+							上一篇：{pageData.prev.title}
+						</a>
+					) : null}
+					{pageData.next ? (
+						<a href={`/news/${pageData.next.id}`}>
+							下一篇：{pageData.next.title}
+						</a>
+					) : null}
 				</div>
 			</article>
 		</MainLayout>

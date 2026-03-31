@@ -1,56 +1,56 @@
-import { TranslationOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
-import { ReactNode, useState } from 'react';
-import { TranslationDrawer, TranslationDrawerProps } from './TranslationDrawer';
+import { TranslationOutlined } from "@ant-design/icons";
+import { Button } from "antd";
+import { ReactNode, useState } from "react";
+import { TranslationDrawer, TranslationDrawerProps } from "./TranslationDrawer";
 
 const defaultChildren = (
-  <Button size="small">
-    <TranslationOutlined></TranslationOutlined>
-  </Button>
+	<Button size="small">
+		<TranslationOutlined></TranslationOutlined>
+	</Button>
 );
 
 export type TranslationProps = Pick<
-  TranslationDrawerProps,
-  'entity' | 'entityId' | 'field' | 'originValue' | 'type'
+	TranslationDrawerProps,
+	"entity" | "entityId" | "field" | "originValue" | "type"
 > & { children?: ReactNode };
 export function Translation({
-  entity,
-  entityId,
-  field,
-  originValue,
-  type,
-  children = defaultChildren,
+	entity,
+	entityId,
+	field,
+	originValue,
+	type,
+	children = defaultChildren,
 }: TranslationProps) {
-  const [open, setOpen] = useState(false);
-  const [show, setShow] = useState(false);
+	const [open, setOpen] = useState(false);
+	const [show, setShow] = useState(false);
 
-  return (
-    <>
-      <div
-        onClick={() => {
-          setShow(true);
-          setOpen(true);
-        }}
-      >
-        {children}
-      </div>
-      {show && (
-        <TranslationDrawer
-          open={open}
-          onClose={() => setOpen(false)}
-          title={`翻译：${entity}#${entityId} · ${field}`}
-          entity={entity}
-          entityId={entityId}
-          field={field}
-          originValue={originValue}
-          type={type}
-          afterOpenChange={(open) => {
-            if (!open) {
-              setShow(false);
-            }
-          }}
-        />
-      )}
-    </>
-  );
+	return (
+		<>
+			<div
+				onClick={() => {
+					setShow(true);
+					setOpen(true);
+				}}
+			>
+				{children}
+			</div>
+			{show && (
+				<TranslationDrawer
+					open={open}
+					onClose={() => setOpen(false)}
+					title={`翻译：${entity}#${entityId} · ${field}`}
+					entity={entity}
+					entityId={entityId}
+					field={field}
+					originValue={originValue}
+					type={type}
+					afterOpenChange={(open) => {
+						if (!open) {
+							setShow(false);
+						}
+					}}
+				/>
+			)}
+		</>
+	);
 }

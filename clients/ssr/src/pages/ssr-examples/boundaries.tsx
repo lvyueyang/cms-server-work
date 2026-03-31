@@ -46,8 +46,12 @@ export function SsrExamplesBoundariesPage({
 									key={item.title}
 									className="rounded-[24px] border border-white/80 bg-white p-4"
 								>
-									<div className="text-lg font-bold text-slate-900">{item.title}</div>
-									<div className="mt-2 text-sm text-slate-600">{item.description}</div>
+									<div className="text-lg font-bold text-slate-900">
+										{item.title}
+									</div>
+									<div className="mt-2 text-sm text-slate-600">
+										{item.description}
+									</div>
 								</div>
 							))}
 						</div>
@@ -63,12 +67,16 @@ export function SsrExamplesBoundariesPage({
 									className="rounded-[24px] border border-white/80 bg-white p-4"
 								>
 									<div className="flex items-center justify-between gap-3">
-										<div className="text-lg font-bold text-slate-900">{item.title}</div>
+										<div className="text-lg font-bold text-slate-900">
+											{item.title}
+										</div>
 										<span className="rounded-full bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-700">
 											{item.status}
 										</span>
 									</div>
-									<div className="mt-2 text-sm text-slate-600">{item.description}</div>
+									<div className="mt-2 text-sm text-slate-600">
+										{item.description}
+									</div>
 								</div>
 							))}
 						</div>
@@ -80,7 +88,8 @@ export function SsrExamplesBoundariesPage({
 							meta today
 						</div>
 						<div className="mt-4 text-sm text-slate-600">
-							Current route: {requestContext.req.originalUrl || requestContext.req.url}
+							Current route:{" "}
+							{requestContext.req.originalUrl || requestContext.req.url}
 						</div>
 						<div className="mt-5 grid gap-4">
 							<div className="rounded-[24px] bg-slate-50 p-4">

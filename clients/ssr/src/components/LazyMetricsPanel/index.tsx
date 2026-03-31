@@ -45,7 +45,9 @@ export function LazyMetricsPanel({ cards }: { cards: MetricCard[] }) {
 						key={card.id}
 						className="rounded-[24px] border border-white/80 bg-white p-4 shadow-sm"
 					>
-						<div className="text-sm font-semibold text-slate-500">{card.title}</div>
+						<div className="text-sm font-semibold text-slate-500">
+							{card.title}
+						</div>
 						<div className="mt-2 text-3xl font-black tracking-tight text-slate-900">
 							{card.value}
 						</div>

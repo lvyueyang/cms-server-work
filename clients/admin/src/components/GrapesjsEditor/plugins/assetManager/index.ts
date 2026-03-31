@@ -1,8 +1,8 @@
-import { FileManageInfo } from '@cms/api-interface';
-import { Editor } from 'grapesjs';
-import { getListApi } from '@/routes/_main/file-manage/module/services';
-import { uploadFile } from '@/services';
-import { fileToUrl } from '@/utils';
+import { FileManageInfo } from "@cms/api-interface";
+import { Editor } from "grapesjs";
+import { getListApi } from "@/routes/_main/file-manage/module/services";
+import { uploadFile } from "@/services";
+import { fileToUrl } from "@/utils";
 
 // Simple CSS for the modal
 const CSS_STYLES = `
@@ -239,41 +239,41 @@ const CSS_STYLES = `
 `;
 
 class AssetManagerUI {
-  private container: HTMLElement;
-  private overlay: HTMLElement;
-  private currentList: FileManageInfo[] = [];
-  private selectedFile: FileManageInfo | null = null;
-  private currentPage: number = 1;
-  private pageSize: number = 20;
-  private total: number = 0;
-  private keyword: string = '';
-  private loading: boolean = false;
-  private editor: Editor;
-  private onSelect?: (files: any[]) => void;
-  private onClose: () => void;
+	private container: HTMLElement;
+	private overlay: HTMLElement;
+	private currentList: FileManageInfo[] = [];
+	private selectedFile: FileManageInfo | null = null;
+	private currentPage: number = 1;
+	private pageSize: number = 20;
+	private total: number = 0;
+	private keyword: string = "";
+	private loading: boolean = false;
+	private editor: Editor;
+	private onSelect?: (files: any[]) => void;
+	private onClose: () => void;
 
-  constructor(editor: Editor, options: any, onClose: () => void) {
-    this.editor = editor;
-    this.onSelect = options.onSelect;
-    this.onClose = onClose;
+	constructor(editor: Editor, options: any, onClose: () => void) {
+		this.editor = editor;
+		this.onSelect = options.onSelect;
+		this.onClose = onClose;
 
-    this.container = document.createElement('div');
-    this.overlay = document.createElement('div');
-    this.init();
-  }
+		this.container = document.createElement("div");
+		this.overlay = document.createElement("div");
+		this.init();
+	}
 
-  private init() {
-    // Inject Styles
-    if (!document.getElementById('gjs-am-styles')) {
-      const style = document.createElement('style');
-      style.id = 'gjs-am-styles';
-      style.innerHTML = CSS_STYLES;
-      document.head.appendChild(style);
-    }
+	private init() {
+		// Inject Styles
+		if (!document.getElementById("gjs-am-styles")) {
+			const style = document.createElement("style");
+			style.id = "gjs-am-styles";
+			style.innerHTML = CSS_STYLES;
+			document.head.appendChild(style);
+		}
 
-    this.overlay.className = 'gjs-am-modal-overlay';
+		this.overlay.className = "gjs-am-modal-overlay";
 
-    const content = `
+		const content = `
       <div class="gjs-am-modal-content">
         <div class="gjs-am-header">
           <h3 class="gjs-am-title">选择资源</h3>
@@ -303,234 +303,253 @@ class AssetManagerUI {
       </div>
     `;
 
-    this.overlay.innerHTML = content;
-    document.body.appendChild(this.overlay);
+		this.overlay.innerHTML = content;
+		document.body.appendChild(this.overlay);
 
-    this.bindEvents();
-    this.fetchData();
-  }
+		this.bindEvents();
+		this.fetchData();
+	}
 
-  private bindEvents() {
-    // Close
-    this.overlay.querySelector('#gjs-am-close-btn')?.addEventListener('click', () => this.destroy());
+	private bindEvents() {
+		// Close
+		this.overlay
+			.querySelector("#gjs-am-close-btn")
+			?.addEventListener("click", () => this.destroy());
 
-    // Search
-    const searchInput = this.overlay.querySelector('#gjs-am-search-input') as HTMLInputElement;
-    let timeout: any;
-    searchInput?.addEventListener('input', (e) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        this.keyword = (e.target as HTMLInputElement).value;
-        this.currentPage = 1;
-        this.fetchData();
-      }, 500);
-    });
+		// Search
+		const searchInput = this.overlay.querySelector(
+			"#gjs-am-search-input",
+		) as HTMLInputElement;
+		let timeout: any;
+		searchInput?.addEventListener("input", (e) => {
+			clearTimeout(timeout);
+			timeout = setTimeout(() => {
+				this.keyword = (e.target as HTMLInputElement).value;
+				this.currentPage = 1;
+				this.fetchData();
+			}, 500);
+		});
 
-    // Upload
-    const uploadBtn = this.overlay.querySelector('#gjs-am-upload-btn');
-    const uploadInput = this.overlay.querySelector('#gjs-am-upload-input') as HTMLInputElement;
+		// Upload
+		const uploadBtn = this.overlay.querySelector("#gjs-am-upload-btn");
+		const uploadInput = this.overlay.querySelector(
+			"#gjs-am-upload-input",
+		) as HTMLInputElement;
 
-    uploadBtn?.addEventListener('click', () => {
-      uploadInput.click();
-    });
+		uploadBtn?.addEventListener("click", () => {
+			uploadInput.click();
+		});
 
-    uploadInput?.addEventListener('change', async (e) => {
-      const files = (e.target as HTMLInputElement).files;
-      if (files && files.length > 0) {
-        await this.handleUpload(files[0]);
-        uploadInput.value = ''; // Reset
-      }
-    });
+		uploadInput?.addEventListener("change", async (e) => {
+			const files = (e.target as HTMLInputElement).files;
+			if (files && files.length > 0) {
+				await this.handleUpload(files[0]);
+				uploadInput.value = ""; // Reset
+			}
+		});
 
-    // Pagination
-    this.overlay.querySelector('#gjs-am-prev-btn')?.addEventListener('click', () => {
-      if (this.currentPage > 1) {
-        this.currentPage--;
-        this.fetchData();
-      }
-    });
+		// Pagination
+		this.overlay
+			.querySelector("#gjs-am-prev-btn")
+			?.addEventListener("click", () => {
+				if (this.currentPage > 1) {
+					this.currentPage--;
+					this.fetchData();
+				}
+			});
 
-    this.overlay.querySelector('#gjs-am-next-btn')?.addEventListener('click', () => {
-      const maxPage = Math.ceil(this.total / this.pageSize);
-      if (this.currentPage < maxPage) {
-        this.currentPage++;
-        this.fetchData();
-      }
-    });
+		this.overlay
+			.querySelector("#gjs-am-next-btn")
+			?.addEventListener("click", () => {
+				const maxPage = Math.ceil(this.total / this.pageSize);
+				if (this.currentPage < maxPage) {
+					this.currentPage++;
+					this.fetchData();
+				}
+			});
 
-    // Confirm
-    this.overlay.querySelector('#gjs-am-confirm-btn')?.addEventListener('click', () => {
-      this.confirmSelection();
-    });
-  }
+		// Confirm
+		this.overlay
+			.querySelector("#gjs-am-confirm-btn")
+			?.addEventListener("click", () => {
+				this.confirmSelection();
+			});
+	}
 
-  private async handleUpload(file: File) {
-    this.setLoading(true);
-    try {
-      const res = await uploadFile(file);
-      // const data = res.data.data;
-      // Refresh list
-      this.currentPage = 1;
-      await this.fetchData();
-    } catch (error) {
-      console.error('Upload failed', error);
-      alert('上传失败');
-    } finally {
-      this.setLoading(false);
-    }
-  }
+	private async handleUpload(file: File) {
+		this.setLoading(true);
+		try {
+			const res = await uploadFile(file);
+			// const data = res.data.data;
+			// Refresh list
+			this.currentPage = 1;
+			await this.fetchData();
+		} catch (error) {
+			console.error("Upload failed", error);
+			alert("上传失败");
+		} finally {
+			this.setLoading(false);
+		}
+	}
 
-  private async fetchData() {
-    this.setLoading(true);
-    try {
-      const res = await getListApi({
-        current: this.currentPage,
-        page_size: this.pageSize,
-        keyword: this.keyword,
-      });
-      this.currentList = res.data.data.list;
-      this.total = res.data.data.total;
-      this.renderGrid();
-      this.updatePagination();
-    } catch (error) {
-      console.error('Fetch list failed', error);
-    } finally {
-      this.setLoading(false);
-    }
-  }
+	private async fetchData() {
+		this.setLoading(true);
+		try {
+			const res = await getListApi({
+				current: this.currentPage,
+				page_size: this.pageSize,
+				keyword: this.keyword,
+			});
+			this.currentList = res.data.data.list;
+			this.total = res.data.data.total;
+			this.renderGrid();
+			this.updatePagination();
+		} catch (error) {
+			console.error("Fetch list failed", error);
+		} finally {
+			this.setLoading(false);
+		}
+	}
 
-  private setLoading(loading: boolean) {
-    this.loading = loading;
-    const loader = this.overlay.querySelector('#gjs-am-loading') as HTMLElement;
-    if (loader) {
-      loader.style.display = loading ? 'flex' : 'none';
-    }
-  }
+	private setLoading(loading: boolean) {
+		this.loading = loading;
+		const loader = this.overlay.querySelector("#gjs-am-loading") as HTMLElement;
+		if (loader) {
+			loader.style.display = loading ? "flex" : "none";
+		}
+	}
 
-  private renderGrid() {
-    const grid = this.overlay.querySelector('#gjs-am-grid') as HTMLElement;
-    if (!grid) return;
+	private renderGrid() {
+		const grid = this.overlay.querySelector("#gjs-am-grid") as HTMLElement;
+		if (!grid) return;
 
-    grid.innerHTML = '';
+		grid.innerHTML = "";
 
-    if (this.currentList.length === 0) {
-      grid.innerHTML = '<div class="gjs-am-empty" style="grid-column: 1/-1;">暂无资源</div>';
-      return;
-    }
+		if (this.currentList.length === 0) {
+			grid.innerHTML =
+				'<div class="gjs-am-empty" style="grid-column: 1/-1;">暂无资源</div>';
+			return;
+		}
 
-    this.currentList.forEach((file) => {
-      const item = document.createElement('div');
-      item.className = 'gjs-am-item';
-      if (this.selectedFile?.id === file.id) {
-        item.classList.add('selected');
-      }
+		this.currentList.forEach((file) => {
+			const item = document.createElement("div");
+			item.className = "gjs-am-item";
+			if (this.selectedFile?.id === file.id) {
+				item.classList.add("selected");
+			}
 
-      const isImage = file.type?.startsWith('image');
-      const preview = isImage
-        ? `<img src="${fileToUrl(file.id)}" alt="${file.name}" />`
-        : `<span style="font-size: 24px; color: #999;">📄</span>`;
+			const isImage = file.type?.startsWith("image");
+			const preview = isImage
+				? `<img src="${fileToUrl(file.id)}" alt="${file.name}" />`
+				: `<span style="font-size: 24px; color: #999;">📄</span>`;
 
-      item.innerHTML = `
+			item.innerHTML = `
         <div class="gjs-am-item-preview">${preview}</div>
         <div class="gjs-am-item-name" title="${file.name}">${file.name}</div>
       `;
 
-      item.addEventListener('click', () => {
-        this.selectItem(file);
-      });
+			item.addEventListener("click", () => {
+				this.selectItem(file);
+			});
 
-      // Double click to confirm
-      item.addEventListener('dblclick', () => {
-        this.selectItem(file);
-        this.confirmSelection();
-      });
+			// Double click to confirm
+			item.addEventListener("dblclick", () => {
+				this.selectItem(file);
+				this.confirmSelection();
+			});
 
-      grid.appendChild(item);
-    });
-  }
+			grid.appendChild(item);
+		});
+	}
 
-  private selectItem(file: FileManageInfo) {
-    this.selectedFile = file;
+	private selectItem(file: FileManageInfo) {
+		this.selectedFile = file;
 
-    // Update UI
-    const items = this.overlay.querySelectorAll('.gjs-am-item');
-    items.forEach((el) => {
-      el.classList.remove('selected');
-    });
+		// Update UI
+		const items = this.overlay.querySelectorAll(".gjs-am-item");
+		items.forEach((el) => {
+			el.classList.remove("selected");
+		});
 
-    // Find the one we just clicked (simple matching by checking list index or re-rendering)
-    // Re-rendering is easier for state consistency but slightly heavier.
-    // Let's just re-render grid for simplicity or toggle class.
-    this.renderGrid();
+		// Find the one we just clicked (simple matching by checking list index or re-rendering)
+		// Re-rendering is easier for state consistency but slightly heavier.
+		// Let's just re-render grid for simplicity or toggle class.
+		this.renderGrid();
 
-    // Enable confirm button
-    const btn = this.overlay.querySelector('#gjs-am-confirm-btn') as HTMLButtonElement;
-    if (btn) btn.disabled = false;
-  }
+		// Enable confirm button
+		const btn = this.overlay.querySelector(
+			"#gjs-am-confirm-btn",
+		) as HTMLButtonElement;
+		if (btn) btn.disabled = false;
+	}
 
-  private updatePagination() {
-    const info = this.overlay.querySelector('#gjs-am-page-info');
-    const prevBtn = this.overlay.querySelector('#gjs-am-prev-btn') as HTMLButtonElement;
-    const nextBtn = this.overlay.querySelector('#gjs-am-next-btn') as HTMLButtonElement;
+	private updatePagination() {
+		const info = this.overlay.querySelector("#gjs-am-page-info");
+		const prevBtn = this.overlay.querySelector(
+			"#gjs-am-prev-btn",
+		) as HTMLButtonElement;
+		const nextBtn = this.overlay.querySelector(
+			"#gjs-am-next-btn",
+		) as HTMLButtonElement;
 
-    const maxPage = Math.ceil(this.total / this.pageSize) || 1;
+		const maxPage = Math.ceil(this.total / this.pageSize) || 1;
 
-    if (info) info.textContent = `${this.currentPage} / ${maxPage}`;
-    if (prevBtn) prevBtn.disabled = this.currentPage <= 1;
-    if (nextBtn) nextBtn.disabled = this.currentPage >= maxPage;
-  }
+		if (info) info.textContent = `${this.currentPage} / ${maxPage}`;
+		if (prevBtn) prevBtn.disabled = this.currentPage <= 1;
+		if (nextBtn) nextBtn.disabled = this.currentPage >= maxPage;
+	}
 
-  private confirmSelection() {
-    if (!this.selectedFile) return;
+	private confirmSelection() {
+		if (!this.selectedFile) return;
 
-    const file = this.selectedFile;
-    const assets = [
-      {
-        src: fileToUrl(file.id),
-        name: file.name,
-        type: file.type?.startsWith('image') ? 'image' : 'file',
-        height: 100,
-        width: 100,
-      },
-    ];
+		const file = this.selectedFile;
+		const assets = [
+			{
+				src: fileToUrl(file.id),
+				name: file.name,
+				type: file.type?.startsWith("image") ? "image" : "file",
+				height: 100,
+				width: 100,
+			},
+		];
 
-    this.editor.AssetManager.add(assets);
+		this.editor.AssetManager.add(assets);
 
-    if (this.onSelect) {
-      this.onSelect(assets);
-    } else {
-      const selected = this.editor.getSelected();
-      if (selected && selected.is('image')) {
-        selected.set('src', assets[0].src);
-      }
-    }
+		if (this.onSelect) {
+			this.onSelect(assets);
+		} else {
+			const selected = this.editor.getSelected();
+			if (selected && selected.is("image")) {
+				selected.set("src", assets[0].src);
+			}
+		}
 
-    this.destroy();
-  }
+		this.destroy();
+	}
 
-  public destroy() {
-    if (this.overlay && this.overlay.parentNode) {
-      this.overlay.parentNode.removeChild(this.overlay);
-    }
-    this.onClose();
-  }
+	public destroy() {
+		if (this.overlay && this.overlay.parentNode) {
+			this.overlay.parentNode.removeChild(this.overlay);
+		}
+		this.onClose();
+	}
 }
 
 export default function assetManagerPlugin(editor: Editor) {
-  editor.Commands.add('open-assets', {
-    run(editor, sender, options = {}) {
-      // Create and open the UI
-      new AssetManagerUI(editor, options, () => {
-        editor.stopCommand('open-assets');
-      });
-    },
-    stop(editor) {
-      // The UI handles its own destruction usually,
-      // but we can ensure it's closed if called programmatically
-      const overlay = document.querySelector('.gjs-am-modal-overlay');
-      if (overlay && overlay.parentNode) {
-        overlay.parentNode.removeChild(overlay);
-      }
-    },
-  });
+	editor.Commands.add("open-assets", {
+		run(editor, sender, options = {}) {
+			// Create and open the UI
+			new AssetManagerUI(editor, options, () => {
+				editor.stopCommand("open-assets");
+			});
+		},
+		stop(editor) {
+			// The UI handles its own destruction usually,
+			// but we can ensure it's closed if called programmatically
+			const overlay = document.querySelector(".gjs-am-modal-overlay");
+			if (overlay && overlay.parentNode) {
+				overlay.parentNode.removeChild(overlay);
+			}
+		},
+	});
 }

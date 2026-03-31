@@ -1,61 +1,61 @@
 // 最大范围的全局变量白名单（包含大部分安全的全局对象）
 function createMaxWhitelist() {
-  // 基础数据类型构造函数
-  const primitives = {
-    Number: Number,
-    String: String,
-    Boolean: Boolean,
-    Array: Array,
-    Object: Object,
-    Date: Date,
-    RegExp: RegExp,
-  };
+	// 基础数据类型构造函数
+	const primitives = {
+		Number: Number,
+		String: String,
+		Boolean: Boolean,
+		Array: Array,
+		Object: Object,
+		Date: Date,
+		RegExp: RegExp,
+	};
 
-  // 安全的全局函数
-  const safeFunctions = {
-    isNaN,
-    isFinite,
-    parseFloat: parseFloat,
-    parseInt: parseInt,
-    decodeURI: decodeURI,
-    decodeURIComponent: decodeURIComponent,
-    encodeURI: encodeURI,
-    encodeURIComponent: encodeURIComponent,
-  };
+	// 安全的全局函数
+	const safeFunctions = {
+		isNaN,
+		isFinite,
+		parseFloat: parseFloat,
+		parseInt: parseInt,
+		decodeURI: decodeURI,
+		decodeURIComponent: decodeURIComponent,
+		encodeURI: encodeURI,
+		encodeURIComponent: encodeURIComponent,
+	};
 
-  // 合并所有安全的全局对象
-  return {
-    ...primitives,
-    ...safeFunctions,
-    Math: Math,
-    JSON: JSON,
-    // 可根据需要添加其他安全的全局对象
-    console: {
-      log: console.log,
-      warn: console.warn,
-      error: console.error,
-    },
-  };
+	// 合并所有安全的全局对象
+	return {
+		...primitives,
+		...safeFunctions,
+		Math: Math,
+		JSON: JSON,
+		// 可根据需要添加其他安全的全局对象
+		console: {
+			log: console.log,
+			warn: console.warn,
+			error: console.error,
+		},
+	};
 }
 
 // 创建支持最大白名单的执行环境
 export function createMaxSafeFunction(code: string) {
-  const whitelist = createMaxWhitelist();
-  const allowedKeys = Object.keys(whitelist);
+	const whitelist = createMaxWhitelist();
+	const allowedKeys = Object.keys(whitelist);
 
-  // 构建安全执行的函数体
-  const safeCode = `
+	// 构建安全执行的函数体
+	const safeCode = `
     "use strict";
-    return (function(${allowedKeys.join(', ')}) {
+    return (function(${allowedKeys.join(", ")}) {
       ${code}
-    })(${allowedKeys.join(', ')});
+    })(${allowedKeys.join(", ")});
   `;
-  try {
-    const func = new Function(...allowedKeys, safeCode);
-    return (...args: any[]) => func(...Object.values(whitelist), ...args);
-  } catch (err: any) {
-    throw new Error(`代码解析错误: ${err.message}`);
-  }
+	try {
+		const func = new Function(...allowedKeys, safeCode);
+		return (...args: any[]) => func(...Object.values(whitelist), ...args);
+	} catch (err: any) {
+		throw new Error(`代码解析错误: ${err.message}`);
+	}
 }
 
 // // ------------------------------

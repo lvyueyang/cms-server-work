@@ -1,8 +1,10 @@
-import { request } from '@/request';
-import { ImageValidateCodeResponseDto } from '@cms/api-interface';
+import { ImageValidateCodeResponseDto } from "@cms/api-interface";
+import { request } from "@/request";
 
-export * from './user';
+export * from "./user";
 
 export const getImageCode = () => {
-  return request.get<ImageValidateCodeResponseDto['data']>(`/api/image-validate-code`);
+	return request.get<ImageValidateCodeResponseDto["data"]>(
+		`/api/image-validate-code`,
+	);
 };

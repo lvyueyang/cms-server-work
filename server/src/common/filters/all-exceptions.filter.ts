@@ -1,3 +1,4 @@
+import { InternalServerErrorPage } from "@cms/ssr/pages";
 import {
 	ArgumentsHost,
 	Catch,
@@ -5,7 +6,6 @@ import {
 	HttpException,
 	HttpStatus,
 } from "@nestjs/common";
-import { InternalServerErrorPage } from "@cms/ssr/pages";
 import { HttpAdapterHost } from "@nestjs/core";
 import { CLS_KEYS, clsStore } from "@/common/cls.store";
 import { LoggerService } from "@/modules/logger/logger.service";

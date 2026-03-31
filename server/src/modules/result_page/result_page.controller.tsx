@@ -1,6 +1,6 @@
+import { ResultPage } from "@cms/ssr/pages";
 import { Controller, Get, Query } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { ResultPage } from "@cms/ssr/pages";
 import { RenderView } from "../render_view/render_view.decorator";
 
 @ApiTags("Result Page")

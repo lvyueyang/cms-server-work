@@ -1,4 +1,7 @@
-function withQuery(pathname: string, query: Record<string, string | undefined>) {
+function withQuery(
+	pathname: string,
+	query: Record<string, string | undefined>,
+) {
 	const search = new URLSearchParams();
 	for (const [key, value] of Object.entries(query)) {
 		if (value) {

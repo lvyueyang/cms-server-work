@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 
 type LocationState = unknown;
 
@@ -22,7 +22,9 @@ interface UseConsumeLocationStateOptions<T> {
  * - 只在客户端运行（local navigation state）
  * - clear() 需要返回一个可导航目标，用于清理 state（默认 replace）
  */
-export function useConsumeLocationState<T>(opt: UseConsumeLocationStateOptions<T>) {
+export function useConsumeLocationState<T>(
+	opt: UseConsumeLocationStateOptions<T>,
+) {
 	const navigate = useNavigate();
 	const location = useRouterState({
 		select: (state) => state.location,
@@ -46,5 +48,5 @@ export function useConsumeLocationState<T>(opt: UseConsumeLocationStateOptions<T
 			replace: next.replace ?? true,
 			state: undefined,
 		} as any);
-		}, [location.state]);
+	}, [location.state]);
 }

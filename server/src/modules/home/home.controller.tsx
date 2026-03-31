@@ -1,5 +1,3 @@
-import { Controller, Get, Req, Res } from "@nestjs/common";
-import { ApiExcludeEndpoint } from "@nestjs/swagger";
 import {
 	HomePage,
 	InternalServerErrorPage,
@@ -11,6 +9,8 @@ import {
 	SsrExamplesI18nPage,
 	SsrExamplesPage,
 } from "@cms/ssr/pages";
+import { Controller, Get, Req, Res } from "@nestjs/common";
+import { ApiExcludeEndpoint } from "@nestjs/swagger";
 import { Request, Response } from "express";
 import Lang from "@/common/lang.decorator";
 import { ContentLang } from "@/constants";
@@ -206,43 +206,43 @@ function createCommonExampleData(isEnglish: boolean) {
 
 @Controller()
 export class HomeController {
-  constructor(
-    private readonly bannerService: BannerService,
-    private readonly newsService: NewsService,
-  ) {}
+	constructor(
+		private readonly bannerService: BannerService,
+		private readonly newsService: NewsService,
+	) {}
 
-  @RenderView(HomePage)
-  @Get('/')
-  async index(@Lang() lang: ContentLang) {
-    const [[banners], [news]] = await Promise.all([
-      this.bannerService.findList(
-        {
-          position: ['home_top'],
-          is_available: true,
-          current: 1,
-          page_size: 20,
-          order_key: 'recommend',
-          order_type: 'DESC',
-        },
-        lang,
-      ),
-      this.newsService.findList(
-        {
-          is_available: true,
-          current: 1,
-          page_size: 1,
-          order_key: 'recommend',
-          order_type: 'DESC',
-        },
-        lang,
-      ),
-    ]);
-    return {
-      title: '首页',
-      banners,
-      news,
-    }
-  }
+	@RenderView(HomePage)
+	@Get("/")
+	async index(@Lang() lang: ContentLang) {
+		const [[banners], [news]] = await Promise.all([
+			this.bannerService.findList(
+				{
+					position: ["home_top"],
+					is_available: true,
+					current: 1,
+					page_size: 20,
+					order_key: "recommend",
+					order_type: "DESC",
+				},
+				lang,
+			),
+			this.newsService.findList(
+				{
+					is_available: true,
+					current: 1,
+					page_size: 1,
+					order_key: "recommend",
+					order_type: "DESC",
+				},
+				lang,
+			),
+		]);
+		return {
+			title: "首页",
+			banners,
+			news,
+		};
+	}
 
 	@RenderView(SsrExamplesPage)
 	@Get("/ssr-examples")
@@ -358,8 +358,8 @@ export class HomeController {
 				{
 					title: isEnglish ? "Imported PNG logo" : "导入的 PNG logo",
 					description: isEnglish
-						? "Referenced with `import logoImage from \"../../assets/images/logo.png\"`."
-						: "通过 `import logoImage from \"../../assets/images/logo.png\"` 引用。",
+						? 'Referenced with `import logoImage from "../../assets/images/logo.png"`.'
+						: '通过 `import logoImage from "../../assets/images/logo.png"` 引用。',
 					kind: "import png",
 				},
 				{
@@ -430,7 +430,9 @@ export class HomeController {
 						: "island 会先以占位节点出现在 SSR HTML 中，随后在浏览器端挂载。",
 				},
 				{
-					title: isEnglish ? "Lazy chunk stays client-only" : "懒块保持客户端执行",
+					title: isEnglish
+						? "Lazy chunk stays client-only"
+						: "懒块保持客户端执行",
 					description: isEnglish
 						? "React.lazy runs after client mount and does not contribute server HTML."
 						: "React.lazy 只会在客户端挂载后执行，不会贡献服务端 HTML。",
@@ -506,14 +508,18 @@ export class HomeController {
 			],
 			boundaries: [
 				{
-					title: isEnglish ? "No React Server Components" : "不支持 React Server Components",
+					title: isEnglish
+						? "No React Server Components"
+						: "不支持 React Server Components",
 					description: isEnglish
 						? "The runtime does not implement RSC semantics or the React Flight protocol."
 						: "当前运行时没有实现 RSC 语义，也没有接入 React Flight 协议。",
 					status: isEnglish ? "unsupported" : "未支持",
 				},
 				{
-					title: isEnglish ? "No partial hydrate reuse" : "不支持局部 hydrate 复用",
+					title: isEnglish
+						? "No partial hydrate reuse"
+						: "不支持局部 hydrate 复用",
 					description: isEnglish
 						? "Client islands mount fresh in the browser rather than hydrating server-rendered client HTML."
 						: "客户端 island 会在浏览器端重新挂载，而不是复用服务端生成的 client HTML。",
@@ -531,53 +537,53 @@ export class HomeController {
 		};
 	}
 
-  @Get(['/en', '/en/*'])
-  @ApiExcludeEndpoint()
-  enPage(@Req() req: Request, @Res() res: Response) {
-    // 设置语言cookie为en
-    res.cookie('lang', ContentLang.EN_US);
+	@Get(["/en", "/en/*"])
+	@ApiExcludeEndpoint()
+	enPage(@Req() req: Request, @Res() res: Response) {
+		// 设置语言cookie为en
+		res.cookie("lang", ContentLang.EN_US);
 
-    // 获取原始路径，去掉开头的/en
-    const originalUrl = req.url;
-    const redirectPath = originalUrl.replace(/^\/en/, '') || '/';
+		// 获取原始路径，去掉开头的/en
+		const originalUrl = req.url;
+		const redirectPath = originalUrl.replace(/^\/en/, "") || "/";
 
-    // 重定向到去掉/en的路径
-    res.redirect(redirectPath);
-    return;
-  }
+		// 重定向到去掉/en的路径
+		res.redirect(redirectPath);
+		return;
+	}
 
-  @Get(['/zh', '/zh/*'])
-  @ApiExcludeEndpoint()
-  zhPage(@Req() req: Request, @Res() res: Response) {
-    // 设置语言cookie为zh
-    res.cookie('lang', ContentLang.ZH_CN);
+	@Get(["/zh", "/zh/*"])
+	@ApiExcludeEndpoint()
+	zhPage(@Req() req: Request, @Res() res: Response) {
+		// 设置语言cookie为zh
+		res.cookie("lang", ContentLang.ZH_CN);
 
-    // 获取原始路径，去掉开头的/zh
-    const originalUrl = req.url;
-    const redirectPath = originalUrl.replace(/^\/zh/, '') || '/';
+		// 获取原始路径，去掉开头的/zh
+		const originalUrl = req.url;
+		const redirectPath = originalUrl.replace(/^\/zh/, "") || "/";
 
-    // 重定向到去掉/zh的路径
-    res.redirect(redirectPath);
-    return;
-  }
+		// 重定向到去掉/zh的路径
+		res.redirect(redirectPath);
+		return;
+	}
 
-  @RenderView(NotFoundPage)
-  @ApiExcludeEndpoint()
-  @Get('/404')
-  pageNotFound() {
-    return {
-      title: '404',
-      description: '抱歉，您访问的页面不存在。',
-    };
-  }
+	@RenderView(NotFoundPage)
+	@ApiExcludeEndpoint()
+	@Get("/404")
+	pageNotFound() {
+		return {
+			title: "404",
+			description: "抱歉，您访问的页面不存在。",
+		};
+	}
 
-  @RenderView(InternalServerErrorPage)
-  @ApiExcludeEndpoint()
-  @Get('/500')
-  pageServerError() {
-    return {
-      title: '500',
-      description: '页面渲染失败，请稍后重试。',
-    };
-  }
+	@RenderView(InternalServerErrorPage)
+	@ApiExcludeEndpoint()
+	@Get("/500")
+	pageServerError() {
+		return {
+			title: "500",
+			description: "页面渲染失败，请稍后重试。",
+		};
+	}
 }

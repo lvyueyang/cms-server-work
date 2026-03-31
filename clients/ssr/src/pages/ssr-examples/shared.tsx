@@ -77,7 +77,9 @@ export function ExampleSectionHeader({
 			<div className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">
 				{eyebrow}
 			</div>
-			<h2 className="text-3xl font-black tracking-tight text-slate-900">{title}</h2>
+			<h2 className="text-3xl font-black tracking-tight text-slate-900">
+				{title}
+			</h2>
 			<p className="max-w-3xl text-base text-slate-600">{desc}</p>
 		</div>
 	);

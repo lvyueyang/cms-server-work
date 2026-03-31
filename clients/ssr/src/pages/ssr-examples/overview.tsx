@@ -3,8 +3,8 @@ import {
 	type DemoItem,
 	type ExampleNavItem,
 	type ExampleResourceLink,
-	type MetricCard,
 	ExampleSectionHeader,
+	type MetricCard,
 	SsrExampleLayout,
 } from "./shared";
 
@@ -84,11 +84,15 @@ export function SsrExamplesPage({
 									href={item.href}
 									className="rounded-[24px] border border-slate-200 bg-slate-50 p-4 transition hover:border-slate-300 hover:bg-white"
 								>
-									<div className="text-lg font-bold text-slate-900">{item.label}</div>
+									<div className="text-lg font-bold text-slate-900">
+										{item.label}
+									</div>
 									<div className="mt-1 text-sm font-semibold text-slate-500">
 										{item.href}
 									</div>
-									<div className="mt-2 text-sm text-slate-600">{item.description}</div>
+									<div className="mt-2 text-sm text-slate-600">
+										{item.description}
+									</div>
 								</a>
 							))}
 						</div>
@@ -111,7 +115,9 @@ export function SsrExamplesPage({
 											{item.status}
 										</span>
 									</div>
-									<div className="mt-2 text-sm text-slate-600">{item.description}</div>
+									<div className="mt-2 text-sm text-slate-600">
+										{item.description}
+									</div>
 								</div>
 							))}
 						</div>

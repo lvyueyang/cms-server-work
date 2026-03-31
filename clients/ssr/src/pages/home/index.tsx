@@ -30,7 +30,8 @@ export function HomePage({ pageData }: PageComponentProps<HomePageData>) {
 							默认服务端渲染，按需挂载客户端组件
 						</h1>
 						<p className="max-w-2xl text-lg text-slate-600">
-							页面内容由服务端流式输出，带 <code>'use client'</code> 的组件在浏览器端首次挂载。
+							页面内容由服务端流式输出，带 <code>'use client'</code>{" "}
+							的组件在浏览器端首次挂载。
 						</p>
 						<div className="flex flex-wrap gap-3 text-sm font-semibold">
 							<a
@@ -76,7 +77,8 @@ export function HomePage({ pageData }: PageComponentProps<HomePageData>) {
 							多页面验证当前 SSR 的现有能力和边界能力
 						</div>
 						<div className="mt-3 text-sm text-slate-600">
-							包含 i18n、资源引用、client islands、浏览器 API、错误边界和 meta 边界等专题页。
+							包含 i18n、资源引用、client islands、浏览器 API、错误边界和 meta
+							边界等专题页。
 						</div>
 					</a>
 					{pageData.news ? (
@@ -91,7 +93,9 @@ export function HomePage({ pageData }: PageComponentProps<HomePageData>) {
 								{pageData.news.title}
 							</div>
 							{pageData.news.desc ? (
-								<div className="mt-2 text-sm text-slate-300">{pageData.news.desc}</div>
+								<div className="mt-2 text-sm text-slate-300">
+									{pageData.news.desc}
+								</div>
 							) : null}
 						</a>
 					) : null}

@@ -1,7 +1,7 @@
-import { createRoot } from "react-dom/client";
 import type { ComponentType } from "react";
-import type { SsrBootstrapPayload } from "./types";
+import { createRoot } from "react-dom/client";
 import { AppProvider } from "./context";
+import type { SsrBootstrapPayload } from "./types";
 
 const CLIENT_COMPONENT_ATTRIBUTE = "data-cms-client-component";
 const CLIENT_PROPS_ATTRIBUTE = "data-cms-client-props";
@@ -17,7 +17,10 @@ export function registerClientComponent(
 	exportName: string,
 	component: ComponentType<any>,
 ) {
-	clientComponentRegistry.set(createRegistryKey(moduleId, exportName), component);
+	clientComponentRegistry.set(
+		createRegistryKey(moduleId, exportName),
+		component,
+	);
 }
 
 export function createClientComponentReference(

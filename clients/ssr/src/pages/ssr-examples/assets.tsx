@@ -1,7 +1,7 @@
-import logoImage from "../../assets/images/logo.png";
 import monitorImage from "../../assets/images/examples/monitor.jpg";
 import teamImage from "../../assets/images/examples/team.jpg";
 import workspaceImage from "../../assets/images/examples/workspace.jpg";
+import logoImage from "../../assets/images/logo.png";
 import type { PageComponentProps } from "../../runtime/types";
 import {
 	type ExampleResourceLink,
@@ -45,13 +45,15 @@ const importedAssetImages = [
 	{
 		src: workspaceImage,
 		title: "Imported JPG 02",
-		description: "Bundled from clients/ssr/src/assets/images/examples/workspace.jpg",
+		description:
+			"Bundled from clients/ssr/src/assets/images/examples/workspace.jpg",
 		kind: "import jpg",
 	},
 	{
 		src: monitorImage,
 		title: "Imported JPG 03",
-		description: "Bundled from clients/ssr/src/assets/images/examples/monitor.jpg",
+		description:
+			"Bundled from clients/ssr/src/assets/images/examples/monitor.jpg",
 		kind: "import jpg",
 	},
 ];
@@ -87,11 +89,15 @@ export function SsrExamplesAssetsPage({
 									href={item.href}
 									className="rounded-[24px] border border-slate-200 bg-slate-50 p-4 transition hover:border-slate-300 hover:bg-white"
 								>
-									<div className="text-lg font-bold text-slate-900">{item.label}</div>
+									<div className="text-lg font-bold text-slate-900">
+										{item.label}
+									</div>
 									<div className="mt-1 break-all text-sm font-semibold text-slate-500">
 										{item.href}
 									</div>
-									<div className="mt-2 text-sm text-slate-600">{item.description}</div>
+									<div className="mt-2 text-sm text-slate-600">
+										{item.description}
+									</div>
 								</a>
 							))}
 						</div>
@@ -146,7 +152,9 @@ export function SsrExamplesAssetsPage({
 							<div className="mt-2 break-all text-lg font-black tracking-tight text-slate-900">
 								{item.value}
 							</div>
-							<div className="mt-2 text-sm text-slate-600">{item.description}</div>
+							<div className="mt-2 text-sm text-slate-600">
+								{item.description}
+							</div>
 						</div>
 					))}
 				</div>

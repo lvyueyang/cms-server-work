@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
 	lazy,
@@ -160,11 +160,13 @@ export function SsrExamplesDashboard({
 			</div>
 
 			<div className="mt-6 flex flex-wrap gap-3">
-					<input
-						value={query}
-						onChange={(event) => setQuery(event.target.value)}
+				<input
+					value={query}
+					onChange={(event) => setQuery(event.target.value)}
 					placeholder={
-						lang === "en-US" ? "Filter client data..." : "按名称筛选客户端数据..."
+						lang === "en-US"
+							? "Filter client data..."
+							: "按名称筛选客户端数据..."
 					}
 					className="min-w-[220px] flex-1 rounded-full border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-slate-900"
 				/>
@@ -175,10 +177,18 @@ export function SsrExamplesDashboard({
 					}
 					className="rounded-full border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-slate-900"
 				>
-					<option value="all">{lang === "en-US" ? "All assets" : "全部资源"}</option>
-					<option value="bundle">{lang === "en-US" ? "Bundle" : "构建资源"}</option>
-					<option value="image">{lang === "en-US" ? "Image" : "图片资源"}</option>
-					<option value="document">{lang === "en-US" ? "Document" : "文档资源"}</option>
+					<option value="all">
+						{lang === "en-US" ? "All assets" : "全部资源"}
+					</option>
+					<option value="bundle">
+						{lang === "en-US" ? "Bundle" : "构建资源"}
+					</option>
+					<option value="image">
+						{lang === "en-US" ? "Image" : "图片资源"}
+					</option>
+					<option value="document">
+						{lang === "en-US" ? "Document" : "文档资源"}
+					</option>
 				</select>
 				<button
 					type="button"
@@ -241,19 +251,21 @@ export function SsrExamplesDashboard({
 				</div>
 			) : null}
 
-				{!isLoading && !error && filteredItems.length === 0 ? (
-					<div className="mt-6 rounded-[24px] border border-dashed border-slate-300 p-5 text-sm text-slate-500">
-						{lang === "en-US"
-							? "No matching items after client-side filtering."
-							: "客户端筛选后没有匹配的数据。"}
-					</div>
-				) : null}
+			{!isLoading && !error && filteredItems.length === 0 ? (
+				<div className="mt-6 rounded-[24px] border border-dashed border-slate-300 p-5 text-sm text-slate-500">
+					{lang === "en-US"
+						? "No matching items after client-side filtering."
+						: "客户端筛选后没有匹配的数据。"}
+				</div>
+			) : null}
 
-				{query !== deferredQuery ? (
-					<div className="mt-4 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-						{lang === "en-US" ? "Applying deferred filter..." : "正在应用延迟筛选..."}
-					</div>
-				) : null}
+			{query !== deferredQuery ? (
+				<div className="mt-4 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+					{lang === "en-US"
+						? "Applying deferred filter..."
+						: "正在应用延迟筛选..."}
+				</div>
+			) : null}
 
 			<div className="mt-6">
 				{shouldLoadLazyPanel ? (

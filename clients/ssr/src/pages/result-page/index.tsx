@@ -25,9 +25,7 @@ const typeConfig: Record<ResultType, { href: string; label: string }> = {
 	},
 };
 
-export function ResultPage({
-	pageData,
-}: PageComponentProps<ResultPageData>) {
+export function ResultPage({ pageData }: PageComponentProps<ResultPageData>) {
 	const action = pageData.type ? typeConfig[pageData.type] : null;
 	const toneClass =
 		pageData.status === "success"

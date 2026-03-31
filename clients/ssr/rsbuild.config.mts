@@ -42,7 +42,9 @@ function parseUseClientExports(code: string) {
 	for (const match of code.matchAll(/export\s*\{([^}]+)\}/g)) {
 		const content = match[1];
 		for (const part of content.split(",")) {
-			const [rawName, rawAlias] = part.split(/\s+as\s+/).map((item) => item.trim());
+			const [rawName, rawAlias] = part
+				.split(/\s+as\s+/)
+				.map((item) => item.trim());
 			const exportName = rawAlias || rawName;
 			if (exportName) {
 				exportNames.add(exportName);
@@ -50,7 +52,9 @@ function parseUseClientExports(code: string) {
 		}
 	}
 	if (
-		/export\s+default\s+(?:async\s+)?function(?:\s+[A-Za-z_$][\w$]*)?/g.test(code) ||
+		/export\s+default\s+(?:async\s+)?function(?:\s+[A-Za-z_$][\w$]*)?/g.test(
+			code,
+		) ||
 		/export\s+default\s+[A-Za-z_$][\w$]*/g.test(code)
 	) {
 		hasDefaultExport = true;

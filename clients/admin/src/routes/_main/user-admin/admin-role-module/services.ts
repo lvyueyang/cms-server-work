@@ -1,4 +1,3 @@
-import { AIP_FIX } from "@/constants";
 import {
 	AdminPermissionCodeListResponseDto,
 	AdminRoleCreateDto,
@@ -7,6 +6,7 @@ import {
 	AdminRoleUpdateDto,
 	AdminRoleUpdatePermissionCodeDto,
 } from "@cms/api-interface";
+import { AIP_FIX } from "@/constants";
 import { request } from "@/request";
 import { Pagination } from "@/types";
 

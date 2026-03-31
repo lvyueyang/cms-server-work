@@ -1,7 +1,7 @@
-import { createContext, useContext } from "react";
 import type { ReactNode } from "react";
+import { createContext, useContext } from "react";
+import { createI18nInstance, I18nProvider } from "./i18n";
 import type { GlobalData, RequestContext, SsrBootstrapPayload } from "./types";
-import { I18nProvider, createI18nInstance } from "./i18n";
 
 const DEFAULT_GLOBAL_DATA: GlobalData = {
 	company_email: "",

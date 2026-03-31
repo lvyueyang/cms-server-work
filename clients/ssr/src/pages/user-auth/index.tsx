@@ -45,7 +45,8 @@ export function LoginPage({
 	return (
 		<AuthShell title="登录" action={{ href: "/", label: "返回首页" }}>
 			<p className="text-sm text-slate-600">
-				请通过表单提交登录。{pageData.message ? `提示：${pageData.message}` : ""}
+				请通过表单提交登录。
+				{pageData.message ? `提示：${pageData.message}` : ""}
 			</p>
 		</AuthShell>
 	);
@@ -53,7 +54,10 @@ export function LoginPage({
 
 export function RegisterPage() {
 	return (
-		<AuthShell title="注册" action={{ href: "/login", label: "已有账号，去登录" }}>
+		<AuthShell
+			title="注册"
+			action={{ href: "/login", label: "已有账号，去登录" }}
+		>
 			<p className="text-sm text-slate-600">请通过表单提交注册信息。</p>
 		</AuthShell>
 	);
@@ -62,7 +66,9 @@ export function RegisterPage() {
 export function ResetPasswordPage() {
 	return (
 		<AuthShell title="重置密码" action={{ href: "/login", label: "返回登录" }}>
-			<p className="text-sm text-slate-600">请通过表单提交手机号、验证码和新密码。</p>
+			<p className="text-sm text-slate-600">
+				请通过表单提交手机号、验证码和新密码。
+			</p>
 		</AuthShell>
 	);
 }

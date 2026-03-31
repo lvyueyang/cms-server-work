@@ -1,350 +1,375 @@
-import { AvailableSwitch } from '@/components/Available';
-import { DictValueCreateDto, DictValueInfo, DictValueUpdateDto } from '@cms/api-interface';
-import { useNavigate, useParams, createFileRoute } from '@tanstack/react-router';
-import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
+import { ActionType, ProColumns, ProTable } from "@ant-design/pro-components";
 import {
-  Button,
-  Input,
-  Popconfirm,
-  Space,
-  Form,
-  Modal,
-  Switch,
-  InputNumber,
-  message,
-  Select,
-} from 'antd';
-import { useRef, useState } from 'react';
-import { createApi, getListApi, removeApi, updateApi } from './value-module';
-import { useConsumeLocationState } from '@/hooks/useConsumeLocationState';
-import { ModalType, useFormModal } from '@/hooks/useFormModal';
-import { useDictStore } from '@/store/dict';
-import { createI18nColumn, enumMapToOptions } from '@/utils';
-import { ContentType, ContentTypeMap } from '@/constants';
-
-import { AutoContentInput } from '@/components/AutoContentInput';
-import { modal } from '@/utils/notice';
-import { TableColumnSort } from '@/components/TableColumnSort';
+	DictValueCreateDto,
+	DictValueInfo,
+	DictValueUpdateDto,
+} from "@cms/api-interface";
+import {
+	createFileRoute,
+	useNavigate,
+	useParams,
+} from "@tanstack/react-router";
+import {
+	Button,
+	Form,
+	Input,
+	InputNumber,
+	Modal,
+	message,
+	Popconfirm,
+	Select,
+	Space,
+	Switch,
+} from "antd";
+import { useRef, useState } from "react";
+import { AutoContentInput } from "@/components/AutoContentInput";
+import { AvailableSwitch } from "@/components/Available";
+import { TableColumnSort } from "@/components/TableColumnSort";
+import { ContentType, ContentTypeMap } from "@/constants";
+import { useConsumeLocationState } from "@/hooks/useConsumeLocationState";
+import { ModalType, useFormModal } from "@/hooks/useFormModal";
+import { useDictStore } from "@/store/dict";
+import { createI18nColumn, enumMapToOptions } from "@/utils";
+import { modal } from "@/utils/notice";
+import { createApi, getListApi, removeApi, updateApi } from "./value-module";
 
 type TableItem = DictValueInfo;
 type CreateFormValues = DictValueCreateDto;
 type UpdateFormValues = DictValueUpdateDto;
 type FormValues = CreateFormValues | UpdateFormValues;
 
-const i18nColumn = createI18nColumn<TableItem>('dict_value');
+const i18nColumn = createI18nColumn<TableItem>("dict_value");
 
 export default function DictValueListPage() {
-  const [searchForm, setSearchForm] = useState({
-    keyword: '',
-  });
-  const navigate = useNavigate();
-  const params = useParams({ strict: false }) as { id?: string };
-  const tableRef = useRef<ActionType | undefined>(undefined);
-  const dictStore = useDictStore();
-  const [selectedRows, setSelectedRows] = useState<TableItem[]>([]);
-  const formModal = useFormModal<FormValues>({
-    submit: (values, modal) => {
-      if (modal.type === ModalType.UPDATE) {
-        return updateApi(values as DictValueUpdateDto).then(() => {
-          tableRef.current?.reload();
-          dictStore.load();
-        });
-      }
-      return createApi({
-        ...values,
-        typeId: Number(params.id),
-      } as DictValueCreateDto).then(() => {
-        tableRef.current?.reload();
-        dictStore.load();
-      });
-    },
-  });
-  const columns: ProColumns<TableItem>[] = [
-    {
-      dataIndex: 'id',
-      title: 'ID',
-      width: 70,
-    },
-    {
-      dataIndex: 'recommend',
-      title: '排序',
-      sorter: (a, b) => a.recommend - b.recommend,
-      width: 80,
-      render: (_, row) => {
-        return (
-          <TableColumnSort
-            value={row.recommend}
-            request={(value) =>
-              updateApi({
-                id: row.id,
-                recommend: value,
-              })
-            }
-          />
-        );
-      },
-    },
-    i18nColumn({
-      dataIndex: 'label',
-      title: '名称',
-      width: 140,
-    }),
-    {
-      dataIndex: 'value',
-      title: '值',
-      width: 180,
-    },
-    i18nColumn({
-      dataIndex: 'desc',
-      title: '描述',
-      ellipsis: true,
-      width: 180,
-    }),
-    {
-      dataIndex: 'attr_type',
-      title: '属性类型',
-      ellipsis: true,
-      width: 90,
-    },
-    {
-      dataIndex: 'attr',
-      title: '属性',
-      ellipsis: true,
-      width: 50,
-      render: (_, row, ind, act, schema) => {
-        return (
-          <i18nColumn.I18nBlock
-            dataIndex="attr"
-            row={row!}
-            transType={(row.attr_type as ContentType) || ContentType.Code}
-            hideValue
-            val={row.attr}
-          />
-        );
-      },
-    },
-    {
-      dataIndex: 'is_available',
-      title: '是否可用',
-      width: 80,
-      render: (_, row) => {
-        return (
-          <AvailableSwitch
-            value={row.is_available}
-            tableRef={tableRef}
-            request={() =>
-              updateApi({
-                id: row.id,
-                is_available: !row.is_available,
-              })
-            }
-          />
-        );
-      },
-    },
-    {
-      dataIndex: 'create_date',
-      title: '创建时间',
-      valueType: 'dateTime',
-      width: 170,
-    },
-    {
-      dataIndex: 'update_date',
-      title: '修改时间',
-      valueType: 'dateTime',
-      width: 170,
-    },
-    {
-      dataIndex: 'operate',
-      title: '操作',
-      hideInSearch: true,
-      fixed: 'right',
-      render: (_, row) => {
-        return (
-          <Space>
-            <a
-              onClick={() => {
-                formModal.form.setFieldsValue(row);
-                formModal.formModalShow(ModalType.UPDATE);
-              }}
-            >
-              编辑
-            </a>
-            <Popconfirm
-              title="确定要删除这个字典值吗？"
-              onConfirm={() => {
-                const close = message.loading('删除中...', 0);
-                removeApi([row.id])
-                  .then(() => {
-                    message.success('删除成功');
-                    tableRef.current?.reload();
-                    dictStore.load();
-                  })
-                  .finally(() => {
-                    close();
-                  });
-              }}
-            >
-              <a>删除</a>
-            </Popconfirm>
-          </Space>
-        );
-      },
-    },
-  ];
-  const dictType = dictStore.list.find((item) => item.id === Number(params.id));
+	const [searchForm, setSearchForm] = useState({
+		keyword: "",
+	});
+	const navigate = useNavigate();
+	const params = useParams({ strict: false }) as { id?: string };
+	const tableRef = useRef<ActionType | undefined>(undefined);
+	const dictStore = useDictStore();
+	const [selectedRows, setSelectedRows] = useState<TableItem[]>([]);
+	const formModal = useFormModal<FormValues>({
+		submit: (values, modal) => {
+			if (modal.type === ModalType.UPDATE) {
+				return updateApi(values as DictValueUpdateDto).then(() => {
+					tableRef.current?.reload();
+					dictStore.load();
+				});
+			}
+			return createApi({
+				...values,
+				typeId: Number(params.id),
+			} as DictValueCreateDto).then(() => {
+				tableRef.current?.reload();
+				dictStore.load();
+			});
+		},
+	});
+	const columns: ProColumns<TableItem>[] = [
+		{
+			dataIndex: "id",
+			title: "ID",
+			width: 70,
+		},
+		{
+			dataIndex: "recommend",
+			title: "排序",
+			sorter: (a, b) => a.recommend - b.recommend,
+			width: 80,
+			render: (_, row) => {
+				return (
+					<TableColumnSort
+						value={row.recommend}
+						request={(value) =>
+							updateApi({
+								id: row.id,
+								recommend: value,
+							})
+						}
+					/>
+				);
+			},
+		},
+		i18nColumn({
+			dataIndex: "label",
+			title: "名称",
+			width: 140,
+		}),
+		{
+			dataIndex: "value",
+			title: "值",
+			width: 180,
+		},
+		i18nColumn({
+			dataIndex: "desc",
+			title: "描述",
+			ellipsis: true,
+			width: 180,
+		}),
+		{
+			dataIndex: "attr_type",
+			title: "属性类型",
+			ellipsis: true,
+			width: 90,
+		},
+		{
+			dataIndex: "attr",
+			title: "属性",
+			ellipsis: true,
+			width: 50,
+			render: (_, row, ind, act, schema) => {
+				return (
+					<i18nColumn.I18nBlock
+						dataIndex="attr"
+						row={row!}
+						transType={(row.attr_type as ContentType) || ContentType.Code}
+						hideValue
+						val={row.attr}
+					/>
+				);
+			},
+		},
+		{
+			dataIndex: "is_available",
+			title: "是否可用",
+			width: 80,
+			render: (_, row) => {
+				return (
+					<AvailableSwitch
+						value={row.is_available}
+						tableRef={tableRef}
+						request={() =>
+							updateApi({
+								id: row.id,
+								is_available: !row.is_available,
+							})
+						}
+					/>
+				);
+			},
+		},
+		{
+			dataIndex: "create_date",
+			title: "创建时间",
+			valueType: "dateTime",
+			width: 170,
+		},
+		{
+			dataIndex: "update_date",
+			title: "修改时间",
+			valueType: "dateTime",
+			width: 170,
+		},
+		{
+			dataIndex: "operate",
+			title: "操作",
+			hideInSearch: true,
+			fixed: "right",
+			render: (_, row) => {
+				return (
+					<Space>
+						<a
+							onClick={() => {
+								formModal.form.setFieldsValue(row);
+								formModal.formModalShow(ModalType.UPDATE);
+							}}
+						>
+							编辑
+						</a>
+						<Popconfirm
+							title="确定要删除这个字典值吗？"
+							onConfirm={() => {
+								const close = message.loading("删除中...", 0);
+								removeApi([row.id])
+									.then(() => {
+										message.success("删除成功");
+										tableRef.current?.reload();
+										dictStore.load();
+									})
+									.finally(() => {
+										close();
+									});
+							}}
+						>
+							<a>删除</a>
+						</Popconfirm>
+					</Space>
+				);
+			},
+		},
+	];
+	const dictType = dictStore.list.find((item) => item.id === Number(params.id));
 
-  useConsumeLocationState<string>({
-    select: (state) => {
-      const type = (state as Record<string, any> | undefined)?.type;
-      return type ? String(type) : undefined;
-    },
-    onConsume: () => {
-      formModal.form.resetFields();
-      formModal.formModalShow();
-    },
-    clear: (type) => ({
-      to: '/dict/$id',
-      params: { id: type },
-    }),
-  });
+	useConsumeLocationState<string>({
+		select: (state) => {
+			const type = (state as Record<string, any> | undefined)?.type;
+			return type ? String(type) : undefined;
+		},
+		onConsume: () => {
+			formModal.form.resetFields();
+			formModal.formModalShow();
+		},
+		clear: (type) => ({
+			to: "/dict/$id",
+			params: { id: type },
+		}),
+	});
 
-  return (
-    <>
-      <ProTable<TableItem>
-        columns={columns}
-        rowKey="id"
-        bordered
-        scroll={{ x: 1200 }}
-        search={false}
-        pagination={false}
-        request={() => {
-          return getListApi({ ...searchForm, typeId: Number(params.id) }).then(({ data }) => {
-            return { data: data.data.list, total: data.data.total || 0 };
-          });
-        }}
-        actionRef={tableRef}
-        rowSelection={{
-          type: 'checkbox',
-          selectedRowKeys: selectedRows.map((i) => i.id),
-          onChange: (_, selectedRows) => {
-            setSelectedRows(selectedRows);
-          },
-        }}
-        headerTitle={
-          <Input.Search
-            value={searchForm.keyword}
-            onChange={(e) => {
-              setSearchForm((state) => ({
-                ...state,
-                keyword: e.target.value.trim(),
-              }));
-            }}
-            style={{ width: 400 }}
-            placeholder="请输入字典值名称搜索"
-            enterButton={<>搜索</>}
-            onSearch={() => {
-              tableRef.current?.setPageInfo?.({ current: 1 });
-              tableRef.current?.reload();
-            }}
-          />
-        }
-        toolBarRender={() => [
-          selectedRows.length ? (
-            <Button
-              danger
-              type="primary"
-              onClick={() => {
-                modal.confirm({
-                  title: '确认删除选中的字典值吗？',
-                  okText: '确认',
-                  okType: 'danger',
-                  onOk: () => {
-                    const close = message.loading('删除中...', 0);
-                    removeApi(selectedRows.map((i) => i.id))
-                      .then(() => {
-                        message.success('删除成功');
-                        tableRef.current?.reload();
-                        dictStore.load();
-                      })
-                      .finally(() => {
-                        close();
-                      });
-                  },
-                });
-              }}
-            >
-              批量删除
-            </Button>
-          ) : null,
-          <Button
-            key="create"
-            type="primary"
-            onClick={() => {
-              formModal.form.resetFields();
-              formModal.formModalShow();
-            }}
-          >
-            新增字典值
-          </Button>,
-        ]}
-      />
-      <Modal
-        maskClosable={false}
-        open={formModal.formModal.open}
-        title={`${formModal.formModalTitle}字典值`}
-        onCancel={formModal.formModalClose}
-        onOk={formModal.submitHandler}
-        okButtonProps={{
-          loading: formModal.submitLoading,
-        }}
-        width={700}
-      >
-        <br />
-        <Form
-          form={formModal.form}
-          labelCol={{ flex: '80px' }}
-          initialValues={{ recommend: 0, is_available: true, attr_type: dictType?.attr_type }}
-        >
-          {formModal.formModal.type !== ModalType.CREATE && (
-            <Form.Item name="id" label="ID">
-              <Input disabled />
-            </Form.Item>
-          )}
-          <Form.Item label="名称" name="label" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item label="值" name="value" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item label="描述" name="desc">
-            <Input.TextArea />
-          </Form.Item>
-          <Form.Item label="排序" name="recommend">
-            <InputNumber min={0} />
-          </Form.Item>
-          <Form.Item label="上架状态" name="is_available" valuePropName="checked">
-            <Switch checkedChildren="上架" unCheckedChildren="下架" />
-          </Form.Item>
-          <Form.Item label="属性类型" name="attr_type" tooltip="可选，用于定义字典项的附加属性类型">
-            <Select options={enumMapToOptions(ContentTypeMap)} allowClear style={{ width: 200 }} />
-          </Form.Item>
-          <Form.Item label="附件属性" dependencies={['attr_type']}>
-            {() => {
-              const attrType = formModal.form.getFieldValue('attr_type');
-              return (
-                <Form.Item noStyle name="attr">
-                  <AutoContentInput type={attrType} />
-                </Form.Item>
-              );
-            }}
-          </Form.Item>
-        </Form>
-      </Modal>
-    </>
-  );
+	return (
+		<>
+			<ProTable<TableItem>
+				columns={columns}
+				rowKey="id"
+				bordered
+				scroll={{ x: 1200 }}
+				search={false}
+				pagination={false}
+				request={() => {
+					return getListApi({ ...searchForm, typeId: Number(params.id) }).then(
+						({ data }) => {
+							return { data: data.data.list, total: data.data.total || 0 };
+						},
+					);
+				}}
+				actionRef={tableRef}
+				rowSelection={{
+					type: "checkbox",
+					selectedRowKeys: selectedRows.map((i) => i.id),
+					onChange: (_, selectedRows) => {
+						setSelectedRows(selectedRows);
+					},
+				}}
+				headerTitle={
+					<Input.Search
+						value={searchForm.keyword}
+						onChange={(e) => {
+							setSearchForm((state) => ({
+								...state,
+								keyword: e.target.value.trim(),
+							}));
+						}}
+						style={{ width: 400 }}
+						placeholder="请输入字典值名称搜索"
+						enterButton={<>搜索</>}
+						onSearch={() => {
+							tableRef.current?.setPageInfo?.({ current: 1 });
+							tableRef.current?.reload();
+						}}
+					/>
+				}
+				toolBarRender={() => [
+					selectedRows.length ? (
+						<Button
+							danger
+							type="primary"
+							onClick={() => {
+								modal.confirm({
+									title: "确认删除选中的字典值吗？",
+									okText: "确认",
+									okType: "danger",
+									onOk: () => {
+										const close = message.loading("删除中...", 0);
+										removeApi(selectedRows.map((i) => i.id))
+											.then(() => {
+												message.success("删除成功");
+												tableRef.current?.reload();
+												dictStore.load();
+											})
+											.finally(() => {
+												close();
+											});
+									},
+								});
+							}}
+						>
+							批量删除
+						</Button>
+					) : null,
+					<Button
+						key="create"
+						type="primary"
+						onClick={() => {
+							formModal.form.resetFields();
+							formModal.formModalShow();
+						}}
+					>
+						新增字典值
+					</Button>,
+				]}
+			/>
+			<Modal
+				maskClosable={false}
+				open={formModal.formModal.open}
+				title={`${formModal.formModalTitle}字典值`}
+				onCancel={formModal.formModalClose}
+				onOk={formModal.submitHandler}
+				okButtonProps={{
+					loading: formModal.submitLoading,
+				}}
+				width={700}
+			>
+				<br />
+				<Form
+					form={formModal.form}
+					labelCol={{ flex: "80px" }}
+					initialValues={{
+						recommend: 0,
+						is_available: true,
+						attr_type: dictType?.attr_type,
+					}}
+				>
+					{formModal.formModal.type !== ModalType.CREATE && (
+						<Form.Item name="id" label="ID">
+							<Input disabled />
+						</Form.Item>
+					)}
+					<Form.Item label="名称" name="label" rules={[{ required: true }]}>
+						<Input />
+					</Form.Item>
+					<Form.Item label="值" name="value" rules={[{ required: true }]}>
+						<Input />
+					</Form.Item>
+					<Form.Item label="描述" name="desc">
+						<Input.TextArea />
+					</Form.Item>
+					<Form.Item label="排序" name="recommend">
+						<InputNumber min={0} />
+					</Form.Item>
+					<Form.Item
+						label="上架状态"
+						name="is_available"
+						valuePropName="checked"
+					>
+						<Switch checkedChildren="上架" unCheckedChildren="下架" />
+					</Form.Item>
+					<Form.Item
+						label="属性类型"
+						name="attr_type"
+						tooltip="可选，用于定义字典项的附加属性类型"
+					>
+						<Select
+							options={enumMapToOptions(ContentTypeMap)}
+							allowClear
+							style={{ width: 200 }}
+						/>
+					</Form.Item>
+					<Form.Item label="附件属性" dependencies={["attr_type"]}>
+						{() => {
+							const attrType = formModal.form.getFieldValue("attr_type");
+							return (
+								<Form.Item noStyle name="attr">
+									<AutoContentInput type={attrType} />
+								</Form.Item>
+							);
+						}}
+					</Form.Item>
+				</Form>
+			</Modal>
+		</>
+	);
 }
 
-export const Route = createFileRoute('/_main/dict/$id')({
-  component: DictValueListPage,
+export const Route = createFileRoute("/_main/dict/$id")({
+	component: DictValueListPage,
 });

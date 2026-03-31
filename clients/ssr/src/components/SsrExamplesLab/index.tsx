@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
 	Component,
@@ -113,11 +113,16 @@ export function SsrExamplesLab({
 			if (cached) {
 				const parsed = JSON.parse(cached) as Partial<FormDraft>;
 				setDraft({
-					name: typeof parsed.name === "string" ? parsed.name : initialDraft.name,
+					name:
+						typeof parsed.name === "string" ? parsed.name : initialDraft.name,
 					email:
-						typeof parsed.email === "string" ? parsed.email : initialDraft.email,
+						typeof parsed.email === "string"
+							? parsed.email
+							: initialDraft.email,
 					notes:
-						typeof parsed.notes === "string" ? parsed.notes : initialDraft.notes,
+						typeof parsed.notes === "string"
+							? parsed.notes
+							: initialDraft.notes,
 				});
 			}
 		} catch {}
@@ -208,7 +213,11 @@ export function SsrExamplesLab({
 						onChange={(event) =>
 							setDraft((prev) => ({ ...prev, notes: event.target.value }))
 						}
-						placeholder={lang === "en-US" ? "Notes for hydration demo" : "输入一些用于 hydration 演示的备注"}
+						placeholder={
+							lang === "en-US"
+								? "Notes for hydration demo"
+								: "输入一些用于 hydration 演示的备注"
+						}
 						rows={5}
 						className="rounded-[20px] border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-slate-900"
 					/>
@@ -337,7 +346,8 @@ export function SsrExamplesLab({
 					</div>
 					<div className="mt-4 space-y-3 text-sm text-slate-300">
 						<div>
-							<span className="font-semibold text-white">title</span>: {metaTitle}
+							<span className="font-semibold text-white">title</span>:{" "}
+							{metaTitle}
 						</div>
 						<div>
 							<span className="font-semibold text-white">description</span>:{" "}

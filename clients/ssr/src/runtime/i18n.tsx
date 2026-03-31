@@ -1,6 +1,6 @@
-import { createContext, useContext } from "react";
-import type { ReactNode } from "react";
 import i18next, { type i18n as I18nInstance } from "i18next";
+import type { ReactNode } from "react";
+import { createContext, useContext } from "react";
 
 const I18nContext = createContext<I18nInstance | null>(null);
 

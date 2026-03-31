@@ -1,107 +1,108 @@
-import { Modal } from 'antd';
-import { Editor } from 'grapesjs';
-import React, { useRef, useState } from 'react';
-import GrapesjsEditor from '../GrapesjsEditor';
-import styles from './index.module.scss';
+import { Modal } from "antd";
+import { Editor } from "grapesjs";
+import React, { useRef, useState } from "react";
+import GrapesjsEditor from "../GrapesjsEditor";
+import styles from "./index.module.scss";
 
 interface LowCodeEditorProps {
-  value?: string;
-  onChange?: (value: string) => void;
-  placeholder?: string;
+	value?: string;
+	onChange?: (value: string) => void;
+	placeholder?: string;
 }
 
-export const LowCodeEditor: React.FC<LowCodeEditorProps> = ({ value, onChange, placeholder = '点击编辑内容' }) => {
-  const [open, setOpen] = useState(false);
-  const editorRef = useRef<Editor | null>(null);
+export const LowCodeEditor: React.FC<LowCodeEditorProps> = ({
+	value,
+	onChange,
+	placeholder = "点击编辑内容",
+}) => {
+	const [open, setOpen] = useState(false);
+	const editorRef = useRef<Editor | null>(null);
 
-  const handleOk = () => {
-    if (editorRef.current) {
-      const editor = editorRef.current;
-      const html = editor
-        .getComponents()
-        .models.map((m) => m.toHTML())
-        .join('');
-      const cssJson = editor.getCss({ json: true }) as any;
-      const css = cssJson.map((c: any) => c.toCSS()).join('');
-      const content = `<style>${css}</style>${html}`;
-      onChange?.(content);
-    }
-    setOpen(false);
-  };
+	const handleOk = () => {
+		if (editorRef.current) {
+			const editor = editorRef.current;
+			const html = editor
+				.getComponents()
+				.models.map((m) => m.toHTML())
+				.join("");
+			const cssJson = editor.getCss({ json: true }) as any;
+			const css = cssJson.map((c: any) => c.toCSS()).join("");
+			const content = `<style>${css}</style>${html}`;
+			onChange?.(content);
+		}
+		setOpen(false);
+	};
 
-  const handleCancel = () => {
-    setOpen(false);
-  };
+	const handleCancel = () => {
+		setOpen(false);
+	};
 
-  return (
-    <>
-      <div
-        className={styles.previewContainer}
-        onClick={() => setOpen(true)}
-      >
-        {value ? (
-          <div
-            dangerouslySetInnerHTML={{ __html: value }}
-            style={{ pointerEvents: 'none' }}
-          />
-        ) : (
-          <div className={styles.placeholder}>{placeholder}</div>
-        )}
-      </div>
+	return (
+		<>
+			<div className={styles.previewContainer} onClick={() => setOpen(true)}>
+				{value ? (
+					<div
+						dangerouslySetInnerHTML={{ __html: value }}
+						style={{ pointerEvents: "none" }}
+					/>
+				) : (
+					<div className={styles.placeholder}>{placeholder}</div>
+				)}
+			</div>
 
-      <Modal
-        open={open}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        width="100%"
-        styles={{
-          wrapper: {
-            maxWidth: '100%',
-          },
-          container: {
-            padding: 0,
-            height: '100vh',
-          },
-          body: {
-            padding: 0,
-            height: 'calc(100vh - 44px)',
-            width: '100vw',
-            overflow: 'hidden',
-          },
-          footer: {
-            margin: 0,
-            alignItems: 'center',
-            height: 44,
-            display: 'flex',
-            justifyContent: 'flex-end',
-            paddingRight: 10,
-          },
-        }}
-        style={{ maxWidth: '100%' }}
-        maskClosable={false}
-        destroyOnHidden
-        centered
-        keyboard={false}
-        closeIcon={false}
-      >
-        <div className={styles.editorContainer}>
-          <GrapesjsEditor
-            onEditorInit={(editor) => {
-              editorRef.current = editor;
-            }}
-            options={{
-              pageManager: {
-                pages: [
-                  {
-                    id: 'Home',
-                    name: 'Home',
-                    component: value || '',
-                  },
-                ],
-              },
-            }}
-          />
-          {/* <StudioEditor
+			<Modal
+				open={open}
+				onOk={handleOk}
+				onCancel={handleCancel}
+				width="100%"
+				styles={{
+					wrapper: {
+						maxWidth: "100%",
+					},
+					container: {
+						padding: 0,
+						height: "100vh",
+					},
+					body: {
+						padding: 0,
+						height: "calc(100vh - 44px)",
+						width: "100vw",
+						overflow: "hidden",
+					},
+					footer: {
+						margin: 0,
+						alignItems: "center",
+						height: 44,
+						display: "flex",
+						justifyContent: "flex-end",
+						paddingRight: 10,
+					},
+				}}
+				style={{ maxWidth: "100%" }}
+				maskClosable={false}
+				destroyOnHidden
+				centered
+				keyboard={false}
+				closeIcon={false}
+			>
+				<div className={styles.editorContainer}>
+					<GrapesjsEditor
+						onEditorInit={(editor) => {
+							editorRef.current = editor;
+						}}
+						options={{
+							pageManager: {
+								pages: [
+									{
+										id: "Home",
+										name: "Home",
+										component: value || "",
+									},
+								],
+							},
+						}}
+					/>
+					{/* <StudioEditor
             onReady={(editor) => {
               editorRef.current = editor;
               // setTimeout(() => {
@@ -206,8 +207,8 @@ export const LowCodeEditor: React.FC<LowCodeEditorProps> = ({ value, onChange, p
               ],
             }}
           /> */}
-        </div>
-      </Modal>
-    </>
-  );
+				</div>
+			</Modal>
+		</>
+	);
 };
