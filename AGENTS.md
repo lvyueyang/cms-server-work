@@ -7,20 +7,20 @@
 基于 Monorepo 的 CMS 系统，包含服务端、管理后台、CLI 工具和共享类型库。
 
 - **`server/`**: NestJS 服务端，提供 RESTful API
-- **`clients/admin/`**: React + Umi + Ant Design 管理后台
+- **`clients/admin/`**: React + Rsbuild + TanStack Router + Ant Design 管理后台
 - **`packages/api-interface/`**: 接口类型定义库
 - **`packages/cmd/`**: CRUD 代码生成工具
 
 ## 2. 技术栈
 
 - **服务端**: NestJS v10, TypeScript, TypeORM (MySQL), Swagger, Rspack, Winston, JWT, S3, Nodemailer
-- **管理后台**: Umi v4, React, Ant Design v6, Zustand, WangEditor, CodeMirror, GrapesJS
+- **管理后台**: Rsbuild, React, TanStack Router, Ant Design v6, Zustand, WangEditor, CodeMirror, GrapesJS
 
 ## 3. 常用命令
 
 ### 开发
 - `pnpm dev:server`: 启动服务端 (NestJS)
-- `pnpm dev:admin`: 启动管理后台 (Umi)
+- `pnpm dev:admin`: 启动管理后台 (Rsbuild)
 - `pnpm dev:fe`: 启动 Rspack 监听
 
 ### 构建
@@ -110,7 +110,7 @@ throw new ForbiddenException('Access denied');
 - **DTO**: `class-validator` 验证
 
 ### 前端规范 (Admin)
-- **组件目录**: `src/pages/`
+- **路由目录**: `src/routes/`
 - **状态管理**: Zustand (`src/store/`)
 - **API 调用**: `useRequest` (ahooks) 或 React Query
 - **表单**: ProForm + rules

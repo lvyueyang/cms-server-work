@@ -35,7 +35,7 @@ FILE_DATA_DIR_PATH="~/node_server_data/cms_server"
 
 # CMS UI 管理后台
 
-umi 构建 React + antd + antd Pro + typescript
+Rsbuild 构建 React + TanStack Router + antd + antd Pro + typescript
 
 # SSR 服务端渲染
 

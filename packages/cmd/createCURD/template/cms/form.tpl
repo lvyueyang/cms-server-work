@@ -1,10 +1,10 @@
 import UploadImage from '@/components/UploadImage';
 import { {{entityName}}UpdateDto, {{entityName}}CreateDto } from '@cms/api-interface';
 import { message } from '@/utils/notice';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { useRequest } from 'ahooks';
 import { Button, Card, Form, Input, Row, Select, Switch } from 'antd';
 import { useEffect } from 'react';
-import { history, useParams } from 'umi';
 import { createApi, getDetailApi, updateApi } from './module';
 import { RecommendFormItem } from '@/components/RecommendFormItem';
 import { enumMapToOptions } from '@/utils';
@@ -14,9 +14,10 @@ import { AutoContentInput } from '@/components/AutoContentInput';
 type FormValues = {{entityName}}CreateDto | {{entityName}}UpdateDto;
 
 export default function {{entityName}}FormPage() {
-  const { id } = useParams();
+  const { id } = useParams({ strict: false }) as { id?: string };
   const isUpdate = !!id;
   const [form] = Form.useForm<FormValues>();
+  const navigate = useNavigate();
   const { run: submitHandler, loading } = useRequest(
     async () => {
       const values = form.getFieldsValue();
@@ -29,7 +30,7 @@ export default function {{entityName}}FormPage() {
         await createApi({
           ...values,
         } as {{entityName}}CreateDto);
-        history.push('/{{pathName}}/list');
+        navigate({ to: '/{{pathName}}/list' });
         message.success('创建成功');
       }
     },
