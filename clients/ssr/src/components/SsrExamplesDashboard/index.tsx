@@ -4,6 +4,7 @@ import {
 	lazy,
 	Suspense,
 	startTransition,
+	useCallback,
 	useDeferredValue,
 	useEffect,
 	useState,
@@ -58,38 +59,41 @@ export function SsrExamplesDashboard({
 	const [error, setError] = useState("");
 	const [shouldLoadLazyPanel, setShouldLoadLazyPanel] = useState(false);
 
-	useEffect(() => {
-		void refreshItems(false);
-	}, []);
+	const refreshItems = useCallback(
+		async (shouldFail: boolean) => {
+			setIsLoading(true);
+			setError("");
+			await wait(650);
 
-	async function refreshItems(shouldFail: boolean) {
-		setIsLoading(true);
-		setError("");
-		await wait(650);
+			if (shouldFail) {
+				startTransition(() => {
+					setItems([]);
+					setError(
+						t(
+							"ssr_examples.client.error",
+							lang === "en-US"
+								? "Mock request failed. Client-side retry is still available."
+								: "模拟请求失败，但仍可在客户端重试。",
+						),
+					);
+					setShouldLoadLazyPanel(false);
+				});
+				setIsLoading(false);
+				return;
+			}
 
-		if (shouldFail) {
 			startTransition(() => {
-				setItems([]);
-				setError(
-					t(
-						"ssr_examples.client.error",
-						lang === "en-US"
-							? "Mock request failed. Client-side retry is still available."
-							: "模拟请求失败，但仍可在客户端重试。",
-					),
-				);
-				setShouldLoadLazyPanel(false);
+				setItems(initialItems);
+				setShouldLoadLazyPanel(true);
 			});
 			setIsLoading(false);
-			return;
-		}
+		},
+		[initialItems, lang, t],
+	);
 
-		startTransition(() => {
-			setItems(initialItems);
-			setShouldLoadLazyPanel(true);
-		});
-		setIsLoading(false);
-	}
+	useEffect(() => {
+		void refreshItems(false);
+	}, [refreshItems]);
 
 	const filteredItems = items.filter((item) => {
 		if (category !== "all" && item.category !== category) {
